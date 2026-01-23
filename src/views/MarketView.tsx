@@ -278,12 +278,11 @@ export function MarketView({
       {showTradeModal && tradeTarget && (
         <TradeModal
           targetRock={tradeTarget}
-          personalRocks={personalRocks}
-          onClose={() => {
-            setShowTradeModal(false)
-            setTradeTarget(null)
-          }}
+          personalRocks={personalRocks.filter(r => r.id !== tradeTarget.id)}
+          onClose={handleCloseTradeModal}
           onTrade={handleTrade}
+          sellerReputation={targetSellerReputation}
+          loading={tradeSending}
         />
       )}
     </>
