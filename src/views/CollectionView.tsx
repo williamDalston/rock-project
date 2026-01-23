@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
   Share2, Eye, MapPin, Hexagon, Repeat, Heart, Plus, Check, X,
-  ArrowRightLeft, MessageSquare, PackageCheck
+  ArrowRightLeft, MessageSquare, PackageCheck, LogIn, LogOut, ChevronDown
 } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { OptimizedImage } from '@/components/ui/OptimizedImage'
@@ -30,6 +30,9 @@ interface CollectionViewProps {
   marketRocks?: Rock[]
   initialTab?: TabType
   onTabChange?: (tab: TabType) => void
+  onOpenAuth?: () => void
+  isAnonymous?: boolean
+  onSignOut?: () => void
 }
 
 export function CollectionView({
@@ -38,8 +41,12 @@ export function CollectionView({
   user,
   marketRocks = [],
   initialTab = 'collection',
-  onTabChange
+  onTabChange,
+  onOpenAuth,
+  isAnonymous = false,
+  onSignOut
 }: CollectionViewProps) {
+  const [showUserMenu, setShowUserMenu] = useState(false)
   const [activeTab, setActiveTab] = useState<TabType>(initialTab)
 
   // Sync with external tab control
@@ -140,6 +147,44 @@ export function CollectionView({
                     size="sm"
                   />
                 </div>
+              </div>
+
+              {/* Auth Button */}
+              <div className="relative">
+                {isAnonymous ? (
+                  <button
+                    onClick={onOpenAuth}
+                    className="flex items-center space-x-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors"
+                  >
+                    <LogIn className="w-3.5 h-3.5" />
+                    <span>Sign In</span>
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="flex items-center space-x-1.5 px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs rounded-lg transition-colors"
+                    >
+                      <span className="max-w-[100px] truncate">{user?.displayName || user?.email || 'Account'}</span>
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    </button>
+
+                    {showUserMenu && (
+                      <div className="absolute right-0 top-full mt-1 w-40 bg-stone-800 border border-stone-700 rounded-lg shadow-xl z-50">
+                        <button
+                          onClick={() => {
+                            setShowUserMenu(false)
+                            onSignOut?.()
+                          }}
+                          className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-stone-300 hover:bg-stone-700 rounded-lg transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
             </div>
 

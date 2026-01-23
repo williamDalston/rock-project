@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { User, Repeat, Bell, Flame } from 'lucide-react'
+import { User, Repeat, Bell, Flame, LogIn, LogOut, ChevronDown } from 'lucide-react'
 import { RockFeed } from '@/components/feed'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { HeartGeode } from '@/components/ui/HeartGeode'
@@ -26,6 +26,9 @@ interface MarketViewProps {
   profile: UserProfile | null
   sellerReputations?: Map<string, UserReputation>
   onNavigateToTrades?: () => void
+  onOpenAuth?: () => void
+  isAnonymous?: boolean
+  onSignOut?: () => void
 }
 
 export function MarketView({
@@ -34,7 +37,10 @@ export function MarketView({
   user,
   profile,
   sellerReputations = new Map(),
-  onNavigateToTrades
+  onNavigateToTrades,
+  onOpenAuth,
+  isAnonymous = true,
+  onSignOut
 }: MarketViewProps) {
   const [showTradeModal, setShowTradeModal] = useState(false)
   const [tradeTarget, setTradeTarget] = useState<Rock | null>(null)
@@ -141,6 +147,57 @@ export function MarketView({
                 size="sm"
                 showTitle={false}
               />
+            )}
+
+            {/* User Menu / Sign In Button */}
+            {isAnonymous ? (
+              <button
+                onClick={onOpenAuth}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-500
+                           text-white text-xs font-medium rounded-lg transition-colors"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Sign In</span>
+              </button>
+            ) : (
+              <div className="relative group">
+                <button className="flex items-center gap-2 p-1.5 bg-stone-800 hover:bg-stone-700 rounded-lg transition-colors">
+                  {user?.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt="Profile"
+                      className="w-7 h-7 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center text-white text-xs font-bold">
+                      {user?.displayName?.[0] || user?.email?.[0] || 'U'}
+                    </div>
+                  )}
+                  <ChevronDown className="w-3 h-3 text-stone-400" />
+                </button>
+
+                {/* Dropdown Menu */}
+                <div className="absolute right-0 top-full mt-1 w-48 py-1 bg-stone-800 rounded-lg shadow-xl
+                                border border-stone-700 opacity-0 invisible group-hover:opacity-100
+                                group-hover:visible transition-all z-50">
+                  <div className="px-3 py-2 border-b border-stone-700">
+                    <p className="text-sm font-medium text-white truncate">
+                      {user?.displayName || 'User'}
+                    </p>
+                    <p className="text-xs text-stone-400 truncate">
+                      {user?.email || 'No email'}
+                    </p>
+                  </div>
+                  <button
+                    onClick={onSignOut}
+                    className="w-full px-3 py-2 text-left text-sm text-stone-300 hover:bg-stone-700
+                               flex items-center gap-2 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         </div>

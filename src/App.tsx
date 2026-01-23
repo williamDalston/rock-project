@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useRocks } from '@/hooks/useRocks'
 import { useUserProfile } from '@/hooks/useUserProfile'
@@ -8,13 +8,27 @@ import { DEFAULT_FORM_DATA, XP_REWARDS } from '@/constants'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import { NavBar } from '@/components/layout/NavBar'
 import { ToastContainer, useToast } from '@/components/ui/Toast'
+import { WelcomeModal } from '@/components/ui/WelcomeModal'
+import { AuthModal } from '@/components/modals/AuthModal'
 import { MarketView } from '@/views/MarketView'
 import { ScanView } from '@/views/ScanView'
 import { CollectionView } from '@/views/CollectionView'
 import type { ViewType, RockFormData, AIAnalysisResult } from '@/types'
 
 export default function App() {
-  const { user, loading: authLoading } = useAuth()
+  const {
+    user,
+    loading: authLoading,
+    error: authError,
+    isAnonymous,
+    signInWithGoogle,
+    signInWithEmail,
+    signUpWithEmail,
+    resetPassword,
+    signOut,
+    upgradeAnonymousAccount,
+    clearError
+  } = useAuth()
   const { personalRocks, marketRocks, loading: rocksLoading, addRock } = useRocks(user)
   const { profile, addXP, incrementStat } = useUserProfile(user)
   const toast = useToast()
@@ -24,10 +38,25 @@ export default function App() {
   const [formData, setFormData] = useState<RockFormData>(DEFAULT_FORM_DATA)
   const [analysisResult, setAnalysisResult] = useState<AIAnalysisResult | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [showWelcome, setShowWelcome] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+
+  // Check if first visit
+  useEffect(() => {
+    const hasSeenWelcome = localStorage.getItem('lithos_welcomed')
+    if (!hasSeenWelcome) {
+      setShowWelcome(true)
+    }
+  }, [])
 
   const navigateToTrades = () => {
     setCollectionTab('trades')
     setView('collection')
+  }
+
+  const handleWelcomeComplete = () => {
+    localStorage.setItem('lithos_welcomed', 'true')
+    setShowWelcome(false)
   }
 
   const loading = authLoading || rocksLoading
@@ -140,6 +169,11 @@ export default function App() {
     setAnalysisResult(null)
   }
 
+  const handleSignOut = async () => {
+    await signOut()
+    toast.success('Signed out', 'You are now browsing as a guest')
+  }
+
   if (loading) {
     return <LoadingScreen />
   }
@@ -148,6 +182,24 @@ export default function App() {
     <div className="min-h-screen-safe bg-stone-950 text-stone-200 pb-24 font-sans">
       <ToastContainer toasts={toast.toasts} onDismiss={toast.dismissToast} />
 
+      {/* First-time user welcome */}
+      {showWelcome && <WelcomeModal onComplete={handleWelcomeComplete} />}
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSignInWithGoogle={signInWithGoogle}
+        onSignInWithEmail={signInWithEmail}
+        onSignUpWithEmail={signUpWithEmail}
+        onResetPassword={resetPassword}
+        error={authError}
+        clearError={clearError}
+        loading={authLoading}
+        isAnonymous={isAnonymous}
+        onUpgradeAccount={upgradeAnonymousAccount}
+      />
+
       {view === 'market' && (
         <MarketView
           marketRocks={marketRocks}
@@ -155,6 +207,9 @@ export default function App() {
           user={user}
           profile={profile}
           onNavigateToTrades={navigateToTrades}
+          onOpenAuth={() => setShowAuthModal(true)}
+          isAnonymous={isAnonymous}
+          onSignOut={handleSignOut}
         />
       )}
 
@@ -178,6 +233,9 @@ export default function App() {
           marketRocks={marketRocks}
           initialTab={collectionTab}
           onTabChange={setCollectionTab}
+          onOpenAuth={() => setShowAuthModal(true)}
+          isAnonymous={isAnonymous}
+          onSignOut={handleSignOut}
         />
       )}
 
