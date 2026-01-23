@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useRocks } from '@/hooks/useRocks'
 import { useUserProfile } from '@/hooks/useUserProfile'
@@ -10,10 +10,21 @@ import { NavBar } from '@/components/layout/NavBar'
 import { ToastContainer, useToast } from '@/components/ui/Toast'
 import { WelcomeModal } from '@/components/ui/WelcomeModal'
 import { AuthModal } from '@/components/modals/AuthModal'
-import { MarketView } from '@/views/MarketView'
-import { ScanView } from '@/views/ScanView'
-import { CollectionView } from '@/views/CollectionView'
 import type { ViewType, RockFormData, AIAnalysisResult } from '@/types'
+
+// Lazy load views for code splitting
+const MarketView = lazy(() => import('@/views/MarketView').then(m => ({ default: m.MarketView })))
+const ScanView = lazy(() => import('@/views/ScanView').then(m => ({ default: m.ScanView })))
+const CollectionView = lazy(() => import('@/views/CollectionView').then(m => ({ default: m.CollectionView })))
+
+// Simple loading fallback for lazy components
+function ViewLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-[50vh]">
+      <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+    </div>
+  )
+}
 
 export default function App() {
   const {
@@ -200,44 +211,46 @@ export default function App() {
         onUpgradeAccount={upgradeAnonymousAccount}
       />
 
-      {view === 'market' && (
-        <MarketView
-          marketRocks={marketRocks}
-          personalRocks={personalRocks}
-          user={user}
-          profile={profile}
-          onNavigateToTrades={navigateToTrades}
-          onOpenAuth={() => setShowAuthModal(true)}
-          isAnonymous={isAnonymous}
-          onSignOut={handleSignOut}
-        />
-      )}
+      <Suspense fallback={<ViewLoader />}>
+        {view === 'market' && (
+          <MarketView
+            marketRocks={marketRocks}
+            personalRocks={personalRocks}
+            user={user}
+            profile={profile}
+            onNavigateToTrades={navigateToTrades}
+            onOpenAuth={() => setShowAuthModal(true)}
+            isAnonymous={isAnonymous}
+            onSignOut={handleSignOut}
+          />
+        )}
 
-      {view === 'scan' && (
-        <ScanView
-          formData={formData}
-          analysisResult={analysisResult}
-          isAnalyzing={isAnalyzing}
-          onFormChange={handleFormChange}
-          onSave={handleSave}
-          onSaveAsObservation={handleSaveAsObservation}
-          onDiscard={handleDiscard}
-        />
-      )}
+        {view === 'scan' && (
+          <ScanView
+            formData={formData}
+            analysisResult={analysisResult}
+            isAnalyzing={isAnalyzing}
+            onFormChange={handleFormChange}
+            onSave={handleSave}
+            onSaveAsObservation={handleSaveAsObservation}
+            onDiscard={handleDiscard}
+          />
+        )}
 
-      {view === 'collection' && (
-        <CollectionView
-          personalRocks={personalRocks}
-          profile={profile}
-          user={user}
-          marketRocks={marketRocks}
-          initialTab={collectionTab}
-          onTabChange={setCollectionTab}
-          onOpenAuth={() => setShowAuthModal(true)}
-          isAnonymous={isAnonymous}
-          onSignOut={handleSignOut}
-        />
-      )}
+        {view === 'collection' && (
+          <CollectionView
+            personalRocks={personalRocks}
+            profile={profile}
+            user={user}
+            marketRocks={marketRocks}
+            initialTab={collectionTab}
+            onTabChange={setCollectionTab}
+            onOpenAuth={() => setShowAuthModal(true)}
+            isAnonymous={isAnonymous}
+            onSignOut={handleSignOut}
+          />
+        )}
+      </Suspense>
 
       {view !== 'scan' && (
         <NavBar currentView={view} onViewChange={setView} onScan={handleScan} />
