@@ -372,11 +372,17 @@ export function MarketView({
 
                 {/* Compact Header - Above image like Instagram */}
                 <div className="p-3 flex justify-between items-center border-b border-stone-800/50">
-                  <div className="flex items-center space-x-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      if (rock.ownerId) setViewProfileUserId(rock.ownerId)
+                    }}
+                    className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+                  >
                     <div className="w-8 h-8 rounded-full bg-stone-800 border border-stone-600 flex items-center justify-center">
                       <User className="w-4 h-4 text-stone-400" />
                     </div>
-                    <div>
+                    <div className="text-left">
                       <div className="flex items-center space-x-1.5">
                         <p className="text-xs font-bold text-white">
                           Geologist {rock.ownerId?.slice(0, 4)}
@@ -392,7 +398,7 @@ export function MarketView({
                         <FreshnessBadge createdAt={rock.createdAt} />
                       </p>
                     </div>
-                  </div>
+                  </button>
                   <div className="flex items-center space-x-1.5">
                     <RarityBadge score={rock.rarityScore} size="sm" />
                     {rock.verificationLevel && rock.verificationLevel !== 'unverified' && (
