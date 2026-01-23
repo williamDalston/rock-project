@@ -45,7 +45,8 @@ export function TrendingSection({
 
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollRef.current) return
-    const scrollAmount = 200
+    // Scroll by roughly 2 cards worth
+    const scrollAmount = 320
     scrollRef.current.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
       behavior: 'smooth'
@@ -105,7 +106,7 @@ export function TrendingSection({
 
         <div
           ref={scrollRef}
-          className="flex overflow-x-auto space-x-3 px-4 pb-2 scrollbar-hide scroll-smooth"
+          className="flex overflow-x-auto gap-3 px-4 pb-3 scroll-smooth scrollbar-thin"
           style={{
             scrollSnapType: 'x mandatory',
             WebkitOverflowScrolling: 'touch'
@@ -157,70 +158,64 @@ function TrendingCard({
 
   return (
     <article
-      className="flex-shrink-0 w-36 bg-stone-900 rounded-xl border border-stone-800
-                 overflow-hidden hover:border-orange-800/50
-                 transition-all duration-200 hover:shadow-lg hover:shadow-orange-900/20
+      className="flex-shrink-0 w-36 md:w-44 lg:w-48 bg-stone-900 rounded-xl border border-stone-800
+                 overflow-hidden hover:border-orange-500/50
+                 transition-all duration-200 hover:shadow-lg hover:shadow-orange-900/30
                  relative group"
       style={{ scrollSnapAlign: 'start' }}
     >
       {/* Rank Badge */}
-      <div className="absolute top-1.5 left-1.5 z-10 w-6 h-6 rounded-full
+      <div className="absolute top-2 left-2 z-10 w-6 h-6 md:w-7 md:h-7 rounded-full
                      bg-gradient-to-br from-orange-500 to-red-600
                      flex items-center justify-center shadow-lg">
-        <span className="text-[10px] font-bold text-white">
+        <span className="text-[10px] md:text-xs font-bold text-white">
           #{rank}
         </span>
       </div>
 
-      {/* Compact Image - tap to open */}
+      {/* Image - tap to open */}
       <button
         onClick={onClick}
-        className="w-full aspect-[4/3] relative block"
+        className="w-full aspect-square relative block"
       >
         <img
           src={rock.imageUrl}
           alt={rock.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
 
         {/* Rarity Badge */}
-        <div className="absolute top-1.5 right-1.5">
+        <div className="absolute top-2 right-2">
           <RarityBadge score={rock.rarityScore} size="sm" />
         </div>
 
-        {/* Trending Reason Tag */}
-        <div className="absolute bottom-1.5 left-1.5 right-1.5">
-          <span className="inline-block bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[9px] text-orange-300 font-medium truncate max-w-full">
+        {/* Bottom info overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-2 md:p-3">
+          <span className="inline-block bg-orange-500/90 backdrop-blur-sm px-2 py-0.5 rounded text-[9px] md:text-[10px] text-white font-medium">
             {trendingReason}
           </span>
+          <h3 className="text-xs md:text-sm font-serif font-bold text-white mt-1.5 truncate">
+            {rock.marketTitle || rock.name}
+          </h3>
         </div>
       </button>
 
-      {/* Compact Content */}
-      <div className="p-2">
-        <h3
-          className="text-xs font-serif font-bold text-white truncate cursor-pointer hover:text-orange-300 transition-colors"
-          onClick={onClick}
-        >
-          {rock.marketTitle || rock.name}
-        </h3>
-
-        <div className="flex items-center justify-between mt-1.5">
-          <span className="text-[9px] text-stone-500 uppercase tracking-wide truncate">
-            {rock.type}
-          </span>
-          <HeartGeode
-            isLiked={isLiked}
-            count={rock.likes || 0}
-            onToggle={onLike}
-            disabled={!user || isLiking}
-            size="sm"
-          />
-        </div>
+      {/* Footer with type and like */}
+      <div className="p-2 md:p-2.5 flex items-center justify-between bg-stone-900/95">
+        <span className="text-[9px] md:text-[10px] text-stone-400 uppercase tracking-wide truncate max-w-[60%]">
+          {rock.type}
+        </span>
+        <HeartGeode
+          isLiked={isLiked}
+          count={rock.likes || 0}
+          onToggle={onLike}
+          disabled={!user || isLiking}
+          size="sm"
+        />
       </div>
     </article>
   )

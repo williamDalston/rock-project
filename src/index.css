@@ -223,6 +223,30 @@ img:not([src]), img[src=""] {
   display: none;
 }
 
+/* Thin scrollbar for horizontal scroll areas */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #44403c #1c1917;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #1c1917;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #44403c;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #57534e;
+}
+
 /* ========================================
    HeartGeode Animations
    ======================================== */
