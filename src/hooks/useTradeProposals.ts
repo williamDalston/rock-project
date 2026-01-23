@@ -8,7 +8,9 @@ import {
   updateDoc,
   doc,
   serverTimestamp,
-  orderBy
+  orderBy,
+  writeBatch,
+  Timestamp
 } from 'firebase/firestore'
 import { db, getCollectionPaths } from '@/services/firebase'
 import { APP_CONFIG, TRADING_CONFIG } from '@/constants'
@@ -172,16 +174,76 @@ export function useTradeProposals(user: User | null): UseTradeProposalsReturn {
   const completeProposal = useCallback(async (proposalId: string) => {
     if (!user) throw new Error('User not authenticated')
 
+    // Find the proposal in local state
+    const proposal = [...sentProposals, ...receivedProposals].find(p => p.id === proposalId)
+    if (!proposal) throw new Error('Proposal not found')
+    if (proposal.status !== 'accepted') throw new Error('Trade must be accepted first')
+
+    const batch = writeBatch(db)
+
+    // Get user paths for both parties
+    const senderPaths = getCollectionPaths(APP_CONFIG.APP_ID, proposal.fromUserId)
+    const receiverPaths = getCollectionPaths(APP_CONFIG.APP_ID, proposal.toUserId)
+
+    // Prepare rock data with updated ownership and timestamp
+    const now = Timestamp.now()
+
+    const offeredRockForReceiver = {
+      ...proposal.offeredRock,
+      ownerId: proposal.toUserId,
+      previousOwnerId: proposal.fromUserId,
+      acquiredVia: 'trade',
+      acquiredAt: now
+    }
+
+    const targetRockForSender = {
+      ...proposal.targetRock,
+      ownerId: proposal.fromUserId,
+      previousOwnerId: proposal.toUserId,
+      acquiredVia: 'trade',
+      acquiredAt: now
+    }
+
+    // Transfer offered rock: sender -> receiver
+    if (senderPaths.userRocks) {
+      const senderRockRef = doc(db, senderPaths.userRocks, proposal.offeredRockId)
+      batch.delete(senderRockRef)
+    }
+    if (receiverPaths.userRocks) {
+      const receiverNewRockRef = doc(db, receiverPaths.userRocks, proposal.offeredRockId)
+      batch.set(receiverNewRockRef, offeredRockForReceiver)
+    }
+
+    // Transfer target rock: receiver -> sender
+    if (receiverPaths.userRocks) {
+      const receiverRockRef = doc(db, receiverPaths.userRocks, proposal.targetRockId)
+      batch.delete(receiverRockRef)
+    }
+    if (senderPaths.userRocks) {
+      const senderNewRockRef = doc(db, senderPaths.userRocks, proposal.targetRockId)
+      batch.set(senderNewRockRef, targetRockForSender)
+    }
+
+    // Update market copies with new ownership
+    const marketPath = paths.marketRocks
+    const offeredMarketRef = doc(db, marketPath, proposal.offeredRockId)
+    const targetMarketRef = doc(db, marketPath, proposal.targetRockId)
+
+    // Update market rocks (they may or may not exist)
+    batch.set(offeredMarketRef, offeredRockForReceiver, { merge: true })
+    batch.set(targetMarketRef, targetRockForSender, { merge: true })
+
+    // Mark trade as completed
     const proposalRef = doc(db, tradesPath, proposalId)
-    await updateDoc(proposalRef, {
+    batch.update(proposalRef, {
       status: 'completed' as TradeStatus,
       completedAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     })
 
-    // Note: Rock ownership transfer should be handled by a Cloud Function
-    // for atomicity and security
-  }, [user, tradesPath])
+    // Execute all operations atomically
+    await batch.commit()
+  }, [user, tradesPath, paths.marketRocks, sentProposals, receivedProposals])
 
   // Calculate pending counts
   const pendingReceivedCount = receivedProposals.filter(
