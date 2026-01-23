@@ -139,6 +139,99 @@ export async function identifyRockWithAI(
 }
 
 /**
+ * Validate an image before processing
+ * Checks if the image is a valid rock/mineral/fossil photo
+ */
+export interface ImageValidationResult {
+  isValid: boolean
+  isRock: boolean
+  imageQuality: 'good' | 'acceptable' | 'poor'
+  reason?: string
+}
+
+const VALIDATION_PROMPT = `
+You are an image quality validator for a rock collecting app.
+Analyze this image and return a JSON object ONLY. No markdown, no code blocks.
+
+{
+  "isRock": true/false (Is this image of a rock, mineral, crystal, gemstone, or fossil?),
+  "imageQuality": "good" | "acceptable" | "poor",
+  "qualityIssues": [] (Array of issues like "blurry", "too dark", "too small", "corrupt", "screenshot"),
+  "reason": "Brief explanation if image is rejected"
+}
+
+REJECTION CRITERIA (isRock = false):
+- Image is NOT a rock, mineral, crystal, gemstone, or fossil
+- Image is a person, animal, plant, food, building, vehicle, text, meme, etc.
+- Image is clearly a screenshot of another app
+- Image is completely corrupt/broken
+
+QUALITY ISSUES (still valid, just note the quality):
+- "blurry" - Image lacks sharpness
+- "too dark" - Hard to see details
+- "poor lighting" - Shadows obscuring specimen
+- "too small" - Specimen is tiny in frame
+
+Be lenient - if there's ANY rock/mineral visible, it's valid. Only reject clear non-rocks.
+`
+
+export async function validateImage(base64Image: string): Promise<ImageValidationResult> {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY
+
+  if (!apiKey) {
+    // If no API key, skip validation
+    return { isValid: true, isRock: true, imageQuality: 'good' }
+  }
+
+  const url = `${GEMINI_API_URL}?key=${apiKey}`
+  const cleanedImage = cleanBase64(base64Image)
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          role: 'user',
+          parts: [
+            { text: VALIDATION_PROMPT },
+            { inlineData: { mimeType: 'image/jpeg', data: cleanedImage } }
+          ]
+        }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          temperature: 0.1 // Very low for consistent validation
+        }
+      })
+    })
+
+    if (!response.ok) {
+      // On API error, allow the image (fail open)
+      return { isValid: true, isRock: true, imageQuality: 'acceptable' }
+    }
+
+    const data = await response.json()
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text
+
+    if (!text) {
+      return { isValid: true, isRock: true, imageQuality: 'acceptable' }
+    }
+
+    const result = JSON.parse(text)
+
+    return {
+      isValid: result.isRock && result.imageQuality !== 'poor',
+      isRock: result.isRock,
+      imageQuality: result.imageQuality || 'acceptable',
+      reason: result.reason
+    }
+  } catch {
+    // On any error, allow the image (fail open for better UX)
+    return { isValid: true, isRock: true, imageQuality: 'acceptable' }
+  }
+}
+
+/**
  * Get confidence level category
  */
 export function getConfidenceLevel(probability: number): 'high' | 'medium' | 'low' {

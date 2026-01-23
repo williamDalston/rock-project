@@ -36,6 +36,7 @@ interface CollectionViewProps {
   onOpenAuth?: () => void
   isAnonymous?: boolean
   onSignOut?: () => void
+  onDeleteRock?: (rockId: string, rockName: string) => Promise<void>
 }
 
 export function CollectionView({
@@ -47,7 +48,8 @@ export function CollectionView({
   onTabChange,
   onOpenAuth,
   isAnonymous = false,
-  onSignOut
+  onSignOut,
+  onDeleteRock
 }: CollectionViewProps) {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [activeTab, setActiveTab] = useState<TabType>(initialTab)
@@ -622,6 +624,7 @@ export function CollectionView({
           onVoteSubmitted={handleVoteSubmitted}
           allRocks={[...personalRocks, ...marketRocks]}
           onSelectSimilar={(rock) => setDetailRock(rock)}
+          onDelete={onDeleteRock}
         />
       )}
     </>

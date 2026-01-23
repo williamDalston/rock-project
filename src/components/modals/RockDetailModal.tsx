@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import {
   X, MapPin, Calendar, ThumbsUp, ThumbsDown, Shield, Users,
   Award, Sparkles, MessageSquare, ChevronDown, ChevronUp, Gem,
-  ChevronLeft, ChevronRight, Repeat, Bookmark
+  ChevronLeft, ChevronRight, Repeat, Bookmark, Trash2, Loader
 } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { SelfCollectedBadge } from '@/components/ui/SelfCollectedBadge'
@@ -34,6 +34,7 @@ interface RockDetailModalProps {
   onTrade?: (rock: Rock) => void
   onWishlist?: (rock: Rock) => void
   isInWishlist?: boolean
+  onDelete?: (rockId: string, rockName: string) => Promise<void>
 }
 
 export function RockDetailModal({
@@ -55,12 +56,15 @@ export function RockDetailModal({
   isLiking = false,
   onTrade,
   onWishlist,
-  isInWishlist = false
+  isInWishlist = false,
+  onDelete
 }: RockDetailModalProps) {
   const [showVoteForm, setShowVoteForm] = useState(false)
   const [voteComment, setVoteComment] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [showProperties, setShowProperties] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   // Find similar rocks
   const similarRocks = useMemo(() => {
@@ -122,6 +126,20 @@ export function RockDetailModal({
       month: 'short',
       day: 'numeric'
     })
+  }
+
+  const handleDelete = async () => {
+    if (!onDelete) return
+    setIsDeleting(true)
+    try {
+      await onDelete(rock.id, rock.name)
+      onClose()
+    } catch (err) {
+      console.error('Failed to delete:', err)
+    } finally {
+      setIsDeleting(false)
+      setShowDeleteConfirm(false)
+    }
   }
 
   return (
@@ -302,6 +320,47 @@ export function RockDetailModal({
                 >
                   <Bookmark className={`w-4 h-4 transition-transform ${isInWishlist ? 'fill-current scale-110' : ''}`} />
                 </button>
+              )}
+
+              {/* Delete Button - Only for owned rocks */}
+              {onDelete && rock.ownerId === user?.uid && (
+                <div className="relative ml-auto">
+                  {showDeleteConfirm ? (
+                    <div className="flex items-center gap-2 bg-stone-800 rounded-xl p-1">
+                      <span className="text-xs text-stone-400 px-2">Delete?</span>
+                      <button
+                        onClick={() => setShowDeleteConfirm(false)}
+                        disabled={isDeleting}
+                        className="px-3 py-1.5 text-xs bg-stone-700 hover:bg-stone-600 text-stone-300 rounded-lg transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                        className="px-3 py-1.5 text-xs bg-rose-600 hover:bg-rose-500 text-white rounded-lg transition-colors flex items-center gap-1"
+                      >
+                        {isDeleting ? (
+                          <>
+                            <Loader className="w-3 h-3 animate-spin" />
+                            <span>Deleting</span>
+                          </>
+                        ) : (
+                          <span>Yes, delete</span>
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="flex items-center gap-2 px-3 py-2.5 rounded-xl transition-all duration-200
+                                bg-stone-800 hover:bg-rose-900/50 text-stone-400 hover:text-rose-400 active:scale-95"
+                      title="Delete from collection"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               )}
             </div>
 

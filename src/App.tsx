@@ -4,7 +4,7 @@ import { useRocks } from '@/hooks/useRocks'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import { useTradeProposals } from '@/hooks/useTradeProposals'
 import { useNotifications } from '@/hooks/useNotifications'
-import { identifyRockWithAI } from '@/services/gemini'
+import { identifyRockWithAI, validateImage } from '@/services/gemini'
 import { compressImage } from '@/utils/imageCompression'
 import { DEFAULT_FORM_DATA, XP_REWARDS } from '@/constants'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
@@ -45,7 +45,7 @@ export default function App() {
     upgradeAnonymousAccount,
     clearError
   } = useAuth()
-  const { personalRocks, marketRocks, loading: rocksLoading, addRock } = useRocks(user)
+  const { personalRocks, marketRocks, loading: rocksLoading, addRock, deleteRock } = useRocks(user)
   const { profile, addXP, incrementStat } = useUserProfile(user)
   const { receivedProposals, sentProposals } = useTradeProposals(user)
   const toast = useToast()
@@ -156,6 +156,25 @@ export default function App() {
       const compressed = await compressImage(file)
       setFormData((prev) => ({ ...prev, imageUrl: compressed }))
 
+      // Validate image quality and content first
+      const validation = await validateImage(compressed)
+
+      if (!validation.isRock) {
+        toast.error('Not a rock', validation.reason || 'Please upload a photo of a rock, mineral, or fossil.')
+        setView('market')
+        setFormData(DEFAULT_FORM_DATA)
+        setIsAnalyzing(false)
+        return
+      }
+
+      if (validation.imageQuality === 'poor') {
+        toast.error('Poor image quality', 'Please take a clearer photo with better lighting.')
+        setView('market')
+        setFormData(DEFAULT_FORM_DATA)
+        setIsAnalyzing(false)
+        return
+      }
+
       // Pass coordinates if available for location-aware identification
       const analysis = await identifyRockWithAI(compressed, formData.coordinates)
       setAnalysisResult(analysis)
@@ -252,6 +271,16 @@ export default function App() {
     setAnalysisResult(null)
   }
 
+  const handleDeleteRock = async (rockId: string, rockName: string) => {
+    try {
+      await deleteRock(rockId, rockName)
+      toast.success('Deleted', `"${rockName}" has been removed from your collection`)
+    } catch (err) {
+      console.error('Failed to delete:', err)
+      toast.error('Delete failed', 'Please try again')
+    }
+  }
+
   const handleSignOut = async () => {
     await signOut()
     toast.success('Signed out', 'You are now browsing as a guest')
@@ -320,6 +349,7 @@ export default function App() {
             onOpenAuth={() => setShowAuthModal(true)}
             isAnonymous={isAnonymous}
             onSignOut={handleSignOut}
+            onDeleteRock={handleDeleteRock}
           />
         )}
       </Suspense>
