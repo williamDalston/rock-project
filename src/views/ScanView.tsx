@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Loader, ScanLine, Sparkles, Droplets, MapPin, Navigation, Hexagon } from 'lucide-react'
+import { Loader, ScanLine, Sparkles, Droplets, MapPin, Navigation, Hexagon, ArrowLeft } from 'lucide-react'
 import { Toggle } from '@/components/ui/Toggle'
 import { ConfidenceMeter } from '@/components/ui/ConfidenceMeter'
 import { ProtectedAreaWarning, ProtectedAreaBanner } from '@/components/ui/ProtectedAreaWarning'
@@ -63,6 +63,15 @@ export function ScanView({
     <div className="min-h-screen bg-stone-950 text-stone-200 pb-20">
       {/* Image Preview */}
       <div className="h-[40vh] relative bg-black">
+        {/* Back Button */}
+        <button
+          onClick={onDiscard}
+          className="absolute top-4 left-4 z-20 flex items-center space-x-2 px-3 py-2 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full text-white/80 hover:text-white transition-colors"
+          aria-label="Go back to previous screen"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="text-sm font-medium">Back</span>
+        </button>
         {formData.imageUrl ? (
           <img
             src={formData.imageUrl}
@@ -112,9 +121,9 @@ export function ScanView({
           )}
 
           {/* Name & Rarity */}
-          <div className="flex justify-between items-start">
-            <div className="flex-grow pr-4">
-              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+            <div className="flex-grow">
+              <label className="text-[11px] font-bold text-stone-400 uppercase tracking-widest">
                 Identification
               </label>
               <input
@@ -129,8 +138,8 @@ export function ScanView({
                 </p>
               )}
             </div>
-            <div className="flex flex-col items-end">
-              <label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest mb-1">
+            <div className="flex flex-col sm:items-end">
+              <label className="text-[11px] font-bold text-stone-400 uppercase tracking-widest mb-1">
                 Rarity
               </label>
               <input
@@ -141,7 +150,8 @@ export function ScanView({
                 onChange={(e) =>
                   onFormChange({ rarityScore: parseInt(e.target.value) || 1 })
                 }
-                className="bg-stone-900 border border-stone-800 text-center text-white w-12 h-10 rounded-lg focus:border-emerald-500 focus:outline-none"
+                className="bg-stone-900 border border-stone-800 text-center text-white w-full sm:w-16 h-12 rounded-lg focus:border-emerald-500 focus:outline-none text-lg"
+                aria-label="Rarity score from 1 to 10"
               />
             </div>
           </div>
@@ -152,7 +162,7 @@ export function ScanView({
               <div className="flex items-center space-x-2">
                 <MapPin className="w-4 h-4 text-emerald-400" />
                 <div>
-                  <p className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">
+                  <p className="text-[11px] font-bold text-stone-400 uppercase tracking-widest">
                     Location
                   </p>
                   <p className="text-sm text-stone-300">
@@ -176,12 +186,12 @@ export function ScanView({
           </div>
 
           {/* Visual Properties Grid */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-stone-900/50 p-3 rounded-xl border border-stone-800">
-              <div className="flex items-center space-x-2 mb-1 text-stone-400">
-                <Sparkles className="w-3 h-3" />
-                <span className="text-[10px] uppercase tracking-widest">Luster</span>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-stone-900/50 p-4 rounded-xl border border-stone-800">
+              <label className="flex items-center space-x-2 mb-2 text-stone-400">
+                <Sparkles className="w-4 h-4" aria-hidden="true" />
+                <span className="text-[11px] uppercase tracking-widest font-medium">Luster</span>
+              </label>
               <input
                 value={formData.visuals.luster}
                 onChange={(e) =>
@@ -189,15 +199,16 @@ export function ScanView({
                     visuals: { ...formData.visuals, luster: e.target.value }
                   })
                 }
-                className="bg-transparent text-sm font-medium text-stone-200 w-full focus:outline-none"
-                placeholder="..."
+                className="bg-transparent text-base font-medium text-stone-200 w-full focus:outline-none"
+                placeholder="e.g., Vitreous, Metallic"
+                aria-label="Rock luster"
               />
             </div>
-            <div className="bg-stone-900/50 p-3 rounded-xl border border-stone-800">
-              <div className="flex items-center space-x-2 mb-1 text-stone-400">
-                <Droplets className="w-3 h-3" />
-                <span className="text-[10px] uppercase tracking-widest">Texture</span>
-              </div>
+            <div className="bg-stone-900/50 p-4 rounded-xl border border-stone-800">
+              <label className="flex items-center space-x-2 mb-2 text-stone-400">
+                <Droplets className="w-4 h-4" aria-hidden="true" />
+                <span className="text-[11px] uppercase tracking-widest font-medium">Texture</span>
+              </label>
               <input
                 value={formData.visuals.texture}
                 onChange={(e) =>
@@ -205,25 +216,26 @@ export function ScanView({
                     visuals: { ...formData.visuals, texture: e.target.value }
                   })
                 }
-                className="bg-transparent text-sm font-medium text-stone-200 w-full focus:outline-none"
-                placeholder="..."
+                className="bg-transparent text-base font-medium text-stone-200 w-full focus:outline-none"
+                placeholder="e.g., Crystalline, Glassy"
+                aria-label="Rock texture"
               />
             </div>
           </div>
 
           {/* Extended Properties (from AI) */}
           {(formData.hardness || formData.cleavage) && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {formData.hardness && (
-                <div className="bg-stone-900/50 p-3 rounded-xl border border-stone-800">
-                  <p className="text-[10px] text-stone-500 uppercase tracking-widest mb-1">Hardness</p>
-                  <p className="text-sm font-medium text-stone-200">{formData.hardness} (Mohs)</p>
+                <div className="bg-stone-900/50 p-4 rounded-xl border border-stone-800">
+                  <p className="text-[11px] text-stone-400 uppercase tracking-widest mb-1 font-medium">Hardness</p>
+                  <p className="text-base font-medium text-stone-200">{formData.hardness} (Mohs)</p>
                 </div>
               )}
               {formData.cleavage && (
-                <div className="bg-stone-900/50 p-3 rounded-xl border border-stone-800">
-                  <p className="text-[10px] text-stone-500 uppercase tracking-widest mb-1">Cleavage</p>
-                  <p className="text-sm font-medium text-stone-200 truncate">{formData.cleavage}</p>
+                <div className="bg-stone-900/50 p-4 rounded-xl border border-stone-800">
+                  <p className="text-[11px] text-stone-400 uppercase tracking-widest mb-1 font-medium">Cleavage</p>
+                  <p className="text-base font-medium text-stone-200 line-clamp-2">{formData.cleavage}</p>
                 </div>
               )}
             </div>
@@ -231,14 +243,15 @@ export function ScanView({
 
           {/* Description */}
           <div>
-            <label className="text-[10px] font-bold text-stone-500 uppercase tracking-widest">
+            <label className="text-[11px] font-bold text-stone-400 uppercase tracking-widest">
               Description
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => onFormChange({ description: e.target.value })}
               rows={3}
-              className="w-full bg-stone-900 border border-stone-800 rounded-xl p-3 text-stone-300 mt-2 focus:border-emerald-500 focus:outline-none text-sm leading-relaxed"
+              className="w-full bg-stone-900 border border-stone-800 rounded-xl p-4 text-stone-300 mt-2 focus:border-emerald-500 focus:outline-none text-base leading-relaxed"
+              aria-label="Rock description"
             />
           </div>
 
@@ -260,16 +273,18 @@ export function ScanView({
           <div className="flex space-x-4 pt-4">
             <button
               onClick={onDiscard}
-              className="flex-1 py-4 rounded-xl font-bold text-stone-500 hover:bg-stone-900 transition-colors"
+              className="flex-1 py-4 rounded-xl font-bold text-stone-400 hover:text-stone-300 hover:bg-stone-900 transition-colors min-h-[52px]"
+              aria-label="Discard and go back"
             >
               Discard
             </button>
             <button
               onClick={handleSave}
               disabled={!formData.name}
-              className="flex-[2] bg-emerald-600 hover:bg-emerald-500 disabled:bg-stone-800 disabled:text-stone-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-emerald-900/20 transition-colors"
+              className="flex-[2] bg-emerald-600 hover:bg-emerald-500 disabled:bg-stone-800 disabled:text-stone-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-emerald-900/20 transition-colors min-h-[52px]"
+              aria-label={protectedArea?.isProtected ? 'Review protected area warning and save' : 'Save rock to collection'}
             >
-              {protectedArea?.isProtected ? 'Review & Save' : 'Accession to Vault'}
+              {protectedArea?.isProtected ? 'Review & Save' : 'Save to Collection'}
             </button>
           </div>
         </div>

@@ -7,6 +7,7 @@ import { compressImage } from '@/utils/imageCompression'
 import { DEFAULT_FORM_DATA, XP_REWARDS } from '@/constants'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import { NavBar } from '@/components/layout/NavBar'
+import { ToastContainer, useToast } from '@/components/ui/Toast'
 import { MarketView } from '@/views/MarketView'
 import { ScanView } from '@/views/ScanView'
 import { CollectionView } from '@/views/CollectionView'
@@ -16,11 +17,18 @@ export default function App() {
   const { user, loading: authLoading } = useAuth()
   const { personalRocks, marketRocks, loading: rocksLoading, addRock } = useRocks(user)
   const { profile, addXP, incrementStat } = useUserProfile(user)
+  const toast = useToast()
 
   const [view, setView] = useState<ViewType>('market')
+  const [collectionTab, setCollectionTab] = useState<'collection' | 'trades' | 'wishlists'>('collection')
   const [formData, setFormData] = useState<RockFormData>(DEFAULT_FORM_DATA)
   const [analysisResult, setAnalysisResult] = useState<AIAnalysisResult | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+
+  const navigateToTrades = () => {
+    setCollectionTab('trades')
+    setView('collection')
+  }
 
   const loading = authLoading || rocksLoading
 
@@ -55,7 +63,8 @@ export default function App() {
       }))
     } catch (err) {
       console.error('Analysis failed:', err)
-      alert('Analysis failed. Please try again.')
+      toast.error('Analysis failed', 'Please try again with a clearer image.')
+      setView('market')
     } finally {
       setIsAnalyzing(false)
     }
@@ -85,12 +94,19 @@ export default function App() {
         await addXP('FIRST_SPECIMEN')
       }
 
+      // Calculate total XP earned
+      let xpEarned = XP_REWARDS.SPECIMEN_ADDED
+      if (formData.isSelfCollected) xpEarned += XP_REWARDS.SELF_COLLECTED
+      if (personalRocks.length === 0) xpEarned += XP_REWARDS.FIRST_SPECIMEN
+
       setView('collection')
       setFormData(DEFAULT_FORM_DATA)
       setAnalysisResult(null)
+
+      toast.success('Rock saved!', `+${xpEarned} XP earned`)
     } catch (err) {
       console.error('Failed to save:', err)
-      alert('Failed to save rock. Please try again.')
+      toast.error('Failed to save', 'Please check your connection and try again.')
     }
   }
 
@@ -110,9 +126,11 @@ export default function App() {
       setView('collection')
       setFormData(DEFAULT_FORM_DATA)
       setAnalysisResult(null)
+
+      toast.success('Observation saved!', `+${XP_REWARDS.SPECIMEN_ADDED} XP earned`)
     } catch (err) {
       console.error('Failed to save observation:', err)
-      alert('Failed to save. Please try again.')
+      toast.error('Failed to save', 'Please check your connection and try again.')
     }
   }
 
@@ -128,12 +146,15 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-200 pb-24 font-sans">
+      <ToastContainer toasts={toast.toasts} onDismiss={toast.dismissToast} />
+
       {view === 'market' && (
         <MarketView
           marketRocks={marketRocks}
           personalRocks={personalRocks}
           user={user}
           profile={profile}
+          onNavigateToTrades={navigateToTrades}
         />
       )}
 
@@ -153,6 +174,10 @@ export default function App() {
         <CollectionView
           personalRocks={personalRocks}
           profile={profile}
+          user={user}
+          marketRocks={marketRocks}
+          initialTab={collectionTab}
+          onTabChange={setCollectionTab}
         />
       )}
 

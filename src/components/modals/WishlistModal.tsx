@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, Plus, Heart, Sparkles } from 'lucide-react'
+import { X, Plus, Heart, ChevronDown, ChevronUp, Sparkles } from 'lucide-react'
 import { Toggle } from '@/components/ui/Toggle'
 import { ROCK_TYPES, WISHLIST_CONFIG } from '@/constants'
 import type { RockType, LusterType, CrystalHabit } from '@/types'
@@ -40,6 +40,7 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
   const [isPublic, setIsPublic] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
   const canSave = name || rockType || minRarity || maxRarity ||
     selectedLusters.length > 0 || selectedHabits.length > 0
@@ -101,8 +102,8 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
             </div>
             <div>
               <h3 className="font-serif font-bold text-white">Add to Wishlist</h3>
-              <p className="text-[10px] text-stone-500">
-                {existingCount}/{WISHLIST_CONFIG.MAX_WISHLIST_ITEMS} items
+              <p className="text-xs text-stone-400">
+                {existingCount} of {WISHLIST_CONFIG.MAX_WISHLIST_ITEMS} items used
               </p>
             </div>
           </div>
@@ -128,7 +129,7 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
 
           {/* Rock Name */}
           <div>
-            <label className="block text-xs text-stone-400 mb-1.5">
+            <label className="block text-[11px] text-stone-400 mb-1.5 font-medium uppercase tracking-wide">
               Rock/Mineral Name
             </label>
             <input
@@ -137,26 +138,28 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Amethyst, Quartz, Fluorite..."
               disabled={atLimit}
-              className="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-2.5
-                         text-white text-sm placeholder-stone-500
+              className="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3
+                         text-white text-base placeholder-stone-500
                          focus:outline-none focus:ring-2 focus:ring-rose-500
                          disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Rock or mineral name to search for"
             />
           </div>
 
           {/* Rock Type */}
           <div>
-            <label className="block text-xs text-stone-400 mb-1.5">
+            <label className="block text-[11px] text-stone-400 mb-1.5 font-medium uppercase tracking-wide">
               Type
             </label>
             <select
               value={rockType}
               onChange={(e) => setRockType(e.target.value as RockType | '')}
               disabled={atLimit}
-              className="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-2.5
-                         text-white text-sm appearance-none cursor-pointer
+              className="w-full bg-stone-800 border border-stone-700 rounded-xl px-4 py-3
+                         text-white text-base appearance-none cursor-pointer
                          focus:outline-none focus:ring-2 focus:ring-rose-500
                          disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Rock type filter"
             >
               <option value="">Any Type</option>
               {ROCK_TYPES.map(type => (
@@ -167,7 +170,7 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
 
           {/* Rarity Range */}
           <div>
-            <label className="block text-xs text-stone-400 mb-1.5">
+            <label className="block text-[11px] text-stone-400 mb-1.5 font-medium uppercase tracking-wide">
               Rarity Range
             </label>
             <div className="grid grid-cols-2 gap-3">
@@ -179,10 +182,11 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
                 onChange={(e) => setMinRarity(e.target.value)}
                 placeholder="Min (1)"
                 disabled={atLimit}
-                className="bg-stone-800 border border-stone-700 rounded-xl px-4 py-2.5
-                           text-white text-sm placeholder-stone-500
+                className="bg-stone-800 border border-stone-700 rounded-xl px-4 py-3
+                           text-white text-base placeholder-stone-500
                            focus:outline-none focus:ring-2 focus:ring-rose-500
                            disabled:opacity-50"
+                aria-label="Minimum rarity"
               />
               <input
                 type="number"
@@ -192,59 +196,93 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
                 onChange={(e) => setMaxRarity(e.target.value)}
                 placeholder="Max (10)"
                 disabled={atLimit}
-                className="bg-stone-800 border border-stone-700 rounded-xl px-4 py-2.5
-                           text-white text-sm placeholder-stone-500
+                className="bg-stone-800 border border-stone-700 rounded-xl px-4 py-3
+                           text-white text-base placeholder-stone-500
                            focus:outline-none focus:ring-2 focus:ring-rose-500
                            disabled:opacity-50"
+                aria-label="Maximum rarity"
               />
             </div>
           </div>
 
-          {/* Luster Selection */}
-          <div>
-            <label className="block text-xs text-stone-400 mb-1.5">
-              Luster Preference
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {LUSTER_OPTIONS.map(luster => (
-                <button
-                  key={luster}
-                  onClick={() => toggleLuster(luster)}
-                  disabled={atLimit}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors
-                    ${selectedLusters.includes(luster)
-                      ? 'bg-rose-600 text-white'
-                      : 'bg-stone-800 text-stone-400 hover:bg-stone-700'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                >
-                  {luster}
-                </button>
-              ))}
-            </div>
-          </div>
+          {/* Advanced Options Toggle */}
+          <button
+            type="button"
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            disabled={atLimit}
+            className="w-full flex items-center justify-between py-3 px-4 bg-stone-800/50 hover:bg-stone-800 rounded-xl transition-colors disabled:opacity-50"
+            aria-expanded={showAdvanced}
+          >
+            <span className="text-sm text-stone-300 font-medium flex items-center space-x-2">
+              <Sparkles className="w-4 h-4 text-rose-400" />
+              <span>Advanced Filters</span>
+              {(selectedLusters.length > 0 || selectedHabits.length > 0) && (
+                <span className="bg-rose-600 text-white text-xs px-2 py-0.5 rounded-full">
+                  {selectedLusters.length + selectedHabits.length}
+                </span>
+              )}
+            </span>
+            {showAdvanced ? (
+              <ChevronUp className="w-5 h-5 text-stone-500" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-stone-500" />
+            )}
+          </button>
 
-          {/* Habit Selection */}
-          <div>
-            <label className="block text-xs text-stone-400 mb-1.5">
-              Crystal Habit
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {HABIT_OPTIONS.map(habit => (
-                <button
-                  key={habit}
-                  onClick={() => toggleHabit(habit)}
-                  disabled={atLimit}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors
-                    ${selectedHabits.includes(habit)
-                      ? 'bg-rose-600 text-white'
-                      : 'bg-stone-800 text-stone-400 hover:bg-stone-700'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                >
-                  {habit}
-                </button>
-              ))}
+          {/* Advanced Options - Luster & Habit */}
+          {showAdvanced && (
+            <div className="space-y-4 pl-2 border-l-2 border-rose-500/30">
+              {/* Luster Selection */}
+              <div>
+                <label className="block text-[11px] text-stone-400 mb-2 font-medium uppercase tracking-wide">
+                  Luster Preference
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {LUSTER_OPTIONS.map(luster => (
+                    <button
+                      key={luster}
+                      type="button"
+                      onClick={() => toggleLuster(luster)}
+                      disabled={atLimit}
+                      aria-pressed={selectedLusters.includes(luster)}
+                      className={`px-3 py-2 rounded-full text-sm font-medium transition-colors min-h-[40px]
+                        ${selectedLusters.includes(luster)
+                          ? 'bg-rose-600 text-white'
+                          : 'bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-stone-300'
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    >
+                      {luster}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Habit Selection */}
+              <div>
+                <label className="block text-[11px] text-stone-400 mb-2 font-medium uppercase tracking-wide">
+                  Crystal Habit
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {HABIT_OPTIONS.map(habit => (
+                    <button
+                      key={habit}
+                      type="button"
+                      onClick={() => toggleHabit(habit)}
+                      disabled={atLimit}
+                      aria-pressed={selectedHabits.includes(habit)}
+                      className={`px-3 py-2 rounded-full text-sm font-medium transition-colors min-h-[40px]
+                        ${selectedHabits.includes(habit)
+                          ? 'bg-rose-600 text-white'
+                          : 'bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-stone-300'
+                        } disabled:opacity-50 disabled:cursor-not-allowed`}
+                    >
+                      {habit}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Public Toggle */}
           <div className="flex items-center justify-between pt-2">
@@ -270,25 +308,26 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
           <button
             onClick={handleSave}
             disabled={saving || !canSave || atLimit}
-            className="w-full py-3 bg-rose-600 hover:bg-rose-500 disabled:bg-stone-700
+            className="w-full py-4 bg-rose-600 hover:bg-rose-500 disabled:bg-stone-700
                        disabled:cursor-not-allowed text-white rounded-xl font-bold
-                       transition-colors flex items-center justify-center space-x-2"
+                       transition-colors flex items-center justify-center space-x-2 min-h-[52px]"
+            aria-label="Add item to wishlist"
           >
             {saving ? (
               <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 <span>Saving...</span>
               </>
             ) : (
               <>
-                <Plus className="w-4 h-4" />
+                <Plus className="w-5 h-5" />
                 <span>Add to Wishlist</span>
               </>
             )}
           </button>
           {!canSave && !atLimit && (
-            <p className="text-[10px] text-stone-500 text-center mt-2">
-              Add at least one criteria to create a wishlist item
+            <p className="text-xs text-stone-400 text-center mt-3">
+              Enter a name, type, or rarity to create a wishlist item
             </p>
           )}
         </div>

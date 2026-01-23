@@ -73,19 +73,19 @@ export function ConfidenceMeter({ confidence, physicalTest, onTestComplete }: Co
 
       {/* Primary Identification */}
       <div className="px-3 py-2 border-t border-stone-800">
-        <p className="text-xs text-stone-500 uppercase tracking-wider mb-1">Primary ID</p>
+        <p className="text-[11px] text-stone-400 uppercase tracking-wider mb-1 font-medium">Primary ID</p>
         <p className="text-sm font-medium text-white">{confidence.primary.name}</p>
       </div>
 
       {/* Alternatives (if any) */}
       {confidence.alternatives.length > 0 && (
         <div className="px-3 py-2 border-t border-stone-800">
-          <p className="text-xs text-stone-500 uppercase tracking-wider mb-2">Alternatives</p>
-          <div className="space-y-1">
+          <p className="text-[11px] text-stone-400 uppercase tracking-wider mb-2 font-medium">Alternatives</p>
+          <div className="space-y-1.5">
             {confidence.alternatives.map((alt, index) => (
               <div key={index} className="flex items-center justify-between">
-                <span className="text-xs text-stone-400">{alt.name}</span>
-                <span className="text-xs text-stone-500">
+                <span className="text-sm text-stone-300">{alt.name}</span>
+                <span className="text-sm text-stone-400 font-medium">
                   {Math.round(alt.probability * 100)}%
                 </span>
               </div>
