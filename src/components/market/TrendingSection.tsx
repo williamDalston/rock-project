@@ -2,8 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import { Flame, ChevronLeft, ChevronRight } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { HeartGeode } from '@/components/ui/HeartGeode'
-import { VerificationBadge } from '@/components/ui/VerificationBadge'
-import { OptimizedImage } from '@/components/ui/OptimizedImage'
 import { getTrendingReason } from '@/services/trending'
 import type { Rock, User } from '@/types'
 
@@ -159,61 +157,60 @@ function TrendingCard({
 
   return (
     <article
-      className="flex-shrink-0 w-44 md:w-52 bg-stone-900 rounded-xl border border-stone-800
-                 overflow-hidden cursor-pointer hover:border-orange-800/50
+      className="flex-shrink-0 w-36 bg-stone-900 rounded-xl border border-stone-800
+                 overflow-hidden hover:border-orange-800/50
                  transition-all duration-200 hover:shadow-lg hover:shadow-orange-900/20
-                 relative group active:scale-[0.98]"
+                 relative group"
       style={{ scrollSnapAlign: 'start' }}
     >
       {/* Rank Badge */}
-      <div className="absolute top-2 left-2 z-10 w-7 h-7 rounded-full
+      <div className="absolute top-1.5 left-1.5 z-10 w-6 h-6 rounded-full
                      bg-gradient-to-br from-orange-500 to-red-600
                      flex items-center justify-center shadow-lg">
-        <span className="text-xs font-bold text-white">
+        <span className="text-[10px] font-bold text-white">
           #{rank}
         </span>
       </div>
 
-      {/* Image */}
-      <div className="aspect-square relative" onClick={onClick}>
-        <OptimizedImage
+      {/* Compact Image - tap to open */}
+      <button
+        onClick={onClick}
+        className="w-full aspect-[4/3] relative block"
+      >
+        <img
           src={rock.imageUrl}
           alt={rock.name}
-          aspectRatio="square"
-          showVignette={false}
-          hoverZoom={false}
+          className="w-full h-full object-cover"
+          loading="lazy"
         />
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
 
-        {/* Top Right Badges */}
-        <div className="absolute top-2 right-2 flex flex-col items-end space-y-1">
+        {/* Rarity Badge */}
+        <div className="absolute top-1.5 right-1.5">
           <RarityBadge score={rock.rarityScore} size="sm" />
-          {rock.verificationLevel && rock.verificationLevel !== 'unverified' && (
-            <VerificationBadge level={rock.verificationLevel} size="sm" />
-          )}
         </div>
 
         {/* Trending Reason Tag */}
-        <div className="absolute bottom-2 left-2 right-2">
-          <span className="inline-block bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-full text-[10px] text-orange-300 font-medium">
+        <div className="absolute bottom-1.5 left-1.5 right-1.5">
+          <span className="inline-block bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[9px] text-orange-300 font-medium truncate max-w-full">
             {trendingReason}
           </span>
         </div>
-      </div>
+      </button>
 
-      {/* Content */}
-      <div className="p-3">
+      {/* Compact Content */}
+      <div className="p-2">
         <h3
-          className="text-sm font-serif font-bold text-white truncate cursor-pointer hover:text-orange-300 transition-colors"
+          className="text-xs font-serif font-bold text-white truncate cursor-pointer hover:text-orange-300 transition-colors"
           onClick={onClick}
         >
           {rock.marketTitle || rock.name}
         </h3>
 
-        <div className="flex items-center justify-between mt-2">
-          <span className="text-[10px] text-stone-500 uppercase tracking-wide">
+        <div className="flex items-center justify-between mt-1.5">
+          <span className="text-[9px] text-stone-500 uppercase tracking-wide truncate">
             {rock.type}
           </span>
           <HeartGeode
