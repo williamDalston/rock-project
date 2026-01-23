@@ -11,6 +11,7 @@ import { OptimizedImage } from '@/components/ui/OptimizedImage'
 import { RarityBorderGlow, LegendarySparkles } from '@/components/ui/RarityGlow'
 import { SEO, SEO_CONFIGS } from '@/components/ui/SEO'
 import { ShareButton, generateRockShareData } from '@/components/ui/ShareButton'
+import { FreshnessBadge, isNewListing } from '@/components/ui/FreshnessBadge'
 import { AestheticFilters, filterRocksByAesthetic } from '@/components/filters/AestheticFilters'
 import { TrendingSection } from '@/components/market/TrendingSection'
 import { TradeModal } from '@/components/modals/TradeModal'
@@ -141,6 +142,26 @@ export function MarketView({
       rock.description?.toLowerCase().includes(query)
     )
   })
+
+  // Navigation helpers for rock detail modal
+  const currentRockIndex = detailRock
+    ? filteredRocks.findIndex(r => r.id === detailRock.id)
+    : -1
+
+  const handleNextRock = useCallback(() => {
+    if (currentRockIndex >= 0 && currentRockIndex < filteredRocks.length - 1) {
+      setDetailRock(filteredRocks[currentRockIndex + 1])
+    }
+  }, [currentRockIndex, filteredRocks])
+
+  const handlePrevRock = useCallback(() => {
+    if (currentRockIndex > 0) {
+      setDetailRock(filteredRocks[currentRockIndex - 1])
+    }
+  }, [currentRockIndex, filteredRocks])
+
+  const hasNextRock = currentRockIndex >= 0 && currentRockIndex < filteredRocks.length - 1
+  const hasPrevRock = currentRockIndex > 0
 
   // Get seller reputation for trade target
   const targetSellerReputation = tradeTarget?.ownerId
@@ -338,7 +359,11 @@ export function MarketView({
             {filteredRocks.map((rock) => (
               <RarityBorderGlow key={rock.id} score={rock.rarityScore}>
                 <article
-                  className="relative group rounded-2xl overflow-hidden shadow-xl bg-stone-900 border border-stone-800"
+                  className={`relative group rounded-2xl overflow-hidden shadow-xl bg-stone-900 border transition-all duration-500 ${
+                    isNewListing(rock.createdAt)
+                      ? 'border-emerald-800/50 ring-1 ring-emerald-500/20'
+                      : 'border-stone-800'
+                  }`}
                 >
                 {/* Legendary sparkles for score 9+ */}
                 {rock.rarityScore >= 9 && <LegendarySparkles />}
@@ -360,8 +385,9 @@ export function MarketView({
                           />
                         )}
                       </div>
-                      <p className="text-[10px] text-stone-500">
-                        {rock.location || 'Unknown Location'}
+                      <p className="text-[10px] text-stone-500 flex items-center gap-1.5">
+                        <span className="truncate max-w-[100px]">{rock.location || 'Unknown'}</span>
+                        <FreshnessBadge createdAt={rock.createdAt} />
                       </p>
                     </div>
                   </div>
@@ -487,6 +513,16 @@ export function MarketView({
           onVoteSubmitted={handleVoteSubmitted}
           allRocks={marketRocks}
           onSelectSimilar={(rock) => setDetailRock(rock)}
+          // Navigation
+          onNext={handleNextRock}
+          onPrev={handlePrevRock}
+          hasNext={hasNextRock}
+          hasPrev={hasPrevRock}
+          // Engagement
+          onLike={toggleLike}
+          isLiked={user ? isLikedByUser(detailRock, user.uid) : false}
+          isLiking={isLiking}
+          onTrade={handleTradeProposal}
         />
       )}
 

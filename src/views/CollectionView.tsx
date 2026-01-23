@@ -11,6 +11,7 @@ import { XPBar } from '@/components/ui/XPBar'
 import { SelfCollectedBadge } from '@/components/ui/SelfCollectedBadge'
 import { VerificationBadge } from '@/components/ui/VerificationBadge'
 import { ReputationBadge } from '@/components/ui/ReputationBadge'
+import { CollectionProgress } from '@/components/ui/CollectionProgress'
 import { SEO, SEO_CONFIGS } from '@/components/ui/SEO'
 import { WishlistModal } from '@/components/modals/WishlistModal'
 import { ReviewModal } from '@/components/modals/ReviewModal'
@@ -233,6 +234,13 @@ export function CollectionView({
                 <p className="text-[10px] text-stone-500 uppercase tracking-wider">Trades</p>
               </div>
             </div>
+
+            {/* Collection Progress */}
+            {personalRocks.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-stone-800">
+                <CollectionProgress rocks={personalRocks} />
+              </div>
+            )}
 
             {/* Reputation Display */}
             {reputation && (
