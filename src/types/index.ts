@@ -335,6 +335,7 @@ export interface WishlistMatch {
   rockId: string
   matchScore: number
   notifiedAt?: Timestamp
+  rock?: Rock  // Populated when matches are resolved
 }
 
 // ============================================
