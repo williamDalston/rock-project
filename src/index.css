@@ -1,0 +1,268 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar for dark theme */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1c1917;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #44403c;
+  border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #57534e;
+}
+
+/* Safe area padding for mobile devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Line clamping */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Base styles */
+body {
+  @apply bg-stone-950 text-stone-200 antialiased;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Focus styles */
+*:focus-visible {
+  @apply outline-none ring-2 ring-emerald-500 ring-offset-2 ring-offset-stone-950;
+}
+
+/* Selection */
+::selection {
+  @apply bg-emerald-500/30;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ========================================
+   HeartGeode Animations
+   ======================================== */
+
+/* Geode crack animation - the main "break open" effect */
+@keyframes geode-crack {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  15% {
+    transform: scale(0.9);
+    filter: brightness(0.8);
+  }
+  30% {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+    filter: brightness(1.4);
+  }
+  70% {
+    transform: scale(1.1) rotate(-3deg);
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+.animate-geode-crack {
+  animation: geode-crack 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Burst animation - particles flying outward */
+@keyframes burst {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-burst {
+  animation: burst 0.5s ease-out forwards;
+}
+
+/* Sparkle animation - twinkling crystal effect */
+@keyframes sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1) rotate(90deg);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8) rotate(180deg);
+  }
+  75% {
+    opacity: 1;
+    transform: scale(1.1) rotate(270deg);
+  }
+}
+
+.animate-sparkle {
+  animation: sparkle 1.5s ease-in-out infinite;
+}
+
+/* Individual sparkle delays for variation */
+.animate-sparkle-1 {
+  animation: sparkle 1.5s ease-in-out infinite;
+  animation-delay: 0s;
+}
+
+.animate-sparkle-2 {
+  animation: sparkle 1.5s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+
+.animate-sparkle-3 {
+  animation: sparkle 1.5s ease-in-out infinite;
+  animation-delay: 0.6s;
+}
+
+/* ========================================
+   XP Bar Shimmer Animation
+   ======================================== */
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+/* ========================================
+   Level Up Animation
+   ======================================== */
+
+@keyframes level-up {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px 10px rgba(245, 158, 11, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+  }
+}
+
+.animate-level-up {
+  animation: level-up 0.8s ease-out;
+}
+
+/* ========================================
+   Confidence Meter Pulse Animation
+   ======================================== */
+
+@keyframes confidence-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-confidence-pulse {
+  animation: confidence-pulse 2s ease-in-out infinite;
+}
+
+/* ========================================
+   Protected Area Warning Flash
+   ======================================== */
+
+@keyframes warning-flash {
+  0%, 100% {
+    border-color: rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    border-color: rgba(239, 68, 68, 1);
+  }
+}
+
+.animate-warning-flash {
+  animation: warning-flash 1s ease-in-out infinite;
+}
+
+/* ========================================
+   Fade In Animation for Modals
+   ======================================== */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* ========================================
+   Slide Up Animation for Cards
+   ======================================== */
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}

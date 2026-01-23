@@ -1,0 +1,56 @@
+[
+  {
+    "filename": "amethyst_macro_01.webp",
+    "title": "Amethyst Cluster",
+    "type": "crystal",
+    "tags": ["amethyst", "macro", "purple", "geode"],
+    "source": "Unsplash",
+    "license": "CC0",
+    "url": "https://unsplash.com/photos/example"
+  },
+  {
+    "filename": "citrine_dark_02.webp",
+    "title": "Citrine Point",
+    "type": "crystal",
+    "tags": ["citrine", "yellow", "point", "quartz"],
+    "source": "Pexels",
+    "license": "CC0",
+    "url": "https://pexels.com/photo/example"
+  },
+  {
+    "filename": "pyrite_cubic_01.webp",
+    "title": "Cubic Pyrite",
+    "type": "mineral",
+    "tags": ["pyrite", "cubic", "metallic", "gold"],
+    "source": "Wikimedia Commons",
+    "license": "CC BY 4.0",
+    "url": "https://commons.wikimedia.org/wiki/example"
+  },
+  {
+    "filename": "malachite_bands_01.webp",
+    "title": "Banded Malachite",
+    "type": "mineral",
+    "tags": ["malachite", "green", "bands", "copper"],
+    "source": "Pixabay",
+    "license": "CC0",
+    "url": "https://pixabay.com/photos/example"
+  },
+  {
+    "filename": "trilobite_clean_01.webp",
+    "title": "Trilobite Fossil",
+    "type": "fossil",
+    "tags": ["trilobite", "paleozoic", "arthropod"],
+    "source": "Smithsonian",
+    "license": "CC0",
+    "url": "https://si.edu/object/example"
+  },
+  {
+    "filename": "basalt_columnar_01.webp",
+    "title": "Columnar Basalt",
+    "type": "texture",
+    "tags": ["basalt", "columnar", "volcanic", "hexagonal"],
+    "source": "Unsplash",
+    "license": "CC0",
+    "url": "https://unsplash.com/photos/example"
+  }
+]
