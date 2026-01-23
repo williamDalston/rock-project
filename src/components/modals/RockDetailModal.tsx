@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import {
   X, MapPin, Calendar, ThumbsUp, ThumbsDown, Shield, Users,
   Award, Sparkles, MessageSquare, ChevronDown, ChevronUp, Gem,
-  ChevronLeft, ChevronRight, Heart, Repeat, Bookmark
+  ChevronLeft, ChevronRight, Repeat, Bookmark
 } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { SelfCollectedBadge } from '@/components/ui/SelfCollectedBadge'
@@ -125,22 +125,50 @@ export function RockDetailModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-end sm:items-center justify-center">
+    <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in">
+      {/* Navigation Arrows - Desktop only */}
+      {hasPrev && onPrev && (
+        <button
+          onClick={onPrev}
+          className="hidden lg:flex absolute left-4 xl:left-8 top-1/2 -translate-y-1/2 z-[70]
+                     w-14 h-14 bg-black/50 hover:bg-black/80 backdrop-blur-sm rounded-full
+                     items-center justify-center text-white/70 hover:text-white
+                     transition-all duration-200 hover:scale-110 group
+                     border border-white/10 hover:border-white/20"
+          aria-label="Previous rock (←)"
+        >
+          <ChevronLeft className="w-7 h-7 group-hover:-translate-x-0.5 transition-transform" />
+        </button>
+      )}
+      {hasNext && onNext && (
+        <button
+          onClick={onNext}
+          className="hidden lg:flex absolute right-4 xl:right-8 top-1/2 -translate-y-1/2 z-[70]
+                     w-14 h-14 bg-black/50 hover:bg-black/80 backdrop-blur-sm rounded-full
+                     items-center justify-center text-white/70 hover:text-white
+                     transition-all duration-200 hover:scale-110 group
+                     border border-white/10 hover:border-white/20"
+          aria-label="Next rock (→)"
+        >
+          <ChevronRight className="w-7 h-7 group-hover:translate-x-0.5 transition-transform" />
+        </button>
+      )}
+
       <div
         {...swipeProps}
-        className="bg-stone-900 w-full max-w-lg sm:rounded-2xl border-t sm:border border-stone-800 shadow-2xl overflow-hidden animate-slide-up max-h-[95vh] flex flex-col"
+        className="bg-stone-900 w-full max-w-lg lg:max-w-5xl xl:max-w-6xl sm:rounded-2xl border-t sm:border border-stone-800 shadow-2xl overflow-hidden animate-modal-enter max-h-[95vh] flex flex-col lg:flex-row"
       >
-        {/* Swipe Handle Indicator */}
+        {/* Swipe Handle Indicator - Mobile only */}
         <div className="sm:hidden flex justify-center pt-2 pb-1">
           <div className="w-10 h-1 bg-stone-600 rounded-full" />
         </div>
 
-        {/* Image Header */}
-        <div className="relative aspect-square sm:aspect-video flex-shrink-0">
+        {/* Image Section - Larger on desktop */}
+        <div className="relative aspect-square sm:aspect-video lg:aspect-auto lg:w-1/2 xl:w-3/5 flex-shrink-0 lg:flex-shrink lg:min-h-0 overflow-hidden">
           <img
             src={rock.imageUrl}
             alt={rock.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover lg:h-full lg:max-h-[95vh] transition-transform duration-700 hover:scale-105"
           />
 
           {/* Header Actions */}
@@ -162,7 +190,7 @@ export function RockDetailModal({
               className="w-11 h-11 bg-black/60 backdrop-blur-sm rounded-full
                          flex items-center justify-center text-white hover:bg-black/80 transition-colors
                          active:scale-95"
-              aria-label="Close"
+              aria-label="Close (Esc)"
             >
               <X className="w-5 h-5" />
             </button>
@@ -177,11 +205,12 @@ export function RockDetailModal({
             )}
           </div>
 
-          {/* Gradient Overlay */}
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-stone-900 to-transparent" />
+          {/* Gradient Overlay - Bottom on mobile, right edge on desktop */}
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-stone-900 to-transparent lg:hidden" />
+          <div className="hidden lg:block absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-stone-900 to-transparent" />
 
-          {/* Title */}
-          <div className="absolute bottom-4 left-4 right-4">
+          {/* Title - Mobile only (shown in content area on desktop) */}
+          <div className="absolute bottom-4 left-4 right-4 lg:hidden">
             <h2 className="text-2xl font-serif font-bold text-white mb-1">
               {rock.name}
             </h2>
@@ -189,11 +218,93 @@ export function RockDetailModal({
               <p className="text-sm text-stone-400 italic">{rock.scientificName}</p>
             )}
           </div>
+
+          {/* Mobile Navigation Hints */}
+          {(hasPrev || hasNext) && (
+            <div className="lg:hidden absolute bottom-16 left-0 right-0 flex justify-center gap-3">
+              {hasPrev && (
+                <button
+                  onClick={onPrev}
+                  className="px-4 py-2 bg-black/70 backdrop-blur-md rounded-full
+                           text-white text-xs font-medium flex items-center gap-1.5
+                           border border-white/10 active:scale-95 transition-transform"
+                >
+                  <ChevronLeft className="w-4 h-4" /> Prev
+                </button>
+              )}
+              {hasNext && (
+                <button
+                  onClick={onNext}
+                  className="px-4 py-2 bg-black/70 backdrop-blur-md rounded-full
+                           text-white text-xs font-medium flex items-center gap-1.5
+                           border border-white/10 active:scale-95 transition-transform"
+                >
+                  Next <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar">
-          <div className="p-4 space-y-4">
+        <div className="flex-1 overflow-y-auto custom-scrollbar lg:w-1/2 xl:w-2/5">
+          <div className="p-4 lg:p-6 space-y-4 lg:animate-content-fade">
+            {/* Desktop Title */}
+            <div className="hidden lg:block">
+              <h2 className="text-3xl font-serif font-bold text-white mb-1 tracking-tight">
+                {rock.name}
+              </h2>
+              {rock.scientificName && (
+                <p className="text-sm text-stone-400 italic">{rock.scientificName}</p>
+              )}
+            </div>
+
+            {/* Engagement Action Bar */}
+            <div className="flex items-center gap-2 py-3 border-b border-stone-800">
+              {/* Like Button */}
+              {onLike && (
+                <HeartGeode
+                  isLiked={isLiked}
+                  count={rock.likes || 0}
+                  onToggle={() => onLike(rock)}
+                  disabled={!user || isLiking}
+                  size="md"
+                />
+              )}
+
+              {/* Trade Button */}
+              {onTrade && rock.ownerId !== user?.uid && (
+                <button
+                  onClick={() => onTrade(rock)}
+                  disabled={!user}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500
+                           text-white rounded-xl transition-all duration-200
+                           disabled:opacity-50 disabled:cursor-not-allowed
+                           hover:shadow-lg hover:shadow-emerald-900/30 active:scale-95"
+                >
+                  <Repeat className="w-4 h-4" />
+                  <span className="text-sm font-medium">Propose Trade</span>
+                </button>
+              )}
+
+              {/* Wishlist Button */}
+              {onWishlist && (
+                <button
+                  onClick={() => onWishlist(rock)}
+                  disabled={!user}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-xl transition-all duration-200
+                            disabled:opacity-50 disabled:cursor-not-allowed active:scale-95
+                            ${isInWishlist
+                              ? 'bg-amber-600 hover:bg-amber-500 text-white hover:shadow-lg hover:shadow-amber-900/30'
+                              : 'bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white'
+                            }`}
+                  title={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+                >
+                  <Bookmark className={`w-4 h-4 transition-transform ${isInWishlist ? 'fill-current scale-110' : ''}`} />
+                </button>
+              )}
+            </div>
+
             {/* Quick Info */}
             <div className="flex flex-wrap gap-3">
               <div className="flex items-center space-x-1.5 text-stone-400">

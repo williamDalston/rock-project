@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Flame, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Flame, ChevronLeft, ChevronRight, Expand } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { HeartGeode } from '@/components/ui/HeartGeode'
 import { getTrendingReason } from '@/services/trending'
@@ -92,8 +92,8 @@ export function TrendingSection({
         </div>
       </div>
 
-      {/* Horizontal Scrolling Cards with edge gradients */}
-      <div className="relative">
+      {/* Horizontal Scrolling Cards with edge gradients and hover chevrons */}
+      <div className="relative group/scroll">
         {/* Left fade gradient */}
         {canScrollLeft && (
           <div className="absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-stone-950 to-transparent z-10 pointer-events-none" />
@@ -104,9 +104,39 @@ export function TrendingSection({
           <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-stone-950 to-transparent z-10 pointer-events-none" />
         )}
 
+        {/* Hover chevron - Left */}
+        {canScrollLeft && (
+          <button
+            onClick={() => scroll('left')}
+            className="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-20
+                       w-10 h-10 rounded-full bg-black/70 backdrop-blur-sm
+                       items-center justify-center
+                       opacity-0 group-hover/scroll:opacity-100 transition-opacity duration-200
+                       hover:bg-black/90 hover:scale-110 active:scale-95"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-6 h-6 text-white" />
+          </button>
+        )}
+
+        {/* Hover chevron - Right */}
+        {canScrollRight && (
+          <button
+            onClick={() => scroll('right')}
+            className="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-20
+                       w-10 h-10 rounded-full bg-black/70 backdrop-blur-sm
+                       items-center justify-center
+                       opacity-0 group-hover/scroll:opacity-100 transition-opacity duration-200
+                       hover:bg-black/90 hover:scale-110 active:scale-95"
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-6 h-6 text-white" />
+          </button>
+        )}
+
         <div
           ref={scrollRef}
-          className="flex overflow-x-auto gap-3 px-4 pb-3 scroll-smooth scrollbar-thin"
+          className="flex overflow-x-auto gap-3 px-4 pb-3 scroll-smooth scrollbar-thin cursor-grab active:cursor-grabbing"
           style={{
             scrollSnapType: 'x mandatory',
             WebkitOverflowScrolling: 'touch'
@@ -176,7 +206,7 @@ function TrendingCard({
       {/* Image - tap to open */}
       <button
         onClick={onClick}
-        className="w-full aspect-square relative block"
+        className="w-full aspect-square relative block cursor-pointer"
       >
         <img
           src={rock.imageUrl}
@@ -187,6 +217,14 @@ function TrendingCard({
 
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+
+        {/* Hover overlay - "View details" hint (desktop only) */}
+        <div className="hidden md:flex absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200 items-center justify-center pointer-events-none">
+          <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 border border-white/30">
+            <Expand className="w-3.5 h-3.5 text-white" />
+            <span className="text-xs font-medium text-white">View</span>
+          </div>
+        </div>
 
         {/* Rarity Badge */}
         <div className="absolute top-2 right-2">
