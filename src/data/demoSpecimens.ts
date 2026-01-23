@@ -49,20 +49,6 @@ export const demoSpecimens: DemoSpecimen[] = [
   // === CLASSIC MINERALS (Verified Images) ===
   // ============================================
   {
-    filename: 'amethyst_cluster_01.webp',
-    title: 'Amethyst Cluster',
-    type: 'crystal',
-    description: 'Deep purple quartz geode cluster with sharp terminations. A meditative stone promoting balance and calm.',
-    tags: ['amethyst', 'quartz', 'purple', 'geode', 'cluster'],
-    source: 'Unsplash',
-    license: 'CC0',
-    url: 'https://unsplash.com',
-    imageUrl: IMAGES.geode_purple,
-    likes: 4567,
-    username: 'CrystalHunter',
-    category: 'classic'
-  },
-  {
     filename: 'pyrite_cube_01.webp',
     title: 'Pyrite Cubes',
     type: 'mineral',
@@ -74,20 +60,6 @@ export const demoSpecimens: DemoSpecimen[] = [
     imageUrl: IMAGES.pyrite_cube,
     likes: 5123,
     username: 'CubeCollector',
-    category: 'metal'
-  },
-  {
-    filename: 'bismuth_hopper_01.webp',
-    title: 'Bismuth Crystal',
-    type: 'metal',
-    description: 'Synthetic bismuth exhibiting staircase hopper crystal structure and rainbow oxidation.',
-    tags: ['bismuth', 'rainbow', 'geometric', 'iridescent', 'metal'],
-    source: 'Unsplash',
-    license: 'CC0',
-    url: 'https://unsplash.com',
-    imageUrl: IMAGES.purple_crystal,
-    likes: 4891,
-    username: 'GeometryLover',
     category: 'metal'
   },
   {
@@ -147,20 +119,6 @@ export const demoSpecimens: DemoSpecimen[] = [
     category: 'classic'
   },
   {
-    filename: 'obsidian_shard_01.webp',
-    title: 'Obsidian Shard',
-    type: 'rock',
-    description: 'Black volcanic glass fragment with conchoidal fracture. Used by ancient peoples for tools.',
-    tags: ['obsidian', 'black', 'glass', 'volcanic', 'sharp'],
-    source: 'Unsplash',
-    license: 'CC0',
-    url: 'https://unsplash.com',
-    imageUrl: IMAGES.dark_crystal,
-    likes: 2876,
-    username: 'VolcanicVibes',
-    category: 'abyssal'
-  },
-  {
     filename: 'amethyst_geode_01.webp',
     title: 'Amethyst Geode',
     type: 'crystal',
@@ -190,20 +148,6 @@ export const demoSpecimens: DemoSpecimen[] = [
     imageUrl: IMAGES.geode_blue,
     likes: 3654,
     username: 'SkyStones',
-    category: 'mystic'
-  },
-  {
-    filename: 'labradorite_flash_01.webp',
-    title: 'Labradorite Flash',
-    type: 'feldspar',
-    description: 'Polished feldspar showing magical blue and gold labradorescence. The Stone of Magic.',
-    tags: ['labradorite', 'flash', 'blue', 'magic', 'feldspar'],
-    source: 'Unsplash',
-    license: 'CC0',
-    url: 'https://unsplash.com',
-    imageUrl: IMAGES.geode_blue,
-    likes: 4521,
-    username: 'NorthernLights',
     category: 'mystic'
   },
   {
