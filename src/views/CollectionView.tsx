@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   Share2, Eye, MapPin, Hexagon, Repeat, Heart, Plus, Check, X,
   ArrowRightLeft, MessageSquare, PackageCheck, LogIn, LogOut, ChevronDown,
-  Mail, User as UserIcon, Truck
+  Mail, User as UserIcon, Truck, Loader
 } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { OptimizedImage } from '@/components/ui/OptimizedImage'
@@ -157,7 +157,7 @@ export function CollectionView({
                 {isAnonymous ? (
                   <button
                     onClick={onOpenAuth}
-                    className="flex items-center space-x-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors"
+                    className="flex items-center space-x-1.5 px-4 py-2.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors min-h-[44px]"
                   >
                     <LogIn className="w-3.5 h-3.5" />
                     <span>Sign In</span>
@@ -166,7 +166,7 @@ export function CollectionView({
                   <>
                     <button
                       onClick={() => setShowUserMenu(!showUserMenu)}
-                      className="flex items-center space-x-1.5 px-3 py-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs rounded-lg transition-colors"
+                      className="flex items-center space-x-1.5 px-4 py-2.5 bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs rounded-lg transition-colors min-h-[44px]"
                     >
                       <span className="max-w-[100px] truncate">{user?.displayName || user?.email || 'Account'}</span>
                       <ChevronDown className="w-3.5 h-3.5" />
@@ -714,21 +714,21 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
           <button
             onClick={() => onRespond(trade.id, false)}
             disabled={loading}
-            className="flex-1 py-2 bg-stone-800 hover:bg-stone-700 text-stone-400
-                       rounded-lg text-sm font-medium transition-colors
+            className="flex-1 py-3 bg-stone-800 hover:bg-stone-700 text-stone-400
+                       rounded-lg text-sm font-medium transition-colors min-h-[44px]
                        disabled:opacity-50 flex items-center justify-center space-x-1"
           >
-            <X className="w-3 h-3" />
+            <X className="w-4 h-4" />
             <span>Decline</span>
           </button>
           <button
             onClick={() => onRespond(trade.id, true)}
             disabled={loading}
-            className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white
-                       rounded-lg text-sm font-bold transition-colors
+            className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white
+                       rounded-lg text-sm font-bold transition-colors min-h-[44px]
                        disabled:opacity-50 flex items-center justify-center space-x-1"
           >
-            <Check className="w-3 h-3" />
+            <Check className="w-4 h-4" />
             <span>Accept</span>
           </button>
         </div>
@@ -777,12 +777,21 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
               <button
                 onClick={() => onComplete(trade)}
                 disabled={loading}
-                className="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white
-                           rounded-lg text-sm font-bold transition-colors
+                className="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white
+                           rounded-lg text-sm font-bold transition-colors min-h-[48px]
                            disabled:opacity-50 flex items-center justify-center space-x-2"
               >
-                <PackageCheck className="w-4 h-4" />
-                <span>I've Received It - Complete Trade</span>
+                {loading ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin" />
+                    <span>Completing...</span>
+                  </>
+                ) : (
+                  <>
+                    <PackageCheck className="w-4 h-4" />
+                    <span>I've Received It - Complete Trade</span>
+                  </>
+                )}
               </button>
               <p className="text-[10px] text-stone-500 text-center">
                 Only click after you've physically received the specimen

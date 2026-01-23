@@ -10,6 +10,7 @@ import { SellerBadge } from '@/components/ui/ReputationBadge'
 import { OptimizedImage } from '@/components/ui/OptimizedImage'
 import { RarityBorderGlow, LegendarySparkles } from '@/components/ui/RarityGlow'
 import { SEO, SEO_CONFIGS } from '@/components/ui/SEO'
+import { ShareButton, generateRockShareData } from '@/components/ui/ShareButton'
 import { AestheticFilters, filterRocksByAesthetic } from '@/components/filters/AestheticFilters'
 import { TrendingSection } from '@/components/market/TrendingSection'
 import { TradeModal } from '@/components/modals/TradeModal'
@@ -308,17 +309,29 @@ export function MarketView({
         {filteredRocks.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-stone-500">
             <p className="text-lg font-serif">
-              {activeFilter === 'all'
+              {searchQuery.trim()
+                ? `No results for "${searchQuery}"`
+                : activeFilter === 'all'
                 ? 'No specimens in the market yet'
                 : `No ${activeFilter} specimens found`
               }
             </p>
             <p className="text-sm mt-2">
-              {activeFilter === 'all'
+              {searchQuery.trim()
+                ? 'Try a different search term or clear the filter'
+                : activeFilter === 'all'
                 ? 'Be the first to share a discovery!'
                 : 'Try a different filter'
               }
             </p>
+            {searchQuery.trim() && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="mt-4 px-4 py-2 bg-stone-800 hover:bg-stone-700 text-white rounded-lg text-sm transition-colors"
+              >
+                Clear search
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
@@ -404,6 +417,14 @@ export function MarketView({
                         count={rock.likes || 0}
                         onToggle={() => toggleLike(rock)}
                         disabled={!user || isLiking}
+                      />
+                      <ShareButton
+                        {...generateRockShareData({
+                          name: rock.name,
+                          type: rock.type,
+                          rarityScore: rock.rarityScore,
+                          id: rock.id
+                        })}
                       />
                       {/* Only show trade button for other users' rocks */}
                       {user && rock.ownerId !== user.uid && (

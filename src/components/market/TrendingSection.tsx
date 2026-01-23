@@ -128,7 +128,7 @@ export function TrendingSection({
       </div>
 
       {/* Mobile swipe hint */}
-      <p className="md:hidden text-center text-[10px] text-stone-600 mt-1">
+      <p className="md:hidden text-center text-[10px] text-stone-500 mt-1">
         Swipe to see more →
       </p>
     </section>

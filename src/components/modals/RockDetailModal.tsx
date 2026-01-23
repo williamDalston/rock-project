@@ -1,11 +1,14 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import {
   X, MapPin, Calendar, ThumbsUp, ThumbsDown, Shield, Users,
-  Award, Sparkles, MessageSquare, ChevronDown, ChevronUp, Gem
+  Award, Sparkles, MessageSquare, ChevronDown, ChevronUp, Gem,
+  ChevronLeft, ChevronRight, Heart, Repeat, Bookmark
 } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { SelfCollectedBadge } from '@/components/ui/SelfCollectedBadge'
 import { VerificationBadge, VerificationStatus } from '@/components/ui/VerificationBadge'
+import { ShareButton, generateRockShareData } from '@/components/ui/ShareButton'
+import { HeartGeode } from '@/components/ui/HeartGeode'
 import { useVerification } from '@/hooks/useVerification'
 import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
 import { findSimilarRocks, getSimilarityReason } from '@/services/similarity'
@@ -19,6 +22,18 @@ interface RockDetailModalProps {
   onVoteSubmitted?: () => void
   allRocks?: Rock[]
   onSelectSimilar?: (rock: Rock) => void
+  // New navigation props
+  onNext?: () => void
+  onPrev?: () => void
+  hasNext?: boolean
+  hasPrev?: boolean
+  // Engagement props
+  onLike?: (rock: Rock) => void
+  isLiked?: boolean
+  isLiking?: boolean
+  onTrade?: (rock: Rock) => void
+  onWishlist?: (rock: Rock) => void
+  isInWishlist?: boolean
 }
 
 export function RockDetailModal({
@@ -28,7 +43,19 @@ export function RockDetailModal({
   onClose,
   onVoteSubmitted,
   allRocks = [],
-  onSelectSimilar
+  onSelectSimilar,
+  // Navigation
+  onNext,
+  onPrev,
+  hasNext = false,
+  hasPrev = false,
+  // Engagement
+  onLike,
+  isLiked = false,
+  isLiking = false,
+  onTrade,
+  onWishlist,
+  isInWishlist = false
 }: RockDetailModalProps) {
   const [showVoteForm, setShowVoteForm] = useState(false)
   const [voteComment, setVoteComment] = useState('')
@@ -55,6 +82,22 @@ export function RockDetailModal({
     threshold: 100,
     direction: 'down'
   })
+
+  // Keyboard navigation
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose()
+    } else if (e.key === 'ArrowRight' && hasNext && onNext) {
+      onNext()
+    } else if (e.key === 'ArrowLeft' && hasPrev && onPrev) {
+      onPrev()
+    }
+  }, [onClose, onNext, onPrev, hasNext, hasPrev])
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
 
   const handleVote = async (isAccurate: boolean) => {
     if (!canVote) return
@@ -100,16 +143,30 @@ export function RockDetailModal({
             className="w-full h-full object-cover"
           />
 
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 w-11 h-11 bg-black/60 backdrop-blur-sm rounded-full
-                       flex items-center justify-center text-white hover:bg-black/80 transition-colors
-                       active:scale-95"
-            aria-label="Close"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          {/* Header Actions */}
+          <div className="absolute top-4 right-4 flex items-center gap-2">
+            {/* Share Button */}
+            <ShareButton
+              {...generateRockShareData({
+                name: rock.name,
+                type: rock.type,
+                rarityScore: rock.rarityScore,
+                id: rock.id
+              })}
+              className="w-11 h-11 bg-black/60 backdrop-blur-sm hover:bg-black/80"
+            />
+
+            {/* Close Button */}
+            <button
+              onClick={onClose}
+              className="w-11 h-11 bg-black/60 backdrop-blur-sm rounded-full
+                         flex items-center justify-center text-white hover:bg-black/80 transition-colors
+                         active:scale-95"
+              aria-label="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
           {/* Badges Overlay */}
           <div className="absolute top-4 left-4 flex flex-col space-y-2">

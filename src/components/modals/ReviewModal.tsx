@@ -100,9 +100,9 @@ export function ReviewModal({ trade, onClose, onSubmit }: ReviewModalProps) {
                   onMouseLeave={() => setHoverRating(null)}
                   onTouchStart={() => setHoverRating(star)}
                   onTouchEnd={() => setHoverRating(null)}
-                  className="p-1 transition-transform hover:scale-110 active:scale-100
+                  className="p-2 transition-transform hover:scale-110 active:scale-100
                              focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:ring-offset-2
-                             focus:ring-offset-stone-900 rounded-lg"
+                             focus:ring-offset-stone-900 rounded-lg min-w-[48px] min-h-[48px] flex items-center justify-center"
                   aria-label={`Rate ${star} stars`}
                 >
                   <Star
@@ -177,7 +177,7 @@ export function ReviewModal({ trade, onClose, onSubmit }: ReviewModalProps) {
           <button
             onClick={onClose}
             disabled={submitting}
-            className="w-full py-2 text-stone-500 hover:text-white text-sm font-medium transition-colors"
+            className="w-full py-3 text-stone-500 hover:text-white text-sm font-medium transition-colors min-h-[44px]"
           >
             Maybe Later
           </button>

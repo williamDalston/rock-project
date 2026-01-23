@@ -256,7 +256,7 @@ export function TradeModal({
                            text-white text-sm placeholder-stone-500 resize-none
                            focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
-              <p className="text-[10px] text-stone-600 text-right mt-1">
+              <p className="text-[10px] text-stone-500 text-right mt-1">
                 {message.length}/200
               </p>
             </div>
@@ -267,7 +267,7 @@ export function TradeModal({
                 onClick={handleBack}
                 disabled={loading}
                 className="flex-1 py-3 bg-stone-800 hover:bg-stone-700 text-white rounded-xl
-                           font-medium transition-colors disabled:opacity-50"
+                           font-medium transition-colors disabled:opacity-50 min-h-[48px]"
               >
                 Back
               </button>
@@ -276,7 +276,7 @@ export function TradeModal({
                 disabled={loading}
                 className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl
                            font-bold transition-colors flex items-center justify-center space-x-2
-                           disabled:opacity-50 disabled:cursor-not-allowed"
+                           disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
               >
                 {loading ? (
                   <>

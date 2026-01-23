@@ -159,9 +159,10 @@ export function ScanView({
                 max={10}
                 min={1}
                 value={formData.rarityScore}
-                onChange={(e) =>
-                  onFormChange({ rarityScore: parseInt(e.target.value) || 1 })
-                }
+                onChange={(e) => {
+                  const val = parseInt(e.target.value) || 1
+                  onFormChange({ rarityScore: Math.max(1, Math.min(10, val)) })
+                }}
                 className="bg-stone-900 border border-stone-800 text-center text-white w-full sm:w-16 h-12 rounded-lg focus:border-emerald-500 focus:outline-none text-lg"
                 aria-label="Rarity score from 1 to 10"
               />
@@ -304,7 +305,7 @@ export function ScanView({
             <div className="flex space-x-3">
               <button
                 onClick={onDiscard}
-                className="flex-1 py-3 rounded-xl font-medium text-stone-400 hover:text-stone-300 hover:bg-stone-900 transition-colors border border-stone-800"
+                className="flex-1 py-3 rounded-xl font-medium text-stone-400 hover:text-stone-300 hover:bg-stone-900 transition-colors border border-stone-800 min-h-[48px]"
                 aria-label="Discard and go back"
               >
                 Discard
@@ -312,13 +313,13 @@ export function ScanView({
               <button
                 onClick={onSaveAsObservation}
                 disabled={!formData.name}
-                className="flex-1 py-3 rounded-xl font-medium text-stone-300 hover:text-white hover:bg-stone-800 transition-colors border border-stone-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 py-3 rounded-xl font-medium text-stone-300 hover:text-white hover:bg-stone-800 transition-colors border border-stone-700 disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
                 aria-label="Save as observation only - private and not tradeable"
               >
                 Save as Observation
               </button>
             </div>
-            <p className="text-[10px] text-stone-600 text-center">
+            <p className="text-[10px] text-stone-500 text-center">
               Observations are private, not on market, and can't be traded
             </p>
           </div>

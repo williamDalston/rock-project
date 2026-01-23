@@ -39,7 +39,7 @@ export function XPBar({ xp, level, showDetails = true }: XPBarProps) {
 
       {showDetails && (
         <div className="flex justify-end mt-0.5">
-          <span className="text-[10px] text-stone-600">{progress}%</span>
+          <span className="text-[10px] text-stone-500">{progress}%</span>
         </div>
       )}
     </div>

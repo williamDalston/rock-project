@@ -16,6 +16,7 @@ export { ReputationBadge, StarRating, ReputationCard, SellerBadge } from './Repu
 // Interactive Elements
 export { HeartGeode } from './HeartGeode'
 export { XPBar } from './XPBar'
+export { ShareButton, generateRockShareData } from './ShareButton'
 
 // Warnings
 export { ProtectedAreaWarning, ProtectedAreaBanner } from './ProtectedAreaWarning'

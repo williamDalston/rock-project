@@ -261,7 +261,7 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
                       onClick={() => toggleLuster(luster)}
                       disabled={atLimit}
                       aria-pressed={selectedLusters.includes(luster)}
-                      className={`px-3 py-2 rounded-full text-sm font-medium transition-colors min-h-[40px]
+                      className={`px-3 py-2 rounded-full text-sm font-medium transition-colors min-h-[44px]
                         ${selectedLusters.includes(luster)
                           ? 'bg-rose-600 text-white'
                           : 'bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-stone-300'
@@ -286,7 +286,7 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
                       onClick={() => toggleHabit(habit)}
                       disabled={atLimit}
                       aria-pressed={selectedHabits.includes(habit)}
-                      className={`px-3 py-2 rounded-full text-sm font-medium transition-colors min-h-[40px]
+                      className={`px-3 py-2 rounded-full text-sm font-medium transition-colors min-h-[44px]
                         ${selectedHabits.includes(habit)
                           ? 'bg-rose-600 text-white'
                           : 'bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-stone-300'
