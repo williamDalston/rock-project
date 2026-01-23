@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Globe, Book, ScanLine } from 'lucide-react'
 import type { ViewType } from '@/types'
 
@@ -8,6 +9,23 @@ interface NavBarProps {
 }
 
 export function NavBar({ currentView, onViewChange, onScan }: NavBarProps) {
+  const [showScanHint, setShowScanHint] = useState(false)
+
+  // Show scan hint for first-time users
+  useEffect(() => {
+    const hasScanned = localStorage.getItem('lithos_has_scanned')
+    if (!hasScanned) {
+      // Delay showing hint to let onboarding complete first
+      const timer = setTimeout(() => setShowScanHint(true), 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
+  const handleScan = (e: React.ChangeEvent<HTMLInputElement>) => {
+    localStorage.setItem('lithos_has_scanned', 'true')
+    setShowScanHint(false)
+    onScan(e)
+  }
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 bg-stone-950/90 backdrop-blur-xl border-t border-stone-800 z-50 pb-safe"
@@ -35,8 +53,20 @@ export function NavBar({ currentView, onViewChange, onScan }: NavBarProps) {
         </button>
 
         <div className="relative -top-5">
+          {/* Scan hint tooltip for new users */}
+          {showScanHint && (
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap animate-bounce">
+              <div className="bg-emerald-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg">
+                Tap to scan a rock!
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-emerald-600 rotate-45" />
+              </div>
+            </div>
+          )}
+
           <label
-            className="bg-gradient-to-tr from-emerald-500 to-emerald-700 w-16 h-16 rounded-full flex items-center justify-center shadow-lg shadow-emerald-900/50 border-4 border-stone-950 cursor-pointer hover:scale-105 transition-transform active:scale-95"
+            className={`bg-gradient-to-tr from-emerald-500 to-emerald-700 w-16 h-16 rounded-full flex items-center justify-center shadow-lg shadow-emerald-900/50 border-4 border-stone-950 cursor-pointer hover:scale-105 transition-transform active:scale-95 ${
+              showScanHint ? 'ring-4 ring-emerald-400/50 ring-offset-2 ring-offset-stone-950' : ''
+            }`}
             aria-label="Scan new rock specimen"
             tabIndex={0}
             role="button"
@@ -51,7 +81,7 @@ export function NavBar({ currentView, onViewChange, onScan }: NavBarProps) {
               type="file"
               accept="image/*"
               capture="environment"
-              onChange={onScan}
+              onChange={handleScan}
               className="hidden"
               aria-label="Upload rock photo"
             />
