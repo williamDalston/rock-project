@@ -1,4 +1,5 @@
-import { Flame } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { Flame, ChevronLeft, ChevronRight } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { HeartGeode } from '@/components/ui/HeartGeode'
 import { VerificationBadge } from '@/components/ui/VerificationBadge'
@@ -23,42 +24,114 @@ export function TrendingSection({
   isLikedByUser,
   isLiking = false
 }: TrendingSectionProps) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
+
+  // Check scroll position to show/hide arrows
+  const checkScroll = () => {
+    if (!scrollRef.current) return
+    const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current
+    setCanScrollLeft(scrollLeft > 10)
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10)
+  }
+
+  useEffect(() => {
+    checkScroll()
+    const el = scrollRef.current
+    if (el) {
+      el.addEventListener('scroll', checkScroll)
+      return () => el.removeEventListener('scroll', checkScroll)
+    }
+  }, [trendingRocks])
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (!scrollRef.current) return
+    const scrollAmount = 200
+    scrollRef.current.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth'
+    })
+  }
+
   if (trendingRocks.length === 0) return null
 
   return (
     <section className="mb-6">
       {/* Header */}
-      <div className="flex items-center space-x-2 px-4 mb-3">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
-          <Flame className="w-4 h-4 text-white" />
+      <div className="flex items-center justify-between px-4 mb-3">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
+            <Flame className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h2 className="font-serif font-bold text-white">Hot Magma</h2>
+            <p className="text-[10px] text-stone-500 uppercase tracking-wider">Trending Now</p>
+          </div>
         </div>
-        <div>
-          <h2 className="font-serif font-bold text-white">Hot Magma</h2>
-          <p className="text-[10px] text-stone-500 uppercase tracking-wider">Trending Now</p>
+
+        {/* Desktop scroll arrows */}
+        <div className="hidden md:flex items-center space-x-2">
+          <button
+            onClick={() => scroll('left')}
+            disabled={!canScrollLeft}
+            className="w-8 h-8 rounded-full bg-stone-800 hover:bg-stone-700 disabled:opacity-30
+                       disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-4 h-4 text-white" />
+          </button>
+          <button
+            onClick={() => scroll('right')}
+            disabled={!canScrollRight}
+            className="w-8 h-8 rounded-full bg-stone-800 hover:bg-stone-700 disabled:opacity-30
+                       disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-4 h-4 text-white" />
+          </button>
         </div>
       </div>
 
-      {/* Horizontal Scrolling Cards */}
-      <div
-        className="flex overflow-x-auto space-x-3 px-4 pb-2 scrollbar-hide scroll-smooth"
-        style={{
-          scrollSnapType: 'x mandatory',
-          WebkitOverflowScrolling: 'touch'
-        }}
-      >
-        {trendingRocks.map((rock, index) => (
-          <TrendingCard
-            key={rock.id}
-            rock={rock}
-            rank={index + 1}
-            user={user}
-            onClick={() => onRockClick(rock)}
-            onLike={() => onLike(rock)}
-            isLiked={user ? isLikedByUser(rock, user.uid) : false}
-            isLiking={isLiking}
-          />
-        ))}
+      {/* Horizontal Scrolling Cards with edge gradients */}
+      <div className="relative">
+        {/* Left fade gradient */}
+        {canScrollLeft && (
+          <div className="absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-stone-950 to-transparent z-10 pointer-events-none" />
+        )}
+
+        {/* Right fade gradient */}
+        {canScrollRight && (
+          <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-stone-950 to-transparent z-10 pointer-events-none" />
+        )}
+
+        <div
+          ref={scrollRef}
+          className="flex overflow-x-auto space-x-3 px-4 pb-2 scrollbar-hide scroll-smooth"
+          style={{
+            scrollSnapType: 'x mandatory',
+            WebkitOverflowScrolling: 'touch'
+          }}
+        >
+          {trendingRocks.map((rock, index) => (
+            <TrendingCard
+              key={rock.id}
+              rock={rock}
+              rank={index + 1}
+              user={user}
+              onClick={() => onRockClick(rock)}
+              onLike={() => onLike(rock)}
+              isLiked={user ? isLikedByUser(rock, user.uid) : false}
+              isLiking={isLiking}
+            />
+          ))}
+        </div>
       </div>
+
+      {/* Mobile swipe hint */}
+      <p className="md:hidden text-center text-[10px] text-stone-600 mt-1">
+        Swipe to see more →
+      </p>
     </section>
   )
 }
@@ -86,7 +159,7 @@ function TrendingCard({
 
   return (
     <article
-      className="flex-shrink-0 w-44 bg-stone-900 rounded-xl border border-stone-800
+      className="flex-shrink-0 w-44 md:w-52 bg-stone-900 rounded-xl border border-stone-800
                  overflow-hidden cursor-pointer hover:border-orange-800/50
                  transition-all duration-200 hover:shadow-lg hover:shadow-orange-900/20
                  relative group active:scale-[0.98]"

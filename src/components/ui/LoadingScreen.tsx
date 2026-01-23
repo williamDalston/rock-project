@@ -12,6 +12,11 @@ export function LoadingScreen() {
       <p className="font-serif italic mt-6 text-emerald-400/80 tracking-widest uppercase text-xs">
         Accessing Stratum...
       </p>
+
+      {/* Subtle dedication */}
+      <p className="absolute bottom-8 text-stone-700 text-[10px] tracking-wide">
+        For Iamê
+      </p>
     </div>
   )
 }

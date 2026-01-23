@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Loader, ScanLine, Sparkles, Droplets, MapPin, Navigation, Hexagon, ArrowLeft } from 'lucide-react'
 import { Toggle } from '@/components/ui/Toggle'
 import { ConfidenceMeter } from '@/components/ui/ConfidenceMeter'
@@ -36,15 +36,19 @@ export function ScanView({
     requestLocation
   } = useGeolocation()
 
-  // Handle GPS capture
-  const handleCaptureLocation = async () => {
-    await requestLocation()
-    if (coords) {
+  // Sync location to form when coords change
+  useEffect(() => {
+    if (coords && locationName) {
       onFormChange({
         coordinates: coords,
-        location: locationName || `${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`
+        location: locationName
       })
     }
+  }, [coords, locationName, onFormChange])
+
+  // Handle GPS capture - just triggers the request, useEffect handles the update
+  const handleCaptureLocation = async () => {
+    await requestLocation()
   }
 
   // Handle save with protected area check
