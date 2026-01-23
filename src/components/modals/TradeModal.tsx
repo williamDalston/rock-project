@@ -1,8 +1,9 @@
-import { useState } from 'react'
-import { X, Repeat, ArrowRight, MessageSquare } from 'lucide-react'
+import { useState, useMemo } from 'react'
+import { X, Repeat, ArrowRight, MessageSquare, Scale } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { SellerBadge } from '@/components/ui/ReputationBadge'
 import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
+import { calculateTradeFairness, getFairnessLabel } from '@/services/trading'
 import type { Rock, UserReputation } from '@/types'
 
 interface TradeModalProps {
@@ -48,6 +49,14 @@ export function TradeModal({
     setSelectedRock(null)
     setMessage('')
   }
+
+  // Calculate trade fairness when a rock is selected
+  const tradeFairness = useMemo(() => {
+    if (!selectedRock) return null
+    const score = calculateTradeFairness(selectedRock, targetRock)
+    const { label, color } = getFairnessLabel(score)
+    return { score, label, color }
+  }, [selectedRock, targetRock])
 
   return (
     <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
@@ -189,6 +198,37 @@ export function TradeModal({
                 <RarityBadge score={targetRock.rarityScore} size="sm" />
               </div>
             </div>
+
+            {/* Trade Fairness Indicator */}
+            {tradeFairness && (
+              <div className="bg-stone-800/50 rounded-lg p-3 mb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Scale className="w-4 h-4 text-stone-400" />
+                    <span className="text-xs text-stone-400">Trade Value</span>
+                  </div>
+                  <span className={`text-sm font-bold ${tradeFairness.color}`}>
+                    {tradeFairness.label}
+                  </span>
+                </div>
+                <div className="mt-2 h-2 bg-stone-700 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full transition-all duration-300 ${
+                      tradeFairness.score >= 60 ? 'bg-emerald-500' :
+                      tradeFairness.score >= 45 ? 'bg-blue-500' :
+                      tradeFairness.score >= 30 ? 'bg-amber-500' : 'bg-rose-500'
+                    }`}
+                    style={{ width: `${tradeFairness.score}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-stone-500 mt-1">
+                  {tradeFairness.score >= 45
+                    ? 'This looks like a fair exchange!'
+                    : 'You might be giving more than you get'
+                  }
+                </p>
+              </div>
+            )}
 
             {/* Seller Info */}
             {sellerReputation && (

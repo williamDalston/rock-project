@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { User, Repeat, Bell, Flame, LogIn, LogOut, ChevronDown } from 'lucide-react'
 import { RockFeed } from '@/components/feed'
 import { RarityBadge } from '@/components/ui/RarityBadge'
@@ -9,6 +9,7 @@ import { VerificationBadge } from '@/components/ui/VerificationBadge'
 import { SellerBadge } from '@/components/ui/ReputationBadge'
 import { OptimizedImage } from '@/components/ui/OptimizedImage'
 import { RarityBorderGlow, LegendarySparkles } from '@/components/ui/RarityGlow'
+import { SEO, SEO_CONFIGS } from '@/components/ui/SEO'
 import { AestheticFilters, filterRocksByAesthetic } from '@/components/filters/AestheticFilters'
 import { TrendingSection } from '@/components/market/TrendingSection'
 import { TradeModal } from '@/components/modals/TradeModal'
@@ -18,13 +19,13 @@ import { useLikes } from '@/hooks/useLikes'
 import { useTrending } from '@/hooks/useTrending'
 import { useTradeProposals } from '@/hooks/useTradeProposals'
 import { useUserProfile } from '@/hooks/useUserProfile'
+import { useReputation } from '@/hooks/useReputation'
 
 interface MarketViewProps {
   marketRocks: Rock[]
   personalRocks: Rock[]
   user: UserType | null
   profile: UserProfile | null
-  sellerReputations?: Map<string, UserReputation>
   onNavigateToTrades?: () => void
   onOpenAuth?: () => void
   isAnonymous?: boolean
@@ -36,7 +37,6 @@ export function MarketView({
   personalRocks,
   user,
   profile,
-  sellerReputations = new Map(),
   onNavigateToTrades,
   onOpenAuth,
   isAnonymous = true,
@@ -48,6 +48,7 @@ export function MarketView({
   const [activeFilter, setActiveFilter] = useState<AestheticFilter>('all')
   const [tradeSending, setTradeSending] = useState(false)
   const [showRockFeed, setShowRockFeed] = useState(false)
+  const [sellerReputations, setSellerReputations] = useState<Map<string, UserReputation>>(new Map())
 
   const { toggleLike, isLikedByUser, isLiking } = useLikes(user)
   const { trendingRocks, isTrending } = useTrending(marketRocks)
@@ -57,6 +58,36 @@ export function MarketView({
     loading: tradesLoading
   } = useTradeProposals(user)
   const { addXP } = useUserProfile(user)
+  const { getUserReputation } = useReputation(user)
+
+  // Fetch seller reputations for market rocks
+  useEffect(() => {
+    const fetchReputations = async () => {
+      const uniqueOwnerIds = [...new Set(marketRocks.map(r => r.ownerId).filter(Boolean))]
+      const reputationMap = new Map<string, UserReputation>()
+
+      // Fetch in parallel, limit to 20 to avoid overwhelming
+      const idsToFetch = uniqueOwnerIds.slice(0, 20)
+      const results = await Promise.allSettled(
+        idsToFetch.map(async (ownerId) => {
+          const rep = await getUserReputation(ownerId)
+          return { ownerId, rep }
+        })
+      )
+
+      results.forEach((result) => {
+        if (result.status === 'fulfilled' && result.value.rep) {
+          reputationMap.set(result.value.ownerId, result.value.rep)
+        }
+      })
+
+      setSellerReputations(reputationMap)
+    }
+
+    if (marketRocks.length > 0) {
+      fetchReputations()
+    }
+  }, [marketRocks, getUserReputation])
 
   const handleTradeProposal = (rock: Rock) => {
     if (!user) return
@@ -105,6 +136,7 @@ export function MarketView({
 
   return (
     <>
+      <SEO title={SEO_CONFIGS.market.title} description={SEO_CONFIGS.market.description} />
       <header className="sticky top-0 z-40 bg-stone-950/80 backdrop-blur-md px-4 py-4 border-b border-stone-800">
         <div className="flex justify-between items-center mb-3">
           <div>

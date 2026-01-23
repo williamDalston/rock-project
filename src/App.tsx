@@ -13,7 +13,9 @@ import { ToastContainer, useToast } from '@/components/ui/Toast'
 import { WelcomeModal } from '@/components/ui/WelcomeModal'
 import { AuthModal } from '@/components/modals/AuthModal'
 import { NotificationPrompt } from '@/components/ui/NotificationPrompt'
-import type { ViewType, RockFormData, AIAnalysisResult } from '@/types'
+import { LevelUpCelebration, useLevelUpCelebration } from '@/components/ui/LevelUpCelebration'
+import { TradeCelebration } from '@/components/ui/TradeCelebration'
+import type { ViewType, RockFormData, AIAnalysisResult, TradeProposal } from '@/types'
 
 // Lazy load views for code splitting
 const MarketView = lazy(() => import('@/views/MarketView').then(m => ({ default: m.MarketView })))
@@ -55,6 +57,11 @@ export default function App() {
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [tradeCelebration, setTradeCelebration] = useState<TradeProposal | null>(null)
+
+  // Level up celebration
+  const { celebration, celebrate, closeCelebration } = useLevelUpCelebration()
+  const prevLevelRef = useRef<number | null>(null)
 
   // Check if first visit
   useEffect(() => {
@@ -104,11 +111,31 @@ export default function App() {
           toast.error('Trade declined', `Your trade for "${proposal.targetRock.name}" was declined`)
         } else if (proposal.status === 'completed') {
           notifyTradeCompleted(proposal)
+          // Show trade celebration animation
+          setTradeCelebration(proposal)
         }
       }
       prevSentStatuses.current.set(proposal.id, proposal.status)
     })
   }, [sentProposals, notifyTradeResponse, notifyTradeCompleted, toast])
+
+  // Watch for level ups
+  useEffect(() => {
+    if (!profile) return
+
+    // On first load, just store the level
+    if (prevLevelRef.current === null) {
+      prevLevelRef.current = profile.level
+      return
+    }
+
+    // Check if level increased
+    if (profile.level > prevLevelRef.current) {
+      celebrate(profile.level, profile.title)
+    }
+
+    prevLevelRef.current = profile.level
+  }, [profile, celebrate])
 
   const handleWelcomeComplete = () => {
     localStorage.setItem('lithos_welcomed', 'true')
@@ -303,6 +330,30 @@ export default function App() {
 
       {/* Notification permission prompt */}
       <NotificationPrompt onNavigateToTrades={navigateToTrades} />
+
+      {/* Level up celebration */}
+      {celebration && (
+        <LevelUpCelebration
+          level={celebration.level}
+          title={celebration.title}
+          onComplete={closeCelebration}
+        />
+      )}
+
+      {/* Trade completion celebration */}
+      {tradeCelebration && (
+        <TradeCelebration
+          yourRock={{
+            name: tradeCelebration.offeredRock.name,
+            imageUrl: tradeCelebration.offeredRock.imageUrl
+          }}
+          theirRock={{
+            name: tradeCelebration.targetRock.name,
+            imageUrl: tradeCelebration.targetRock.imageUrl
+          }}
+          onComplete={() => setTradeCelebration(null)}
+        />
+      )}
     </div>
   )
 }
