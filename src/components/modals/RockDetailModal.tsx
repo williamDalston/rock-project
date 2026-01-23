@@ -1,13 +1,14 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
   X, MapPin, Calendar, ThumbsUp, ThumbsDown, Shield, Users,
-  Award, Sparkles, MessageSquare, ChevronDown, ChevronUp
+  Award, Sparkles, MessageSquare, ChevronDown, ChevronUp, Gem
 } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { SelfCollectedBadge } from '@/components/ui/SelfCollectedBadge'
 import { VerificationBadge, VerificationStatus } from '@/components/ui/VerificationBadge'
 import { useVerification } from '@/hooks/useVerification'
 import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
+import { findSimilarRocks, getSimilarityReason } from '@/services/similarity'
 import type { Rock, User, UserProfile } from '@/types'
 
 interface RockDetailModalProps {
@@ -16,6 +17,8 @@ interface RockDetailModalProps {
   profile: UserProfile | null
   onClose: () => void
   onVoteSubmitted?: () => void
+  allRocks?: Rock[]
+  onSelectSimilar?: (rock: Rock) => void
 }
 
 export function RockDetailModal({
@@ -23,12 +26,20 @@ export function RockDetailModal({
   user,
   profile,
   onClose,
-  onVoteSubmitted
+  onVoteSubmitted,
+  allRocks = [],
+  onSelectSimilar
 }: RockDetailModalProps) {
   const [showVoteForm, setShowVoteForm] = useState(false)
   const [voteComment, setVoteComment] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [showProperties, setShowProperties] = useState(false)
+
+  // Find similar rocks
+  const similarRocks = useMemo(() => {
+    if (allRocks.length === 0) return []
+    return findSimilarRocks(rock, allRocks, 6)
+  }, [rock, allRocks])
 
   const {
     rockVerification,
@@ -408,6 +419,48 @@ export function RockDetailModal({
                 <p className="text-sm text-amber-300/70">
                   This specimen has been verified by an expert geologist in the community.
                 </p>
+              </div>
+            )}
+
+            {/* Similar Rocks Section */}
+            {similarRocks.length > 0 && onSelectSimilar && (
+              <div className="border border-stone-800 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 bg-stone-800/50 flex items-center space-x-2">
+                  <Gem className="w-4 h-4 text-purple-400" />
+                  <span className="text-white font-medium">Similar Specimens</span>
+                  <span className="text-stone-500 text-sm">({similarRocks.length})</span>
+                </div>
+
+                <div className="p-3">
+                  <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 custom-scrollbar">
+                    {similarRocks.map(({ rock: similarRock, reasons }) => (
+                      <button
+                        key={similarRock.id}
+                        onClick={() => onSelectSimilar(similarRock)}
+                        className="flex-shrink-0 w-28 group"
+                      >
+                        <div className="relative aspect-square rounded-lg overflow-hidden mb-1.5
+                                        ring-2 ring-transparent group-hover:ring-purple-500 transition-all">
+                          <img
+                            src={similarRock.imageUrl}
+                            alt={similarRock.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                          />
+                          <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/70 to-transparent" />
+                          <div className="absolute bottom-1 left-1">
+                            <RarityBadge score={similarRock.rarityScore} size="sm" />
+                          </div>
+                        </div>
+                        <p className="text-xs text-white font-medium truncate group-hover:text-purple-400 transition-colors">
+                          {similarRock.name}
+                        </p>
+                        <p className="text-[10px] text-stone-500 truncate">
+                          {getSimilarityReason({ rock: similarRock, score: 0, reasons })}
+                        </p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </div>

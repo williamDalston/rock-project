@@ -388,6 +388,8 @@ export function MarketView({
           profile={profile}
           onClose={() => setDetailRock(null)}
           onVoteSubmitted={handleVoteSubmitted}
+          allRocks={marketRocks}
+          onSelectSimilar={(rock) => setDetailRock(rock)}
         />
       )}
 

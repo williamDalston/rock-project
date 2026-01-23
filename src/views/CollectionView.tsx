@@ -577,6 +577,8 @@ export function CollectionView({
           profile={profile}
           onClose={() => setDetailRock(null)}
           onVoteSubmitted={handleVoteSubmitted}
+          allRocks={[...personalRocks, ...marketRocks]}
+          onSelectSimilar={(rock) => setDetailRock(rock)}
         />
       )}
     </>

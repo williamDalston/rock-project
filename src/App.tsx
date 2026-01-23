@@ -1,7 +1,9 @@
-import { useState, useEffect, lazy, Suspense } from 'react'
+import { useState, useEffect, useRef, lazy, Suspense } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useRocks } from '@/hooks/useRocks'
 import { useUserProfile } from '@/hooks/useUserProfile'
+import { useTradeProposals } from '@/hooks/useTradeProposals'
+import { useNotifications } from '@/hooks/useNotifications'
 import { identifyRockWithAI } from '@/services/gemini'
 import { compressImage } from '@/utils/imageCompression'
 import { DEFAULT_FORM_DATA, XP_REWARDS } from '@/constants'
@@ -10,6 +12,7 @@ import { NavBar } from '@/components/layout/NavBar'
 import { ToastContainer, useToast } from '@/components/ui/Toast'
 import { WelcomeModal } from '@/components/ui/WelcomeModal'
 import { AuthModal } from '@/components/modals/AuthModal'
+import { NotificationPrompt } from '@/components/ui/NotificationPrompt'
 import type { ViewType, RockFormData, AIAnalysisResult } from '@/types'
 
 // Lazy load views for code splitting
@@ -42,6 +45,7 @@ export default function App() {
   } = useAuth()
   const { personalRocks, marketRocks, loading: rocksLoading, addRock } = useRocks(user)
   const { profile, addXP, incrementStat } = useUserProfile(user)
+  const { receivedProposals, sentProposals } = useTradeProposals(user)
   const toast = useToast()
 
   const [view, setView] = useState<ViewType>('market')
@@ -64,6 +68,47 @@ export default function App() {
     setCollectionTab('trades')
     setView('collection')
   }
+
+  // Notification system
+  const { notifyNewTrade, notifyTradeResponse, notifyTradeCompleted } = useNotifications(navigateToTrades)
+
+  // Track previous proposal counts to detect changes
+  const prevReceivedCount = useRef(0)
+  const prevSentStatuses = useRef<Map<string, string>>(new Map())
+
+  // Watch for new received trades
+  useEffect(() => {
+    if (receivedProposals.length > prevReceivedCount.current) {
+      // New trade proposal received
+      const newProposals = receivedProposals.slice(0, receivedProposals.length - prevReceivedCount.current)
+      newProposals.forEach(proposal => {
+        if (proposal.status === 'proposed') {
+          notifyNewTrade(proposal)
+          toast.success('New trade proposal!', `Someone wants your "${proposal.targetRock.name}"`)
+        }
+      })
+    }
+    prevReceivedCount.current = receivedProposals.length
+  }, [receivedProposals, notifyNewTrade, toast])
+
+  // Watch for responses to sent trades
+  useEffect(() => {
+    sentProposals.forEach(proposal => {
+      const prevStatus = prevSentStatuses.current.get(proposal.id)
+      if (prevStatus && prevStatus !== proposal.status) {
+        if (proposal.status === 'accepted') {
+          notifyTradeResponse(proposal)
+          toast.success('Trade accepted!', `Your trade for "${proposal.targetRock.name}" was accepted!`)
+        } else if (proposal.status === 'rejected') {
+          notifyTradeResponse(proposal)
+          toast.error('Trade declined', `Your trade for "${proposal.targetRock.name}" was declined`)
+        } else if (proposal.status === 'completed') {
+          notifyTradeCompleted(proposal)
+        }
+      }
+      prevSentStatuses.current.set(proposal.id, proposal.status)
+    })
+  }, [sentProposals, notifyTradeResponse, notifyTradeCompleted, toast])
 
   const handleWelcomeComplete = () => {
     localStorage.setItem('lithos_welcomed', 'true')
@@ -255,6 +300,9 @@ export default function App() {
       {view !== 'scan' && (
         <NavBar currentView={view} onViewChange={setView} onScan={handleScan} />
       )}
+
+      {/* Notification permission prompt */}
+      <NotificationPrompt onNavigateToTrades={navigateToTrades} />
     </div>
   )
 }
