@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { User, Repeat, Bell, Flame, LogIn, LogOut, ChevronDown } from 'lucide-react'
+import { User, Repeat, Bell, Flame, LogIn, LogOut, ChevronDown, Search, X } from 'lucide-react'
 import { RockFeed } from '@/components/feed'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { HeartGeode } from '@/components/ui/HeartGeode'
@@ -48,6 +48,8 @@ export function MarketView({
   const [activeFilter, setActiveFilter] = useState<AestheticFilter>('all')
   const [tradeSending, setTradeSending] = useState(false)
   const [showRockFeed, setShowRockFeed] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showSearch, setShowSearch] = useState(false)
   const [sellerReputations, setSellerReputations] = useState<Map<string, UserReputation>>(new Map())
 
   const { toggleLike, isLikedByUser, isLiking } = useLikes(user)
@@ -126,8 +128,18 @@ export function MarketView({
     await addXP('VERIFICATION_VOTE')
   }, [addXP])
 
-  // Apply aesthetic filter
-  const filteredRocks = filterRocksByAesthetic(marketRocks, activeFilter)
+  // Apply aesthetic filter and search
+  const filteredRocks = filterRocksByAesthetic(marketRocks, activeFilter).filter(rock => {
+    if (!searchQuery.trim()) return true
+    const query = searchQuery.toLowerCase()
+    return (
+      rock.name?.toLowerCase().includes(query) ||
+      rock.marketTitle?.toLowerCase().includes(query) ||
+      rock.type?.toLowerCase().includes(query) ||
+      rock.location?.toLowerCase().includes(query) ||
+      rock.description?.toLowerCase().includes(query)
+    )
+  })
 
   // Get seller reputation for trade target
   const targetSellerReputation = tradeTarget?.ownerId
@@ -147,14 +159,25 @@ export function MarketView({
               Global Stratum Feed
             </p>
           </div>
-          <div className="flex items-center space-x-3">
-            {/* Rock Porn Feed Button */}
+          <div className="flex items-center space-x-2">
+            {/* Search Toggle */}
+            <button
+              onClick={() => setShowSearch(!showSearch)}
+              className={`p-2 rounded-lg transition-colors ${
+                showSearch ? 'bg-emerald-600 text-white' : 'bg-stone-800 text-stone-400 hover:bg-stone-700'
+              }`}
+              title="Search rocks"
+            >
+              <Search className="w-5 h-5" />
+            </button>
+
+            {/* Gallery Feed Button */}
             <button
               onClick={() => setShowRockFeed(true)}
               className="relative p-2 bg-gradient-to-br from-orange-500 to-rose-600 rounded-lg
                          hover:from-orange-400 hover:to-rose-500 transition-all shadow-lg
                          shadow-orange-500/20 group"
-              title="Enter Rock Porn Mode"
+              title="Full-screen gallery"
             >
               <Flame className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
             </button>
@@ -239,10 +262,37 @@ export function MarketView({
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
         />
+
+        {/* Search Bar - Expandable */}
+        {showSearch && (
+          <div className="mt-3 flex items-center gap-2">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-500" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by name, type, location..."
+                className="w-full bg-stone-800 border border-stone-700 rounded-lg pl-10 pr-10 py-2.5
+                           text-white text-sm placeholder-stone-500
+                           focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                autoFocus
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-500 hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </header>
 
-      {/* Centered feed container - Instagram/Twitter style */}
-      <div className="max-w-lg mx-auto px-2 py-4 space-y-4">
+      {/* Responsive container - single column on mobile, multi-column on desktop */}
+      <div className="max-w-7xl mx-auto px-2 md:px-4 lg:px-6 py-4">
         {/* Hot Magma Trending Section */}
         {trendingRocks.length > 0 && activeFilter === 'all' && (
           <TrendingSection
@@ -271,11 +321,12 @@ export function MarketView({
             </p>
           </div>
         ) : (
-          filteredRocks.map((rock) => (
-            <RarityBorderGlow key={rock.id} score={rock.rarityScore}>
-              <article
-                className="relative group rounded-2xl overflow-hidden shadow-xl bg-stone-900 border border-stone-800"
-              >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {filteredRocks.map((rock) => (
+              <RarityBorderGlow key={rock.id} score={rock.rarityScore}>
+                <article
+                  className="relative group rounded-2xl overflow-hidden shadow-xl bg-stone-900 border border-stone-800"
+                >
                 {/* Legendary sparkles for score 9+ */}
                 {rock.rarityScore >= 9 && <LegendarySparkles />}
 
@@ -389,8 +440,9 @@ export function MarketView({
                   </p>
                 </div>
               </article>
-            </RarityBorderGlow>
-          ))
+              </RarityBorderGlow>
+            ))}
+          </div>
         )}
       </div>
 

@@ -537,12 +537,44 @@ export function CollectionView({
                         ))}
                       </div>
 
-                      {/* Matches */}
+                      {/* Matches with View Button */}
                       {itemMatches.length > 0 && (
-                        <div className="pt-2 border-t border-stone-800">
-                          <p className="text-[10px] text-rose-400 font-medium">
-                            {itemMatches.length} match{itemMatches.length > 1 ? 'es' : ''} in market
-                          </p>
+                        <div className="pt-3 border-t border-stone-800">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-xs text-rose-400 font-medium">
+                              🎯 {itemMatches.length} match{itemMatches.length > 1 ? 'es' : ''} found!
+                            </p>
+                          </div>
+                          {/* Show matching rocks */}
+                          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                            {itemMatches.slice(0, 5).map((match) => {
+                              const rock = marketRocks.find(r => r.id === match.rockId)
+                              if (!rock) return null
+                              return (
+                                <button
+                                  key={match.rockId}
+                                  onClick={() => handleRockClick(rock)}
+                                  className="flex-shrink-0 w-16"
+                                >
+                                  <div className="w-16 h-16 rounded-lg overflow-hidden ring-2 ring-rose-500/50">
+                                    <img
+                                      src={rock.imageUrl}
+                                      alt={rock.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                  <p className="text-[9px] text-stone-400 mt-1 truncate text-center">
+                                    {rock.name}
+                                  </p>
+                                </button>
+                              )
+                            })}
+                            {itemMatches.length > 5 && (
+                              <div className="flex-shrink-0 w-16 h-16 rounded-lg bg-stone-800 flex items-center justify-center">
+                                <span className="text-xs text-stone-500">+{itemMatches.length - 5}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
@@ -617,15 +649,15 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
         </div>
       </div>
 
-      {/* Trade Items */}
+      {/* Trade Items - Clear labels for who gets what */}
       <div className="flex items-center space-x-3">
-        {/* Offered Rock */}
+        {/* What you'll give / What they're giving */}
         <div className="flex-1">
-          <p className="text-[10px] text-stone-500 mb-1">
-            {isReceived ? 'They offer' : 'You offer'}
+          <p className={`text-[10px] font-medium mb-1 ${isReceived ? 'text-emerald-400' : 'text-amber-400'}`}>
+            {isReceived ? '🎁 You receive' : '📤 You give'}
           </p>
           <div className="flex items-center space-x-2">
-            <div className="w-12 h-12 rounded-lg overflow-hidden bg-stone-800">
+            <div className={`w-12 h-12 rounded-lg overflow-hidden ${isReceived ? 'ring-2 ring-emerald-500/50' : 'ring-2 ring-amber-500/50'}`}>
               <img
                 src={trade.offeredRock?.imageUrl}
                 alt={trade.offeredRock?.name}
@@ -636,20 +668,20 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
               <p className="text-sm text-white font-medium truncate">
                 {trade.offeredRock?.name}
               </p>
-              <RarityBadge score={trade.offeredRock?.rarityScore || 1} />
+              <RarityBadge score={trade.offeredRock?.rarityScore || 1} size="sm" />
             </div>
           </div>
         </div>
 
         <ArrowRightLeft className="w-4 h-4 text-stone-600 flex-shrink-0" />
 
-        {/* Target Rock */}
+        {/* What you'll get / What they want */}
         <div className="flex-1">
-          <p className="text-[10px] text-stone-500 mb-1">
-            {isReceived ? 'For your' : 'For their'}
+          <p className={`text-[10px] font-medium mb-1 ${isReceived ? 'text-amber-400' : 'text-emerald-400'}`}>
+            {isReceived ? '📤 You give' : '🎁 You receive'}
           </p>
           <div className="flex items-center space-x-2">
-            <div className="w-12 h-12 rounded-lg overflow-hidden bg-stone-800">
+            <div className={`w-12 h-12 rounded-lg overflow-hidden ${isReceived ? 'ring-2 ring-amber-500/50' : 'ring-2 ring-emerald-500/50'}`}>
               <img
                 src={trade.targetRock?.imageUrl}
                 alt={trade.targetRock?.name}
@@ -660,7 +692,7 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
               <p className="text-sm text-white font-medium truncate">
                 {trade.targetRock?.name}
               </p>
-              <RarityBadge score={trade.targetRock?.rarityScore || 1} />
+              <RarityBadge score={trade.targetRock?.rarityScore || 1} size="sm" />
             </div>
           </div>
         </div>

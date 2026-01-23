@@ -270,30 +270,53 @@ export function ScanView({
             label="I found this in the field"
           />
 
-          {/* Public Toggle */}
-          <Toggle
-            enabled={formData.isPublic}
-            onChange={(enabled) => onFormChange({ isPublic: enabled })}
-            label="List on Global Market"
-          />
+          {/* Public Toggle - with explanation */}
+          <div className="space-y-2">
+            <Toggle
+              enabled={formData.isPublic}
+              onChange={(enabled) => onFormChange({ isPublic: enabled })}
+              label="List on Global Market"
+            />
+            <p className="text-[10px] text-stone-500 ml-12">
+              {formData.isPublic
+                ? 'Others can see and propose trades for this specimen'
+                : 'This will be private in your vault only'}
+            </p>
+          </div>
 
           {/* Action Buttons */}
-          <div className="flex space-x-4 pt-4">
-            <button
-              onClick={onDiscard}
-              className="flex-1 py-4 rounded-xl font-bold text-stone-400 hover:text-stone-300 hover:bg-stone-900 transition-colors min-h-[52px]"
-              aria-label="Discard and go back"
-            >
-              Discard
-            </button>
+          <div className="space-y-3 pt-4">
+            {/* Primary action - Save to Collection */}
             <button
               onClick={handleSave}
               disabled={!formData.name}
-              className="flex-[2] bg-emerald-600 hover:bg-emerald-500 disabled:bg-stone-800 disabled:text-stone-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-emerald-900/20 transition-colors min-h-[52px]"
+              className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-stone-800 disabled:text-stone-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-emerald-900/20 transition-colors min-h-[52px]"
               aria-label={protectedArea?.isProtected ? 'Review protected area warning and save' : 'Save rock to collection'}
             >
-              {protectedArea?.isProtected ? 'Review & Save' : 'Save to Collection'}
+              {protectedArea?.isProtected ? 'Review & Save' : formData.isPublic ? 'Save & List on Market' : 'Save to Vault'}
             </button>
+
+            {/* Secondary actions */}
+            <div className="flex space-x-3">
+              <button
+                onClick={onDiscard}
+                className="flex-1 py-3 rounded-xl font-medium text-stone-400 hover:text-stone-300 hover:bg-stone-900 transition-colors border border-stone-800"
+                aria-label="Discard and go back"
+              >
+                Discard
+              </button>
+              <button
+                onClick={onSaveAsObservation}
+                disabled={!formData.name}
+                className="flex-1 py-3 rounded-xl font-medium text-stone-300 hover:text-white hover:bg-stone-800 transition-colors border border-stone-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Save as observation only - private and not tradeable"
+              >
+                Save as Observation
+              </button>
+            </div>
+            <p className="text-[10px] text-stone-600 text-center">
+              Observations are private, not on market, and can't be traded
+            </p>
           </div>
         </div>
       </div>

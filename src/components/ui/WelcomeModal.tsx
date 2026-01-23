@@ -84,21 +84,23 @@ export function WelcomeModal({ onComplete }: WelcomeModalProps) {
             {step.description}
           </p>
 
-          {/* Progress Dots */}
-          <div className="flex justify-center space-x-2 mb-8">
+          {/* Progress Dots - 44px touch targets */}
+          <div className="flex justify-center mb-8">
             {STEPS.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentStep(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentStep
-                    ? 'w-6 bg-emerald-500'
-                    : index < currentStep
-                    ? 'bg-emerald-700'
-                    : 'bg-stone-700'
-                }`}
+                className="w-11 h-11 flex items-center justify-center"
                 aria-label={`Go to step ${index + 1}`}
-              />
+              >
+                <span className={`block rounded-full transition-all duration-300 ${
+                  index === currentStep
+                    ? 'w-6 h-2.5 bg-emerald-500'
+                    : index < currentStep
+                    ? 'w-2.5 h-2.5 bg-emerald-600'
+                    : 'w-2.5 h-2.5 bg-stone-600'
+                }`} />
+              </button>
             ))}
           </div>
 
