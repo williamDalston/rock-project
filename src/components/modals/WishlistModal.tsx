@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { X, Plus, Heart, ChevronDown, ChevronUp, Sparkles } from 'lucide-react'
 import { Toggle } from '@/components/ui/Toggle'
 import { ROCK_TYPES, WISHLIST_CONFIG } from '@/constants'
+import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
 import type { RockType, LusterType, CrystalHabit } from '@/types'
 
 interface WishlistModalProps {
@@ -41,6 +42,12 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showAdvanced, setShowAdvanced] = useState(false)
+
+  const { swipeProps } = useSwipeToDismiss({
+    onDismiss: onClose,
+    threshold: 100,
+    direction: 'down'
+  })
 
   const canSave = name || rockType || minRarity || maxRarity ||
     selectedLusters.length > 0 || selectedHabits.length > 0
@@ -93,7 +100,15 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
 
   return (
     <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-      <div className="bg-stone-900 w-full max-w-md rounded-2xl border border-stone-800 shadow-2xl overflow-hidden animate-slide-up max-h-[90vh] flex flex-col">
+      <div
+        {...swipeProps}
+        className="bg-stone-900 w-full max-w-md rounded-2xl border border-stone-800 shadow-2xl overflow-hidden animate-slide-up max-h-[90vh] flex flex-col"
+      >
+        {/* Swipe Handle Indicator */}
+        <div className="sm:hidden flex justify-center pt-2 pb-1">
+          <div className="w-10 h-1 bg-stone-600 rounded-full" />
+        </div>
+
         {/* Header */}
         <div className="p-4 border-b border-stone-800 flex justify-between items-center flex-shrink-0">
           <div className="flex items-center space-x-2">
@@ -109,7 +124,8 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
           </div>
           <button
             onClick={onClose}
-            className="text-stone-500 hover:text-white transition-colors"
+            className="w-11 h-11 flex items-center justify-center rounded-full
+                       text-stone-500 hover:text-white hover:bg-stone-800 transition-colors"
             aria-label="Close modal"
           >
             <X className="w-6 h-6" />
@@ -292,7 +308,7 @@ export function WishlistModal({ onClose, onSave, existingCount }: WishlistModalP
                 Others can see and help fulfill your wishlist
               </p>
             </div>
-            <Toggle checked={isPublic} onChange={setIsPublic} disabled={atLimit} />
+            <Toggle enabled={isPublic} onChange={setIsPublic} label="Make Public" disabled={atLimit} />
           </div>
 
           {/* Error */}

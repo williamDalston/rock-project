@@ -3,8 +3,9 @@ import { Loader, ScanLine, Sparkles, Droplets, MapPin, Navigation, Hexagon, Arro
 import { Toggle } from '@/components/ui/Toggle'
 import { ConfidenceMeter } from '@/components/ui/ConfidenceMeter'
 import { ProtectedAreaWarning, ProtectedAreaBanner } from '@/components/ui/ProtectedAreaWarning'
+import { InlineFunFact } from '@/components/ui/FunFactCard'
 import { useGeolocation } from '@/hooks/useGeolocation'
-import type { RockFormData, AIAnalysisResult, AIConfidence, PhysicalTest } from '@/types'
+import type { RockFormData, AIAnalysisResult } from '@/types'
 
 interface ScanViewProps {
   formData: RockFormData
@@ -120,10 +121,15 @@ export function ScanView({
             />
           )}
 
+          {/* Fun Fact - show after analysis */}
+          {analysisResult && !isAnalyzing && formData.name && (
+            <InlineFunFact rockType={formData.name.toLowerCase()} />
+          )}
+
           {/* Name & Rarity */}
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
             <div className="flex-grow">
-              <label className="text-[11px] font-bold text-stone-400 uppercase tracking-widest">
+              <label className="text-[10px] font-medium text-stone-500 uppercase tracking-wider">
                 Identification
               </label>
               <input
@@ -139,7 +145,7 @@ export function ScanView({
               )}
             </div>
             <div className="flex flex-col sm:items-end">
-              <label className="text-[11px] font-bold text-stone-400 uppercase tracking-widest mb-1">
+              <label className="text-[10px] font-medium text-stone-500 uppercase tracking-wider mb-1">
                 Rarity
               </label>
               <input
@@ -162,7 +168,7 @@ export function ScanView({
               <div className="flex items-center space-x-2">
                 <MapPin className="w-4 h-4 text-emerald-400" />
                 <div>
-                  <p className="text-[11px] font-bold text-stone-400 uppercase tracking-widest">
+                  <p className="text-[10px] font-medium text-stone-500 uppercase tracking-wider">
                     Location
                   </p>
                   <p className="text-sm text-stone-300">
@@ -188,9 +194,9 @@ export function ScanView({
           {/* Visual Properties Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-stone-900/50 p-4 rounded-xl border border-stone-800">
-              <label className="flex items-center space-x-2 mb-2 text-stone-400">
+              <label className="flex items-center space-x-2 mb-2 text-stone-500">
                 <Sparkles className="w-4 h-4" aria-hidden="true" />
-                <span className="text-[11px] uppercase tracking-widest font-medium">Luster</span>
+                <span className="text-[10px] uppercase tracking-wider font-medium">Luster</span>
               </label>
               <input
                 value={formData.visuals.luster}
@@ -205,9 +211,9 @@ export function ScanView({
               />
             </div>
             <div className="bg-stone-900/50 p-4 rounded-xl border border-stone-800">
-              <label className="flex items-center space-x-2 mb-2 text-stone-400">
+              <label className="flex items-center space-x-2 mb-2 text-stone-500">
                 <Droplets className="w-4 h-4" aria-hidden="true" />
-                <span className="text-[11px] uppercase tracking-widest font-medium">Texture</span>
+                <span className="text-[10px] uppercase tracking-wider font-medium">Texture</span>
               </label>
               <input
                 value={formData.visuals.texture}
@@ -228,13 +234,13 @@ export function ScanView({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {formData.hardness && (
                 <div className="bg-stone-900/50 p-4 rounded-xl border border-stone-800">
-                  <p className="text-[11px] text-stone-400 uppercase tracking-widest mb-1 font-medium">Hardness</p>
+                  <p className="text-[10px] text-stone-500 uppercase tracking-wider mb-1 font-medium">Hardness</p>
                   <p className="text-base font-medium text-stone-200">{formData.hardness} (Mohs)</p>
                 </div>
               )}
               {formData.cleavage && (
                 <div className="bg-stone-900/50 p-4 rounded-xl border border-stone-800">
-                  <p className="text-[11px] text-stone-400 uppercase tracking-widest mb-1 font-medium">Cleavage</p>
+                  <p className="text-[10px] text-stone-500 uppercase tracking-wider mb-1 font-medium">Cleavage</p>
                   <p className="text-base font-medium text-stone-200 line-clamp-2">{formData.cleavage}</p>
                 </div>
               )}
@@ -243,7 +249,7 @@ export function ScanView({
 
           {/* Description */}
           <div>
-            <label className="text-[11px] font-bold text-stone-400 uppercase tracking-widest">
+            <label className="text-[10px] font-medium text-stone-500 uppercase tracking-wider">
               Description
             </label>
             <textarea

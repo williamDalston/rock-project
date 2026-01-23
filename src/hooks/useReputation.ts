@@ -14,7 +14,6 @@ import {
 import { db, getCollectionPaths } from '@/services/firebase'
 import { APP_CONFIG, REPUTATION_CONFIG } from '@/constants'
 import {
-  calculateTrustLevel,
   createDefaultReputation,
   updateReputationWithReview
 } from '@/services/reputation'

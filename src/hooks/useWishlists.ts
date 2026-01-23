@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import {
   collection,
-  query,
-  where,
   onSnapshot,
   addDoc,
   deleteDoc,
@@ -12,7 +10,7 @@ import {
 } from 'firebase/firestore'
 import { db, getCollectionPaths } from '@/services/firebase'
 import { APP_CONFIG, WISHLIST_CONFIG } from '@/constants'
-import { findWishlistMatches, countPotentialMatches } from '@/services/wishlist'
+import { findWishlistMatches } from '@/services/wishlist'
 import type { WishlistItem, WishlistMatch, Rock, User, RockType, LusterType, CrystalHabit } from '@/types'
 
 interface UseWishlistsReturn {

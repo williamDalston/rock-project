@@ -1,4 +1,4 @@
-import { CheckCircle, Award, HelpCircle } from 'lucide-react'
+import { CheckCircle, Award } from 'lucide-react'
 import type { VerificationLevel } from '@/types'
 import { VERIFICATION_STYLES } from '@/constants'
 
@@ -66,10 +66,9 @@ export function VerificationIcon({ level, size = 'md' }: VerificationIconProps) 
   const Icon = level === 'expert_verified' ? Award : CheckCircle
 
   return (
-    <Icon
-      className={`${iconSizes[size]} ${style.text}`}
-      title={style.label}
-    />
+    <span title={style.label}>
+      <Icon className={`${iconSizes[size]} ${style.text}`} />
+    </span>
   )
 }
 

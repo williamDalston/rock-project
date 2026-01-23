@@ -5,9 +5,10 @@ interface HeartGeodeProps {
   count: number
   onToggle: () => void
   disabled?: boolean
+  size?: 'sm' | 'md'
 }
 
-export function HeartGeode({ isLiked, count, onToggle, disabled }: HeartGeodeProps) {
+export function HeartGeode({ isLiked, count, onToggle, disabled, size = 'md' }: HeartGeodeProps) {
   const [isAnimating, setIsAnimating] = useState(false)
 
   const handleClick = () => {
@@ -20,29 +21,46 @@ export function HeartGeode({ isLiked, count, onToggle, disabled }: HeartGeodePro
     setTimeout(() => setIsAnimating(false), 600)
   }
 
+  const sizeClasses = {
+    sm: {
+      button: 'space-x-1 px-2 py-1 rounded-full min-h-[28px]',
+      svg: 'w-4 h-4',
+      text: 'text-[10px]'
+    },
+    md: {
+      button: 'space-x-2 px-4 py-2.5 rounded-full min-h-[44px]',
+      svg: 'w-6 h-6',
+      text: 'text-sm'
+    }
+  }
+
+  const sizeClass = sizeClasses[size]
+
   return (
     <button
       onClick={handleClick}
       disabled={disabled}
       className={`
-        relative flex items-center space-x-1.5 px-3 py-2 rounded-full
-        transition-all duration-300 group
+        relative flex items-center ${sizeClass.button}
+        transition-all duration-300 group active:scale-95
         ${isLiked
           ? 'bg-rose-500/20 text-rose-400'
-          : 'bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-rose-400'
+          : 'bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-rose-400 active:bg-stone-600'
         }
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
       `}
       aria-label={isLiked ? 'Unlike' : 'Like'}
+      aria-pressed={isLiked}
     >
       {/* Geode SVG */}
       <svg
         viewBox="0 0 24 24"
         className={`
-          w-6 h-6 transition-transform duration-300
+          ${sizeClass.svg} transition-transform duration-300
           ${isAnimating ? 'animate-geode-crack' : ''}
           ${isLiked ? 'scale-110' : 'group-hover:scale-105'}
         `}
+        style={{ willChange: isAnimating ? 'transform' : 'auto' }}
         fill="none"
         strokeWidth="1.5"
       >
@@ -80,7 +98,7 @@ export function HeartGeode({ isLiked, count, onToggle, disabled }: HeartGeodePro
 
       {/* Like count */}
       <span className={`
-        text-sm font-bold tabular-nums
+        ${sizeClass.text} font-bold tabular-nums
         transition-all duration-300
         ${isAnimating ? 'scale-125' : ''}
       `}>

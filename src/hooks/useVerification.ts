@@ -9,8 +9,7 @@ import {
   getDoc,
   setDoc,
   updateDoc,
-  serverTimestamp,
-  increment
+  serverTimestamp
 } from 'firebase/firestore'
 import { db, getCollectionPaths } from '@/services/firebase'
 import { APP_CONFIG, VERIFICATION_CONFIG } from '@/constants'
@@ -198,7 +197,7 @@ async function updateRockVerificationAggregate(
     })
   } else {
     // Create new verification record
-    const newData: Omit<RockVerification, 'lastUpdated'> & { lastUpdated: any } = {
+    const newData: Omit<RockVerification, 'lastUpdated' | 'expertVerifiedAt'> & { lastUpdated: any; expertVerifiedAt?: any } = {
       rockId,
       totalVotes: 1,
       weightedScore: voteValue,

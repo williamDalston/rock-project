@@ -32,8 +32,8 @@ export function XPBar({ xp, level, showDetails = true }: XPBarProps) {
           className="h-full bg-gradient-to-r from-amber-600 to-amber-400 rounded-full transition-all duration-500 ease-out relative"
           style={{ width: `${progress}%` }}
         >
-          {/* Shimmer effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+          {/* Shimmer effect - respects reduced motion preference */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent motion-safe:animate-shimmer" />
         </div>
       </div>
 

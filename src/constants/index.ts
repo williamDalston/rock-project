@@ -105,12 +105,19 @@ export const AESTHETIC_FILTERS: Record<AestheticFilter, FilterConfig> = {
 // ============================================
 
 export const XP_REWARDS = {
+  // Original rewards
   SPECIMEN_ADDED: 10,
   SELF_COLLECTED: 25,
   TRADE_COMPLETED: 15,
   IDENTIFICATION_HELP: 20,
   FIRST_SPECIMEN: 50,
-  LIKED_RECEIVED: 2
+  LIKED_RECEIVED: 2,
+  // Phase 3 rewards
+  VERIFICATION_VOTE: 3,
+  VERIFICATION_ACCEPTED: 5,
+  WISHLIST_FULFILLED: 10,
+  POSITIVE_REVIEW_RECEIVED: 5,
+  TRADE_PROPOSED: 2
 } as const
 
 // Level thresholds (XP required to reach each level)

@@ -2,6 +2,7 @@ import { RARITY_LEVELS } from '@/constants'
 
 interface RarityBadgeProps {
   score: number
+  size?: 'sm' | 'md'
 }
 
 function getRarityLevel(score: number) {
@@ -11,12 +12,17 @@ function getRarityLevel(score: number) {
   return RARITY_LEVELS.COMMON
 }
 
-export function RarityBadge({ score }: RarityBadgeProps) {
+export function RarityBadge({ score, size = 'md' }: RarityBadgeProps) {
   const level = getRarityLevel(score)
+
+  const sizeClasses = {
+    sm: 'px-1.5 py-0.5 text-[8px]',
+    md: 'px-2 py-0.5 text-[10px]'
+  }
 
   return (
     <span
-      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${level.color}`}
+      className={`rounded font-bold uppercase tracking-wider ${sizeClasses[size]} ${level.color}`}
     >
       {level.label} &bull; {score}/10
     </span>

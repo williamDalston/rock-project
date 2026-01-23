@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getCurrentPosition, isInProtectedArea, formatLocationName } from '@/services/geolocation'
-import type { Coordinates, ProtectedAreaResult, GeolocationState } from '@/types'
+import type { Coordinates, GeolocationState } from '@/types'
 
 interface UseGeolocationReturn extends GeolocationState {
   requestLocation: () => Promise<void>

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { doc, onSnapshot, setDoc, updateDoc, serverTimestamp, increment } from 'firebase/firestore'
-import { db, getCollectionPaths } from '@/services/firebase'
+import { db } from '@/services/firebase'
 import { APP_CONFIG } from '@/constants'
 import {
   calculateLevel,

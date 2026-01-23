@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { X, Repeat, ArrowRight, MessageSquare } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { SellerBadge } from '@/components/ui/ReputationBadge'
+import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
 import type { Rock, UserReputation } from '@/types'
 
 interface TradeModalProps {
@@ -25,6 +26,12 @@ export function TradeModal({
   const [message, setMessage] = useState('')
   const [step, setStep] = useState<'select' | 'confirm'>('select')
 
+  const { swipeProps } = useSwipeToDismiss({
+    onDismiss: onClose,
+    threshold: 100,
+    direction: 'down'
+  })
+
   const handleSelectRock = (rock: Rock) => {
     setSelectedRock(rock)
     setStep('confirm')
@@ -44,7 +51,15 @@ export function TradeModal({
 
   return (
     <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-      <div className="bg-stone-900 w-full max-w-md rounded-2xl border border-stone-800 shadow-2xl overflow-hidden animate-slide-up">
+      <div
+        {...swipeProps}
+        className="bg-stone-900 w-full max-w-md rounded-2xl border border-stone-800 shadow-2xl overflow-hidden animate-slide-up"
+      >
+        {/* Swipe Handle Indicator */}
+        <div className="sm:hidden flex justify-center pt-2 pb-1">
+          <div className="w-10 h-1 bg-stone-600 rounded-full" />
+        </div>
+
         {/* Header */}
         <div className="p-4 border-b border-stone-800 flex justify-between items-center">
           <div className="flex items-center space-x-2">
@@ -62,7 +77,8 @@ export function TradeModal({
           </div>
           <button
             onClick={onClose}
-            className="text-stone-500 hover:text-white transition-colors"
+            className="w-11 h-11 flex items-center justify-center rounded-full
+                       text-stone-500 hover:text-white hover:bg-stone-800 transition-colors"
             aria-label="Close modal"
           >
             <X className="w-6 h-6" />
@@ -87,7 +103,7 @@ export function TradeModal({
                 <div className="flex items-center space-x-2 mt-1">
                   <RarityBadge score={targetRock.rarityScore} size="sm" />
                   {sellerReputation && (
-                    <SellerBadge reputation={sellerReputation} size="sm" />
+                    <SellerBadge reputation={sellerReputation} />
                   )}
                 </div>
               </div>
@@ -180,7 +196,7 @@ export function TradeModal({
                 <p className="text-[10px] text-stone-500 uppercase tracking-wider mb-1">
                   Seller Reputation
                 </p>
-                <SellerBadge reputation={sellerReputation} size="md" showStats />
+                <SellerBadge reputation={sellerReputation} showStats />
               </div>
             )}
 

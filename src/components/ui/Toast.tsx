@@ -15,7 +15,7 @@ interface ToastProps {
   onDismiss: (id: string) => void
 }
 
-function Toast({ toast, onDismiss }: ToastProps) {
+export function Toast({ toast, onDismiss }: ToastProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       onDismiss(toast.id)

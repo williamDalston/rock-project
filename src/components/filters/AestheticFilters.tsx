@@ -10,22 +10,30 @@ export function AestheticFilters({ activeFilter, onFilterChange }: AestheticFilt
   const filters = Object.entries(AESTHETIC_FILTERS) as [AestheticFilter, typeof AESTHETIC_FILTERS[AestheticFilter]][]
 
   return (
-    <div className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide">
+    <div
+      className="flex space-x-2 overflow-x-auto pb-2 scrollbar-hide scroll-smooth"
+      style={{
+        scrollSnapType: 'x mandatory',
+        WebkitOverflowScrolling: 'touch'
+      }}
+    >
       {filters.map(([key, config]) => (
         <button
           key={key}
           onClick={() => onFilterChange(key)}
+          style={{ scrollSnapAlign: 'start' }}
           className={`
-            flex items-center space-x-1.5 px-3 py-1.5 rounded-full
-            whitespace-nowrap text-sm font-medium
-            transition-all duration-200
+            flex items-center space-x-2 px-4 py-2.5 rounded-full
+            whitespace-nowrap text-sm font-medium min-h-[44px]
+            transition-all duration-200 active:scale-95
             ${activeFilter === key
               ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/30'
-              : 'bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-white'
+              : 'bg-stone-800 text-stone-400 hover:bg-stone-700 hover:text-white active:bg-stone-600'
             }
           `}
+          aria-pressed={activeFilter === key}
         >
-          <span>{config.icon}</span>
+          <span className="text-base">{config.icon}</span>
           <span>{config.label}</span>
         </button>
       ))}

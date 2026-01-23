@@ -8,6 +8,7 @@ import { SelfCollectedBadge } from '@/components/ui/SelfCollectedBadge'
 import { VerificationBadge } from '@/components/ui/VerificationBadge'
 import { SellerBadge } from '@/components/ui/ReputationBadge'
 import { OptimizedImage } from '@/components/ui/OptimizedImage'
+import { RarityBorderGlow, LegendarySparkles } from '@/components/ui/RarityGlow'
 import { AestheticFilters, filterRocksByAesthetic } from '@/components/filters/AestheticFilters'
 import { TrendingSection } from '@/components/market/TrendingSection'
 import { TradeModal } from '@/components/modals/TradeModal'
@@ -43,7 +44,7 @@ export function MarketView({
   const [showRockFeed, setShowRockFeed] = useState(false)
 
   const { toggleLike, isLikedByUser, isLiking } = useLikes(user)
-  const { trendingRocks, isTrending, getTrendingScore } = useTrending(marketRocks)
+  const { trendingRocks, isTrending } = useTrending(marketRocks)
   const {
     createProposal,
     pendingReceivedCount,
@@ -62,14 +63,7 @@ export function MarketView({
 
     setTradeSending(true)
     try {
-      await createProposal(
-        tradeTarget.id,
-        tradeTarget,
-        offeredRock.id,
-        offeredRock,
-        tradeTarget.ownerId,
-        message
-      )
+      await createProposal(tradeTarget, offeredRock, message)
       // Award XP for proposing a trade
       await addXP('TRADE_PROPOSED')
       setShowTradeModal(false)
@@ -163,8 +157,11 @@ export function MarketView({
         {trendingRocks.length > 0 && activeFilter === 'all' && (
           <TrendingSection
             trendingRocks={trendingRocks}
-            onRockSelect={handleTradeProposal}
-            getTrendingScore={getTrendingScore}
+            user={user}
+            onRockClick={handleRockClick}
+            onLike={toggleLike}
+            isLikedByUser={isLikedByUser}
+            isLiking={isLiking}
           />
         )}
 
@@ -185,11 +182,14 @@ export function MarketView({
           </div>
         ) : (
           filteredRocks.map((rock) => (
-            <article
-              key={rock.id}
-              className="relative group rounded-3xl overflow-hidden shadow-2xl bg-stone-900 border border-stone-800"
-            >
-              {/* Header Overlay */}
+            <RarityBorderGlow key={rock.id} score={rock.rarityScore}>
+              <article
+                className="relative group rounded-3xl overflow-hidden shadow-2xl bg-stone-900 border border-stone-800"
+              >
+                {/* Legendary sparkles for score 9+ */}
+                {rock.rarityScore >= 9 && <LegendarySparkles />}
+
+                {/* Header Overlay */}
               <div className="absolute top-0 left-0 right-0 p-4 z-20 flex justify-between items-start bg-gradient-to-b from-black/80 to-transparent">
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 rounded-full bg-stone-800 border border-stone-600 flex items-center justify-center">
@@ -204,7 +204,6 @@ export function MarketView({
                       {rock.ownerId && sellerReputations.get(rock.ownerId) && (
                         <SellerBadge
                           reputation={sellerReputations.get(rock.ownerId)!}
-                          size="sm"
                         />
                       )}
                     </div>
@@ -308,7 +307,8 @@ export function MarketView({
                   </div>
                 )}
               </div>
-            </article>
+              </article>
+            </RarityBorderGlow>
           ))
         )}
       </div>

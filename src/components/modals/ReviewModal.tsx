@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { X, Star, Camera } from 'lucide-react'
+import { X, Star } from 'lucide-react'
 import type { TradeProposal } from '@/types'
 import { REPUTATION_CONFIG } from '@/constants'
+import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
 
 interface ReviewModalProps {
   trade: TradeProposal
@@ -15,6 +16,12 @@ export function ReviewModal({ trade, onClose, onSubmit }: ReviewModalProps) {
   const [submitting, setSubmitting] = useState(false)
   const [hoverRating, setHoverRating] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  const { swipeProps } = useSwipeToDismiss({
+    onDismiss: onClose,
+    threshold: 100,
+    direction: 'down'
+  })
 
   const handleSubmit = async () => {
     setSubmitting(true)
@@ -43,13 +50,22 @@ export function ReviewModal({ trade, onClose, onSubmit }: ReviewModalProps) {
 
   return (
     <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
-      <div className="bg-stone-900 w-full max-w-md rounded-2xl border border-stone-800 shadow-2xl overflow-hidden animate-slide-up">
+      <div
+        {...swipeProps}
+        className="bg-stone-900 w-full max-w-md rounded-2xl border border-stone-800 shadow-2xl overflow-hidden animate-slide-up"
+      >
+        {/* Swipe Handle Indicator */}
+        <div className="sm:hidden flex justify-center pt-2 pb-1">
+          <div className="w-10 h-1 bg-stone-600 rounded-full" />
+        </div>
+
         {/* Header */}
         <div className="p-4 border-b border-stone-800 flex justify-between items-center">
           <h3 className="font-serif font-bold text-white text-lg">Rate Your Trade</h3>
           <button
             onClick={onClose}
-            className="text-stone-500 hover:text-white transition-colors"
+            className="w-11 h-11 flex items-center justify-center rounded-full
+                       text-stone-500 hover:text-white hover:bg-stone-800 transition-colors"
             aria-label="Close modal"
           >
             <X className="w-6 h-6" />
@@ -75,14 +91,18 @@ export function ReviewModal({ trade, onClose, onSubmit }: ReviewModalProps) {
           {/* Star Rating */}
           <div className="text-center py-2">
             <p className="text-sm text-stone-400 mb-3">How was your experience?</p>
-            <div className="flex justify-center space-x-2 mb-2">
+            <div className="flex justify-center space-x-3 sm:space-x-2 mb-2">
               {([1, 2, 3, 4, 5] as const).map((star) => (
                 <button
                   key={star}
                   onClick={() => setRating(star)}
                   onMouseEnter={() => setHoverRating(star)}
                   onMouseLeave={() => setHoverRating(null)}
-                  className="transition-transform hover:scale-110 focus:outline-none"
+                  onTouchStart={() => setHoverRating(star)}
+                  onTouchEnd={() => setHoverRating(null)}
+                  className="p-1 transition-transform hover:scale-110 active:scale-100
+                             focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:ring-offset-2
+                             focus:ring-offset-stone-900 rounded-lg"
                   aria-label={`Rate ${star} stars`}
                 >
                   <Star

@@ -8,8 +8,7 @@ import {
   updateDoc,
   doc,
   serverTimestamp,
-  orderBy,
-  Timestamp
+  orderBy
 } from 'firebase/firestore'
 import { db, getCollectionPaths } from '@/services/firebase'
 import { APP_CONFIG, TRADING_CONFIG } from '@/constants'

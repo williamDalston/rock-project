@@ -1,5 +1,5 @@
-import { Star, Shield, Crown, User } from 'lucide-react'
-import type { TrustLevel, UserReputation } from '@/types'
+import { Star, User } from 'lucide-react'
+import type { UserReputation } from '@/types'
 import { TRUST_LEVEL_STYLES } from '@/constants'
 import { getRatingColor, calculateReputationScore } from '@/services/reputation'
 
@@ -145,13 +145,22 @@ export function ReputationCard({ reputation }: ReputationCardProps) {
 // Mini badge for market listings
 interface SellerBadgeProps {
   reputation: UserReputation | null
+  size?: 'sm' | 'md'
+  showStats?: boolean
 }
 
-export function SellerBadge({ reputation }: SellerBadgeProps) {
+export function SellerBadge({ reputation, size = 'sm', showStats = false }: SellerBadgeProps) {
+  const sizeClasses = {
+    sm: { text: 'text-[10px]', icon: 'w-3 h-3', space: 'space-x-1' },
+    md: { text: 'text-xs', icon: 'w-4 h-4', space: 'space-x-1.5' }
+  }
+
+  const sizeClass = sizeClasses[size]
+
   if (!reputation || reputation.trustLevel === 'new_seller') {
     return (
-      <span className="inline-flex items-center space-x-1 text-[10px] text-stone-500">
-        <User className="w-3 h-3" />
+      <span className={`inline-flex items-center ${sizeClass.space} ${sizeClass.text} text-stone-500`}>
+        <User className={sizeClass.icon} />
         <span>New Seller</span>
       </span>
     )
@@ -160,11 +169,16 @@ export function SellerBadge({ reputation }: SellerBadgeProps) {
   const style = TRUST_LEVEL_STYLES[reputation.trustLevel]
 
   return (
-    <span className={`inline-flex items-center space-x-1 text-[10px] ${style.text}`}>
+    <span className={`inline-flex items-center ${sizeClass.space} ${sizeClass.text} ${style.text}`}>
       <span>{style.icon}</span>
       {reputation.totalReviews > 0 && (
         <span className="font-medium">
           {reputation.averageRating.toFixed(1)} ({reputation.totalReviews})
+        </span>
+      )}
+      {showStats && (
+        <span className="text-stone-500">
+          · {reputation.completedTrades} trades
         </span>
       )}
     </span>

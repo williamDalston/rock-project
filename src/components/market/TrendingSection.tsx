@@ -2,6 +2,7 @@ import { Flame } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { HeartGeode } from '@/components/ui/HeartGeode'
 import { VerificationBadge } from '@/components/ui/VerificationBadge'
+import { OptimizedImage } from '@/components/ui/OptimizedImage'
 import { getTrendingReason } from '@/services/trending'
 import type { Rock, User } from '@/types'
 
@@ -38,7 +39,13 @@ export function TrendingSection({
       </div>
 
       {/* Horizontal Scrolling Cards */}
-      <div className="flex overflow-x-auto space-x-3 px-4 pb-2 scrollbar-hide">
+      <div
+        className="flex overflow-x-auto space-x-3 px-4 pb-2 scrollbar-hide scroll-smooth"
+        style={{
+          scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
         {trendingRocks.map((rock, index) => (
           <TrendingCard
             key={rock.id}
@@ -82,7 +89,8 @@ function TrendingCard({
       className="flex-shrink-0 w-44 bg-stone-900 rounded-xl border border-stone-800
                  overflow-hidden cursor-pointer hover:border-orange-800/50
                  transition-all duration-200 hover:shadow-lg hover:shadow-orange-900/20
-                 relative group"
+                 relative group active:scale-[0.98]"
+      style={{ scrollSnapAlign: 'start' }}
     >
       {/* Rank Badge */}
       <div className="absolute top-2 left-2 z-10 w-7 h-7 rounded-full
@@ -95,14 +103,16 @@ function TrendingCard({
 
       {/* Image */}
       <div className="aspect-square relative" onClick={onClick}>
-        <img
+        <OptimizedImage
           src={rock.imageUrl}
           alt={rock.name}
-          className="w-full h-full object-cover"
+          aspectRatio="square"
+          showVignette={false}
+          hoverZoom={false}
         />
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
         {/* Top Right Badges */}
         <div className="absolute top-2 right-2 flex flex-col items-end space-y-1">
@@ -123,7 +133,7 @@ function TrendingCard({
       {/* Content */}
       <div className="p-3">
         <h3
-          className="text-sm font-bold text-white truncate cursor-pointer hover:text-orange-300 transition-colors"
+          className="text-sm font-serif font-bold text-white truncate cursor-pointer hover:text-orange-300 transition-colors"
           onClick={onClick}
         >
           {rock.marketTitle || rock.name}

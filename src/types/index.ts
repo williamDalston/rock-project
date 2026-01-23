@@ -409,3 +409,43 @@ export interface HotItem {
 // ============================================
 
 export type User = FirebaseUser
+
+// ============================================
+// Demo Specimen Types (for static feed)
+// ============================================
+
+export type SpecimenType =
+  | 'crystal'
+  | 'mineral'
+  | 'rock'
+  | 'gem'
+  | 'metal'
+  | 'fossil'
+  | 'texture'
+  | 'tektite'
+  | 'feldspar'
+  | 'chalcedony'
+
+export type SpecimenCategory =
+  | 'classic'
+  | 'neon'
+  | 'ethereal'
+  | 'abyssal'
+  | 'mystic'
+  | 'common'
+  | 'metal'      // Heavy Metal / Industrial
+  | 'organic'    // Organic & Earthy
+  | 'candy'      // Candy & Pop / Vivid colors
+  | 'precious'   // Royal & Precious / High value gems
+
+export interface Specimen {
+  filename: string
+  title: string
+  type: SpecimenType
+  description: string
+  tags: string[]
+  source: string
+  license: string
+  url: string
+  category?: SpecimenCategory
+}

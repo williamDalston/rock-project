@@ -6,6 +6,8 @@ interface OptimizedImageProps {
   className?: string
   aspectRatio?: 'square' | '4/5' | '3/4' | '16/9'
   priority?: boolean
+  showVignette?: boolean
+  hoverZoom?: boolean
 }
 
 export function OptimizedImage({
@@ -13,7 +15,9 @@ export function OptimizedImage({
   alt,
   className = '',
   aspectRatio = 'square',
-  priority = false
+  priority = false,
+  showVignette = true,
+  hoverZoom = true
 }: OptimizedImageProps) {
   const [isLoaded, setIsLoaded] = useState(false)
   const [isInView, setIsInView] = useState(priority)
@@ -51,11 +55,13 @@ export function OptimizedImage({
   return (
     <div
       ref={imgRef}
-      className={`relative overflow-hidden bg-stone-800 ${aspectClasses[aspectRatio]} ${className}`}
+      className={`relative overflow-hidden bg-stone-800 group ${aspectClasses[aspectRatio]} ${className}`}
     >
-      {/* Skeleton loader */}
+      {/* Skeleton loader with shimmer */}
       {!isLoaded && (
-        <div className="absolute inset-0 skeleton" aria-hidden="true" />
+        <div className="absolute inset-0 skeleton" aria-hidden="true">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-stone-700/30 to-transparent skeleton-shimmer" />
+        </div>
       )}
 
       {/* Actual image */}
@@ -66,11 +72,27 @@ export function OptimizedImage({
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
           onLoad={() => setIsLoaded(true)}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
+          className={`
+            w-full h-full object-cover
+            transition-all duration-500 ease-out
+            ${isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}
+            ${hoverZoom ? 'group-hover:scale-[1.03]' : ''}
+          `}
         />
       )}
+
+      {/* Subtle vignette overlay for depth */}
+      {showVignette && isLoaded && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.15) 100%)'
+          }}
+        />
+      )}
+
+      {/* Subtle inner shadow for framing */}
+      <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-black/10" />
     </div>
   )
 }
