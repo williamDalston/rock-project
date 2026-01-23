@@ -123,6 +123,9 @@ export function useTradeProposals(user: User | null): UseTradeProposalsReturn {
       toUserId: targetRock.ownerId,
       status: 'proposed' as TradeStatus,
       message: message || null,
+      // Store sender's contact info (revealed when accepted)
+      fromUserEmail: user.email || null,
+      fromUserName: user.displayName || 'Anonymous Collector',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     }
@@ -138,10 +141,21 @@ export function useTradeProposals(user: User | null): UseTradeProposalsReturn {
     if (!user) throw new Error('User not authenticated')
 
     const proposalRef = doc(db, tradesPath, proposalId)
-    await updateDoc(proposalRef, {
-      status: action === 'accept' ? 'accepted' : 'rejected',
-      updatedAt: serverTimestamp()
-    })
+
+    if (action === 'accept') {
+      // Include receiver's contact info when accepting
+      await updateDoc(proposalRef, {
+        status: 'accepted',
+        toUserEmail: user.email || null,
+        toUserName: user.displayName || 'Anonymous Collector',
+        updatedAt: serverTimestamp()
+      })
+    } else {
+      await updateDoc(proposalRef, {
+        status: 'rejected',
+        updatedAt: serverTimestamp()
+      })
+    }
   }, [user, tradesPath])
 
   const counterProposal = useCallback(async (

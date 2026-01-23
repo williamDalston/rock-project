@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import {
   Share2, Eye, MapPin, Hexagon, Repeat, Heart, Plus, Check, X,
-  ArrowRightLeft, MessageSquare, PackageCheck, LogIn, LogOut, ChevronDown
+  ArrowRightLeft, MessageSquare, PackageCheck, LogIn, LogOut, ChevronDown,
+  Mail, User as UserIcon, Truck
 } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { OptimizedImage } from '@/components/ui/OptimizedImage'
@@ -699,22 +700,61 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
         </div>
       )}
 
-      {/* Complete Trade Button for Accepted Trades */}
-      {isAccepted && onComplete && (
-        <div className="mt-3 pt-3 border-t border-stone-800">
-          <button
-            onClick={() => onComplete(trade)}
-            disabled={loading}
-            className="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white
-                       rounded-lg text-sm font-bold transition-colors
-                       disabled:opacity-50 flex items-center justify-center space-x-2"
-          >
-            <PackageCheck className="w-4 h-4" />
-            <span>Complete Trade & Review</span>
-          </button>
-          <p className="text-[10px] text-stone-500 text-center mt-2">
-            Confirm you've received the specimen to complete the trade
-          </p>
+      {/* Contact Info & Complete Trade for Accepted Trades */}
+      {isAccepted && (
+        <div className="mt-3 pt-3 border-t border-stone-800 space-y-3">
+          {/* Contact Exchange Section */}
+          <div className="bg-emerald-900/20 border border-emerald-800/50 rounded-lg p-3">
+            <p className="text-xs font-medium text-emerald-400 mb-2 flex items-center gap-1.5">
+              <Mail className="w-3.5 h-3.5" />
+              Contact Your Trade Partner
+            </p>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <UserIcon className="w-3.5 h-3.5 text-stone-500" />
+                <span className="text-sm text-white">
+                  {isReceived
+                    ? (trade.fromUserName || 'Anonymous')
+                    : (trade.toUserName || 'Anonymous')
+                  }
+                </span>
+              </div>
+              {(isReceived ? trade.fromUserEmail : trade.toUserEmail) && (
+                <a
+                  href={`mailto:${isReceived ? trade.fromUserEmail : trade.toUserEmail}?subject=Lithos Trade: ${trade.targetRock.name}&body=Hi! I'm reaching out about our accepted trade on Lithos.%0A%0ARock: ${trade.targetRock.name}%0A%0ALet me know how you'd like to arrange the exchange!`}
+                  className="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  {isReceived ? trade.fromUserEmail : trade.toUserEmail}
+                </a>
+              )}
+            </div>
+            <div className="mt-3 pt-2 border-t border-emerald-800/30">
+              <p className="text-[10px] text-emerald-300/60 flex items-start gap-1.5">
+                <Truck className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                <span>Coordinate shipping or local meetup via email. Once you've both exchanged specimens, come back here to complete the trade.</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Complete Button */}
+          {onComplete && (
+            <>
+              <button
+                onClick={() => onComplete(trade)}
+                disabled={loading}
+                className="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white
+                           rounded-lg text-sm font-bold transition-colors
+                           disabled:opacity-50 flex items-center justify-center space-x-2"
+              >
+                <PackageCheck className="w-4 h-4" />
+                <span>I've Received It - Complete Trade</span>
+              </button>
+              <p className="text-[10px] text-stone-500 text-center">
+                Only click after you've physically received the specimen
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>

@@ -256,6 +256,12 @@ export interface TradeProposal {
   counterOfferedRock?: Rock
   counterMessage?: string
 
+  // Contact info (revealed when accepted)
+  fromUserEmail?: string
+  fromUserName?: string
+  toUserEmail?: string
+  toUserName?: string
+
   // Completion tracking
   completedAt?: Timestamp
 }
