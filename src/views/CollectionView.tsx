@@ -698,6 +698,7 @@ export function CollectionView({
       {viewProfileUserId && (
         <UserProfileModal
           userId={viewProfileUserId}
+          currentUser={user}
           onClose={() => setViewProfileUserId(null)}
           onRockClick={(rock) => setDetailRock(rock)}
         />

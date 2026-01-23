@@ -410,6 +410,19 @@ export function RockDetailModal({
               {rock.description}
             </p>
 
+            {/* Personal Story/Note from Owner */}
+            {rock.personalNote && (
+              <div className="bg-gradient-to-br from-amber-900/20 to-orange-900/10 border border-amber-800/30 rounded-xl p-4">
+                <p className="text-xs text-amber-500/80 uppercase tracking-wider font-medium mb-2 flex items-center gap-1.5">
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  Owner's Story
+                </p>
+                <p className="text-stone-300 text-sm italic leading-relaxed">
+                  "{rock.personalNote}"
+                </p>
+              </div>
+            )}
+
             {/* Properties Accordion */}
             {(rock.hardness || rock.cleavage || rock.fracture || rock.visuals) && (
               <div className="border border-stone-800 rounded-xl overflow-hidden">

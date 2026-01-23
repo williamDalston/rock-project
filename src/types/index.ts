@@ -75,6 +75,9 @@ export interface Rock {
   likes?: number
   likedBy?: string[]
 
+  // Personal notes/story from owner
+  personalNote?: string
+
   // Observation mode (for protected areas)
   isObservationOnly?: boolean
 
@@ -103,6 +106,7 @@ export interface RockFormData {
   fracture?: string
   hardness?: number
   isObservationOnly?: boolean
+  personalNote?: string
 }
 
 export type RockType = 'Igneous' | 'Sedimentary' | 'Metamorphic' | 'Mineral' | 'Fossil'

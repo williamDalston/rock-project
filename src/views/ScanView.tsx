@@ -268,6 +268,25 @@ export function ScanView({
             />
           </div>
 
+          {/* Personal Note/Story */}
+          <div>
+            <label className="text-[10px] font-medium text-stone-500 uppercase tracking-wider">
+              Your Story <span className="text-stone-600">(optional)</span>
+            </label>
+            <textarea
+              value={formData.personalNote || ''}
+              onChange={(e) => onFormChange({ personalNote: e.target.value })}
+              rows={2}
+              maxLength={300}
+              placeholder="Tell the story behind this rock... where you found it, what it means to you, or any memories attached"
+              className="w-full bg-stone-900 border border-stone-800 rounded-xl p-4 text-stone-300 mt-2 focus:border-amber-500 focus:outline-none text-sm placeholder-stone-600"
+              aria-label="Your personal story about this rock"
+            />
+            <p className="text-[10px] text-stone-600 mt-1">
+              {(formData.personalNote?.length || 0)}/300 • Shown to others when they view this rock
+            </p>
+          </div>
+
           {/* Self-Collected Toggle */}
           <Toggle
             enabled={formData.isSelfCollected || false}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { X, Hexagon, Calendar, Loader } from 'lucide-react'
+import { X, Hexagon, Calendar, Loader, Repeat } from 'lucide-react'
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '@/services/firebase'
 import { APP_CONFIG } from '@/constants'
@@ -7,15 +7,17 @@ import { LevelBadge } from '@/components/ui/LevelBadge'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { ReputationBadge } from '@/components/ui/ReputationBadge'
 import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
-import type { UserProfile, Rock } from '@/types'
+import type { UserProfile, Rock, User } from '@/types'
 
 interface UserProfileModalProps {
   userId: string
+  currentUser?: User | null
   onClose: () => void
   onRockClick?: (rock: Rock) => void
+  onTrade?: (rock: Rock) => void
 }
 
-export function UserProfileModal({ userId, onClose, onRockClick }: UserProfileModalProps) {
+export function UserProfileModal({ userId, currentUser, onClose, onRockClick, onTrade }: UserProfileModalProps) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [rocks, setRocks] = useState<Rock[]>([])
   const [loading, setLoading] = useState(true)
@@ -204,15 +206,17 @@ export function UserProfileModal({ userId, onClose, onRockClick }: UserProfileMo
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {rocks.map((rock) => (
-                    <button
+                    <div
                       key={rock.id}
-                      onClick={() => {
-                        onClose()
-                        onRockClick?.(rock)
-                      }}
                       className="bg-stone-800 rounded-xl overflow-hidden group hover:ring-2 hover:ring-emerald-500/50 transition-all"
                     >
-                      <div className="aspect-square relative">
+                      <button
+                        onClick={() => {
+                          onClose()
+                          onRockClick?.(rock)
+                        }}
+                        className="w-full aspect-square relative"
+                      >
                         <img
                           src={rock.imageUrl}
                           alt={rock.name}
@@ -222,16 +226,32 @@ export function UserProfileModal({ userId, onClose, onRockClick }: UserProfileMo
                           <RarityBadge score={rock.rarityScore} size="sm" />
                         </div>
                         <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/80 to-transparent" />
-                      </div>
+                      </button>
                       <div className="p-2">
                         <p className="text-xs font-medium text-white truncate">
                           {rock.marketTitle || rock.name}
                         </p>
-                        <p className="text-[10px] text-stone-500 truncate">
-                          {rock.type}
-                        </p>
+                        <div className="flex items-center justify-between mt-1">
+                          <p className="text-[10px] text-stone-500 truncate">
+                            {rock.type}
+                          </p>
+                          {/* Trade button - only if user logged in */}
+                          {currentUser && onTrade && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                onClose()
+                                onTrade(rock)
+                              }}
+                              className="flex items-center gap-1 px-2 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-medium rounded-md transition-colors"
+                            >
+                              <Repeat className="w-3 h-3" />
+                              Trade
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </button>
+                    </div>
                   ))}
                 </div>
               )}
