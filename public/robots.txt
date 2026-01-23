@@ -1,0 +1,6 @@
+# Lithos - Rock Identification & Trading
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://lithoshub.com/sitemap.xml
