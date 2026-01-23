@@ -4,6 +4,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
+  base: '/rock-project/',  // Must match your GitHub repo name
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
