@@ -10,12 +10,19 @@ import {
 } from '@/services/gamification'
 import type { UserProfile, XPAction, User } from '@/types'
 
+interface ProfileUpdate {
+  displayName?: string
+  avatarUrl?: string
+  bio?: string
+}
+
 interface UseUserProfileReturn {
   profile: UserProfile | null
   loading: boolean
   error: string | null
   addXP: (action: XPAction) => Promise<void>
   incrementStat: (stat: 'totalSpecimens' | 'totalTrades' | 'totalLikes') => Promise<void>
+  updateProfile: (updates: ProfileUpdate) => Promise<void>
 }
 
 export function useUserProfile(user: User | null): UseUserProfileReturn {
@@ -103,11 +110,32 @@ export function useUserProfile(user: User | null): UseUserProfileReturn {
     }
   }, [user])
 
+  const updateProfile = useCallback(async (updates: ProfileUpdate) => {
+    if (!user) return
+
+    const profilePath = `artifacts/${APP_CONFIG.APP_ID}/users/${user.uid}/profile`
+    const profileRef = doc(db, profilePath, 'data')
+
+    try {
+      // Convert to a plain object for Firestore
+      const updateData: { [key: string]: string | undefined } = {}
+      if (updates.displayName !== undefined) updateData.displayName = updates.displayName
+      if (updates.avatarUrl !== undefined) updateData.avatarUrl = updates.avatarUrl
+      if (updates.bio !== undefined) updateData.bio = updates.bio
+
+      await updateDoc(profileRef, updateData)
+    } catch (err) {
+      setError('Failed to update profile')
+      throw err
+    }
+  }, [user])
+
   return {
     profile,
     loading,
     error,
     addXP,
-    incrementStat
+    incrementStat,
+    updateProfile
   }
 }

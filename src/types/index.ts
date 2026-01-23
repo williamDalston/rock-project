@@ -163,6 +163,8 @@ export interface Badge {
 export interface UserProfile {
   userId: string
   displayName?: string
+  avatarUrl?: string
+  bio?: string
   level: number
   xp: number
   title: GeologistTitle

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   Share2, Eye, MapPin, Hexagon, Repeat, Heart, Plus, Check, X,
   ArrowRightLeft, MessageSquare, PackageCheck, LogIn, LogOut, ChevronDown,
-  Mail, User as UserIcon, Truck, Loader
+  Mail, User as UserIcon, Truck, Loader, Pencil
 } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { OptimizedImage } from '@/components/ui/OptimizedImage'
@@ -16,6 +16,7 @@ import { SEO, SEO_CONFIGS } from '@/components/ui/SEO'
 import { WishlistModal } from '@/components/modals/WishlistModal'
 import { ReviewModal } from '@/components/modals/ReviewModal'
 import { RockDetailModal } from '@/components/modals/RockDetailModal'
+import { ProfileEditModal } from '@/components/modals/ProfileEditModal'
 import { useWishlists } from '@/hooks/useWishlists'
 import { useTradeProposals } from '@/hooks/useTradeProposals'
 import { useReputation } from '@/hooks/useReputation'
@@ -64,6 +65,7 @@ export function CollectionView({
     onTabChange?.(tab)
   }
   const [showWishlistModal, setShowWishlistModal] = useState(false)
+  const [showProfileModal, setShowProfileModal] = useState(false)
   const [tradeToReview, setTradeToReview] = useState<TradeProposal | null>(null)
   const [detailRock, setDetailRock] = useState<Rock | null>(null)
 
@@ -84,7 +86,7 @@ export function CollectionView({
   } = useWishlists(user, marketRocks)
 
   const { reputation, submitReview } = useReputation(user)
-  const { addXP, incrementStat } = useUserProfile(user)
+  const { addXP, incrementStat, updateProfile } = useUserProfile(user)
 
   const formatDate = (timestamp: { seconds: number } | null) => {
     if (!timestamp?.seconds) return ''
@@ -140,9 +142,30 @@ export function CollectionView({
           <div className="px-4 py-4 border-b border-stone-800/50">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-full bg-stone-800 border-2 border-stone-700 flex items-center justify-center">
-                  <Hexagon className="w-6 h-6 text-emerald-500" />
-                </div>
+                {/* Avatar with edit button */}
+                <button
+                  onClick={() => setShowProfileModal(true)}
+                  className="relative group"
+                  title="Edit profile"
+                >
+                  <div className="w-14 h-14 rounded-full bg-stone-800 border-2 border-stone-700 overflow-hidden group-hover:border-emerald-500 transition-colors">
+                    {profile.avatarUrl ? (
+                      <img
+                        src={profile.avatarUrl}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Hexagon className="w-7 h-7 text-emerald-500" />
+                      </div>
+                    )}
+                  </div>
+                  {/* Edit overlay */}
+                  <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Pencil className="w-4 h-4 text-white" />
+                  </div>
+                </button>
                 <div>
                   <p className="text-white font-bold">
                     {profile.displayName || `Geologist ${profile.userId.slice(0, 6)}`}
@@ -196,6 +219,13 @@ export function CollectionView({
 
             {/* XP Progress */}
             <XPBar xp={profile.xp} level={profile.level} />
+
+            {/* Bio */}
+            {profile.bio && (
+              <p className="text-sm text-stone-400 mt-3 italic">
+                "{profile.bio}"
+              </p>
+            )}
 
             {/* Badges */}
             {profile.badges.length > 0 && (
@@ -625,6 +655,15 @@ export function CollectionView({
           allRocks={[...personalRocks, ...marketRocks]}
           onSelectSimilar={(rock) => setDetailRock(rock)}
           onDelete={onDeleteRock}
+        />
+      )}
+
+      {/* Profile Edit Modal */}
+      {showProfileModal && profile && (
+        <ProfileEditModal
+          profile={profile}
+          onClose={() => setShowProfileModal(false)}
+          onSave={updateProfile}
         />
       )}
     </>

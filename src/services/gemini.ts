@@ -150,29 +150,30 @@ export interface ImageValidationResult {
 }
 
 const VALIDATION_PROMPT = `
-You are an image quality validator for a rock collecting app.
+You are a VERY lenient image validator for a rock collecting app.
 Analyze this image and return a JSON object ONLY. No markdown, no code blocks.
 
 {
-  "isRock": true/false (Is this image of a rock, mineral, crystal, gemstone, or fossil?),
+  "isRock": true/false,
   "imageQuality": "good" | "acceptable" | "poor",
-  "qualityIssues": [] (Array of issues like "blurry", "too dark", "too small", "corrupt", "screenshot"),
-  "reason": "Brief explanation if image is rejected"
+  "reason": "Brief explanation only if isRock is false"
 }
 
-REJECTION CRITERIA (isRock = false):
-- Image is NOT a rock, mineral, crystal, gemstone, or fossil
-- Image is a person, animal, plant, food, building, vehicle, text, meme, etc.
-- Image is clearly a screenshot of another app
-- Image is completely corrupt/broken
+WHEN TO SET isRock = true (ACCEPT the image):
+- Any rock, stone, pebble, mineral, crystal, gemstone, fossil, or geological specimen
+- Decorative stones, landscaping rocks, beach pebbles, etc.
+- Rough, polished, cut, or tumbled specimens
+- Rock collections, rock displays, rocks in nature
+- Geology-related items like geodes, ore samples
+- Even if blurry, dark, or low quality - still accept if it looks like it MIGHT be a rock
 
-QUALITY ISSUES (still valid, just note the quality):
-- "blurry" - Image lacks sharpness
-- "too dark" - Hard to see details
-- "poor lighting" - Shadows obscuring specimen
-- "too small" - Specimen is tiny in frame
+ONLY SET isRock = false when it's OBVIOUSLY not geological:
+- Photos clearly of people, animals, food, vehicles, buildings
+- Screenshots of apps, text, memes
+- Completely black/white/blank images
 
-Be lenient - if there's ANY rock/mineral visible, it's valid. Only reject clear non-rocks.
+IMPORTANT: When in doubt, set isRock = true. Users should have a good experience.
+Image quality issues (blurry, dark) are fine - we'll still try to identify them.
 `
 
 export async function validateImage(base64Image: string): Promise<ImageValidationResult> {

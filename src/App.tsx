@@ -159,6 +159,7 @@ export default function App() {
       // Validate image quality and content first
       const validation = await validateImage(compressed)
 
+      // Only block obvious non-rocks - be permissive for good UX
       if (!validation.isRock) {
         toast.error('Not a rock', validation.reason || 'Please upload a photo of a rock, mineral, or fossil.')
         setView('market')
@@ -167,13 +168,8 @@ export default function App() {
         return
       }
 
-      if (validation.imageQuality === 'poor') {
-        toast.error('Poor image quality', 'Please take a clearer photo with better lighting.')
-        setView('market')
-        setFormData(DEFAULT_FORM_DATA)
-        setIsAnalyzing(false)
-        return
-      }
+      // Note: We don't block poor quality images - let the AI try to identify them
+      // This gives users a better experience
 
       // Pass coordinates if available for location-aware identification
       const analysis = await identifyRockWithAI(compressed, formData.coordinates)
