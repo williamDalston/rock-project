@@ -1,41 +1,87 @@
-import { useState } from 'react'
-import { User, Repeat } from 'lucide-react'
+import { useState, useCallback } from 'react'
+import { User, Repeat, Bell } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { HeartGeode } from '@/components/ui/HeartGeode'
 import { LevelBadge } from '@/components/ui/LevelBadge'
 import { SelfCollectedBadge } from '@/components/ui/SelfCollectedBadge'
+import { VerificationBadge } from '@/components/ui/VerificationBadge'
+import { SellerBadge } from '@/components/ui/ReputationBadge'
 import { AestheticFilters, filterRocksByAesthetic } from '@/components/filters/AestheticFilters'
+import { TrendingSection } from '@/components/market/TrendingSection'
 import { TradeModal } from '@/components/modals/TradeModal'
-import type { Rock, AestheticFilter, UserProfile, User as UserType } from '@/types'
+import type { Rock, AestheticFilter, UserProfile, User as UserType, UserReputation } from '@/types'
 import { useLikes } from '@/hooks/useLikes'
+import { useTrending } from '@/hooks/useTrending'
+import { useTradeProposals } from '@/hooks/useTradeProposals'
 
 interface MarketViewProps {
   marketRocks: Rock[]
   personalRocks: Rock[]
   user: UserType | null
   profile: UserProfile | null
+  sellerReputations?: Map<string, UserReputation>
 }
 
-export function MarketView({ marketRocks, personalRocks, user, profile }: MarketViewProps) {
+export function MarketView({
+  marketRocks,
+  personalRocks,
+  user,
+  profile,
+  sellerReputations = new Map()
+}: MarketViewProps) {
   const [showTradeModal, setShowTradeModal] = useState(false)
   const [tradeTarget, setTradeTarget] = useState<Rock | null>(null)
   const [activeFilter, setActiveFilter] = useState<AestheticFilter>('all')
+  const [tradeSending, setTradeSending] = useState(false)
 
   const { toggleLike, isLikedByUser, isLiking } = useLikes(user)
+  const { trendingRocks, isTrending, getTrendingScore } = useTrending(marketRocks)
+  const {
+    createProposal,
+    pendingReceivedCount,
+    loading: tradesLoading
+  } = useTradeProposals(user)
 
   const handleTradeProposal = (rock: Rock) => {
+    if (!user) return
     setTradeTarget(rock)
     setShowTradeModal(true)
   }
 
-  const handleTrade = () => {
-    alert('Trade proposal sent via the Stratum Network.')
+  const handleTrade = useCallback(async (offeredRock: Rock, message?: string) => {
+    if (!user || !tradeTarget) return
+
+    setTradeSending(true)
+    try {
+      await createProposal(
+        tradeTarget.id,
+        tradeTarget,
+        offeredRock.id,
+        offeredRock,
+        tradeTarget.ownerId,
+        message
+      )
+      setShowTradeModal(false)
+      setTradeTarget(null)
+    } catch (err) {
+      console.error('Failed to send trade proposal:', err)
+    } finally {
+      setTradeSending(false)
+    }
+  }, [user, tradeTarget, createProposal])
+
+  const handleCloseTradeModal = useCallback(() => {
     setShowTradeModal(false)
     setTradeTarget(null)
-  }
+  }, [])
 
   // Apply aesthetic filter
   const filteredRocks = filterRocksByAesthetic(marketRocks, activeFilter)
+
+  // Get seller reputation for trade target
+  const targetSellerReputation = tradeTarget?.ownerId
+    ? sellerReputations.get(tradeTarget.ownerId)
+    : undefined
 
   return (
     <>
@@ -49,14 +95,25 @@ export function MarketView({ marketRocks, personalRocks, user, profile }: Market
               Global Stratum Feed
             </p>
           </div>
-          {profile && (
-            <LevelBadge
-              level={profile.level}
-              title={profile.title}
-              size="sm"
-              showTitle={false}
-            />
-          )}
+          <div className="flex items-center space-x-3">
+            {/* Trade Notifications */}
+            {pendingReceivedCount > 0 && (
+              <button className="relative p-2 bg-stone-800 rounded-lg hover:bg-stone-700 transition-colors">
+                <Bell className="w-5 h-5 text-amber-400" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {pendingReceivedCount > 9 ? '9+' : pendingReceivedCount}
+                </span>
+              </button>
+            )}
+            {profile && (
+              <LevelBadge
+                level={profile.level}
+                title={profile.title}
+                size="sm"
+                showTitle={false}
+              />
+            )}
+          </div>
         </div>
 
         {/* Aesthetic Filters */}
@@ -67,6 +124,15 @@ export function MarketView({ marketRocks, personalRocks, user, profile }: Market
       </header>
 
       <div className="p-2 space-y-8">
+        {/* Hot Magma Trending Section */}
+        {trendingRocks.length > 0 && activeFilter === 'all' && (
+          <TrendingSection
+            trendingRocks={trendingRocks}
+            onRockSelect={handleTradeProposal}
+            getTrendingScore={getTrendingScore}
+          />
+        )}
+
         {filteredRocks.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-stone-500">
             <p className="text-lg font-serif">
@@ -99,6 +165,13 @@ export function MarketView({ marketRocks, personalRocks, user, profile }: Market
                       <p className="text-xs font-bold text-white shadow-sm">
                         Geologist {rock.ownerId?.slice(0, 4)}
                       </p>
+                      {/* Seller Reputation Badge */}
+                      {rock.ownerId && sellerReputations.get(rock.ownerId) && (
+                        <SellerBadge
+                          reputation={sellerReputations.get(rock.ownerId)!}
+                          size="sm"
+                        />
+                      )}
                     </div>
                     <p className="text-[10px] text-stone-300">
                       {rock.location || 'Unknown Location'}
@@ -107,7 +180,15 @@ export function MarketView({ marketRocks, personalRocks, user, profile }: Market
                 </div>
                 <div className="flex flex-col items-end space-y-1">
                   <RarityBadge score={rock.rarityScore} />
+                  {rock.verificationLevel && rock.verificationLevel !== 'unverified' && (
+                    <VerificationBadge level={rock.verificationLevel} size="sm" />
+                  )}
                   {rock.isSelfCollected && <SelfCollectedBadge size="sm" />}
+                  {isTrending(rock) && (
+                    <span className="bg-orange-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                      Trending
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -154,13 +235,19 @@ export function MarketView({ marketRocks, personalRocks, user, profile }: Market
                       onToggle={() => toggleLike(rock)}
                       disabled={!user || isLiking}
                     />
-                    <button
-                      onClick={() => handleTradeProposal(rock)}
-                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold uppercase tracking-wide flex items-center space-x-2"
-                    >
-                      <Repeat className="w-3 h-3" />
-                      <span>Trade</span>
-                    </button>
+                    {/* Only show trade button for other users' rocks */}
+                    {user && rock.ownerId !== user.uid && (
+                      <button
+                        onClick={() => handleTradeProposal(rock)}
+                        disabled={tradesLoading}
+                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-stone-700
+                                   text-white rounded-lg text-xs font-bold uppercase tracking-wide
+                                   flex items-center space-x-2 transition-colors"
+                      >
+                        <Repeat className="w-3 h-3" />
+                        <span>Trade</span>
+                      </button>
+                    )}
                   </div>
                 </div>
                 <p className="text-sm text-stone-400 line-clamp-2 leading-relaxed">
