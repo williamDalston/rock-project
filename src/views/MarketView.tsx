@@ -241,7 +241,8 @@ export function MarketView({
         />
       </header>
 
-      <div className="p-2 space-y-8">
+      {/* Centered feed container - Instagram/Twitter style */}
+      <div className="max-w-lg mx-auto px-2 py-4 space-y-4">
         {/* Hot Magma Trending Section */}
         {trendingRocks.length > 0 && activeFilter === 'all' && (
           <TrendingSection
@@ -273,129 +274,120 @@ export function MarketView({
           filteredRocks.map((rock) => (
             <RarityBorderGlow key={rock.id} score={rock.rarityScore}>
               <article
-                className="relative group rounded-3xl overflow-hidden shadow-2xl bg-stone-900 border border-stone-800"
+                className="relative group rounded-2xl overflow-hidden shadow-xl bg-stone-900 border border-stone-800"
               >
                 {/* Legendary sparkles for score 9+ */}
                 {rock.rarityScore >= 9 && <LegendarySparkles />}
 
-                {/* Header Overlay */}
-              <div className="absolute top-0 left-0 right-0 p-4 z-20 flex justify-between items-start bg-gradient-to-b from-black/80 to-transparent">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-stone-800 border border-stone-600 flex items-center justify-center">
-                    <User className="w-4 h-4 text-stone-400" />
-                  </div>
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <p className="text-xs font-bold text-white shadow-sm">
-                        Geologist {rock.ownerId?.slice(0, 4)}
+                {/* Compact Header - Above image like Instagram */}
+                <div className="p-3 flex justify-between items-center border-b border-stone-800/50">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 rounded-full bg-stone-800 border border-stone-600 flex items-center justify-center">
+                      <User className="w-4 h-4 text-stone-400" />
+                    </div>
+                    <div>
+                      <div className="flex items-center space-x-1.5">
+                        <p className="text-xs font-bold text-white">
+                          Geologist {rock.ownerId?.slice(0, 4)}
+                        </p>
+                        {rock.ownerId && sellerReputations.get(rock.ownerId) && (
+                          <SellerBadge
+                            reputation={sellerReputations.get(rock.ownerId)!}
+                          />
+                        )}
+                      </div>
+                      <p className="text-[10px] text-stone-500">
+                        {rock.location || 'Unknown Location'}
                       </p>
-                      {/* Seller Reputation Badge */}
-                      {rock.ownerId && sellerReputations.get(rock.ownerId) && (
-                        <SellerBadge
-                          reputation={sellerReputations.get(rock.ownerId)!}
-                        />
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-1.5">
+                    <RarityBadge score={rock.rarityScore} size="sm" />
+                    {rock.verificationLevel && rock.verificationLevel !== 'unverified' && (
+                      <VerificationBadge level={rock.verificationLevel} size="sm" />
+                    )}
+                    {rock.isSelfCollected && <SelfCollectedBadge size="sm" />}
+                    {isTrending(rock) && (
+                      <span className="bg-orange-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                        🔥
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Image - Square aspect ratio like Instagram */}
+                <button
+                  onClick={() => handleRockClick(rock)}
+                  className="w-full relative block cursor-pointer"
+                >
+                  <OptimizedImage
+                    src={rock.imageUrl}
+                    alt={rock.name}
+                    aspectRatio="square"
+                  />
+
+                  {/* Visual Stats Overlay - On hover */}
+                  {(rock.visuals?.luster || rock.visuals?.texture) && (
+                    <div className="absolute bottom-3 right-3 flex flex-col items-end space-y-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {rock.visuals.luster && (
+                        <span className="bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded text-[9px] font-mono text-emerald-300">
+                          {rock.visuals.luster}
+                        </span>
+                      )}
+                      {rock.visuals.texture && (
+                        <span className="bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded text-[9px] font-mono text-emerald-300">
+                          {rock.visuals.texture}
+                        </span>
                       )}
                     </div>
-                    <p className="text-[10px] text-stone-300">
-                      {rock.location || 'Unknown Location'}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end space-y-1">
-                  <RarityBadge score={rock.rarityScore} />
-                  {rock.verificationLevel && rock.verificationLevel !== 'unverified' && (
-                    <VerificationBadge level={rock.verificationLevel} size="sm" />
                   )}
-                  {rock.isSelfCollected && <SelfCollectedBadge size="sm" />}
-                  {isTrending(rock) && (
-                    <span className="bg-orange-500/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                      Trending
-                    </span>
-                  )}
-                </div>
-              </div>
+                </button>
 
-              {/* Image - Click to view details */}
-              <button
-                onClick={() => handleRockClick(rock)}
-                className="w-full relative block cursor-pointer"
-              >
-                <OptimizedImage
-                  src={rock.imageUrl}
-                  alt={rock.name}
-                  aspectRatio="4/5"
-                />
-
-                {/* Visual Stats Overlay */}
-                {(rock.visuals?.luster || rock.visuals?.texture) && (
-                  <div className="absolute bottom-4 right-4 flex flex-col items-end space-y-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    {rock.visuals.luster && (
-                      <span className="bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] font-mono text-emerald-300 border border-emerald-900/50">
-                        Luster: {rock.visuals.luster}
-                      </span>
-                    )}
-                    {rock.visuals.texture && (
-                      <span className="bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] font-mono text-emerald-300 border border-emerald-900/50">
-                        Texture: {rock.visuals.texture}
-                      </span>
-                    )}
-                    {rock.visuals.habit && (
-                      <span className="bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[10px] font-mono text-emerald-300 border border-emerald-900/50">
-                        Habit: {rock.visuals.habit}
-                      </span>
+                {/* Action Bar - Compact like Instagram */}
+                <div className="p-3 bg-stone-900">
+                  {/* Action buttons row */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-3">
+                      <HeartGeode
+                        isLiked={user ? isLikedByUser(rock, user.uid) : false}
+                        count={rock.likes || 0}
+                        onToggle={() => toggleLike(rock)}
+                        disabled={!user || isLiking}
+                      />
+                      {/* Only show trade button for other users' rocks */}
+                      {user && rock.ownerId !== user.uid && (
+                        <button
+                          onClick={() => handleTradeProposal(rock)}
+                          disabled={tradesLoading}
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-stone-700
+                                     text-white rounded-lg text-[10px] font-bold uppercase tracking-wide
+                                     flex items-center space-x-1 transition-colors"
+                        >
+                          <Repeat className="w-3 h-3" />
+                          <span>Trade</span>
+                        </button>
+                      )}
+                    </div>
+                    {/* Properties badges */}
+                    {(rock.hardness || rock.cleavage) && (
+                      <div className="flex items-center gap-1">
+                        {rock.hardness && (
+                          <span className="text-[9px] text-stone-500 bg-stone-800 px-1.5 py-0.5 rounded">
+                            H:{rock.hardness}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
-              </button>
 
-              {/* Action Bar */}
-              <div className="p-4 bg-stone-900 relative">
-                <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-lg font-serif font-bold text-white">
+                  {/* Title and description */}
+                  <h2 className="text-sm font-serif font-bold text-white mb-1">
                     {rock.marketTitle || rock.name}
                   </h2>
-                  <div className="flex items-center space-x-2">
-                    <HeartGeode
-                      isLiked={user ? isLikedByUser(rock, user.uid) : false}
-                      count={rock.likes || 0}
-                      onToggle={() => toggleLike(rock)}
-                      disabled={!user || isLiking}
-                    />
-                    {/* Only show trade button for other users' rocks */}
-                    {user && rock.ownerId !== user.uid && (
-                      <button
-                        onClick={() => handleTradeProposal(rock)}
-                        disabled={tradesLoading}
-                        className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-stone-700
-                                   text-white rounded-lg text-xs font-bold uppercase tracking-wide
-                                   flex items-center space-x-2 transition-colors"
-                      >
-                        <Repeat className="w-3 h-3" />
-                        <span>Trade</span>
-                      </button>
-                    )}
-                  </div>
+                  <p className="text-xs text-stone-400 line-clamp-2 leading-relaxed">
+                    {rock.description}
+                  </p>
                 </div>
-                <p className="text-sm text-stone-400 line-clamp-2 leading-relaxed">
-                  {rock.description}
-                </p>
-
-                {/* Extended Properties */}
-                {(rock.hardness || rock.cleavage) && (
-                  <div className="mt-3 pt-3 border-t border-stone-800 flex flex-wrap gap-2">
-                    {rock.hardness && (
-                      <span className="text-[10px] text-stone-500 bg-stone-800 px-2 py-0.5 rounded">
-                        Hardness: {rock.hardness}
-                      </span>
-                    )}
-                    {rock.cleavage && (
-                      <span className="text-[10px] text-stone-500 bg-stone-800 px-2 py-0.5 rounded">
-                        {rock.cleavage}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
               </article>
             </RarityBorderGlow>
           ))
