@@ -11,6 +11,7 @@ import { XPBar } from '@/components/ui/XPBar'
 import { SelfCollectedBadge } from '@/components/ui/SelfCollectedBadge'
 import { VerificationBadge } from '@/components/ui/VerificationBadge'
 import { ReputationBadge } from '@/components/ui/ReputationBadge'
+import { SEO, SEO_CONFIGS } from '@/components/ui/SEO'
 import { WishlistModal } from '@/components/modals/WishlistModal'
 import { ReviewModal } from '@/components/modals/ReviewModal'
 import { RockDetailModal } from '@/components/modals/RockDetailModal'
@@ -129,6 +130,7 @@ export function CollectionView({
 
   return (
     <>
+      <SEO title={SEO_CONFIGS.collection.title} description={SEO_CONFIGS.collection.description} />
       {/* Profile Header */}
       <header className="sticky top-0 z-40 bg-stone-950/80 backdrop-blur-md border-b border-stone-800">
         {profile && (

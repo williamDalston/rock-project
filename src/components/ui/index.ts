@@ -4,6 +4,7 @@ export { Toast, ToastContainer, useToast } from './Toast'
 export { Toggle } from './Toggle'
 export { ConfidenceMeter } from './ConfidenceMeter'
 export { OptimizedImage } from './OptimizedImage'
+export { SEO, SEO_CONFIGS } from './SEO'
 
 // Badges
 export { RarityBadge } from './RarityBadge'

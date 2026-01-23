@@ -4,6 +4,7 @@ import { Toggle } from '@/components/ui/Toggle'
 import { ConfidenceMeter } from '@/components/ui/ConfidenceMeter'
 import { ProtectedAreaWarning, ProtectedAreaBanner } from '@/components/ui/ProtectedAreaWarning'
 import { InlineFunFact } from '@/components/ui/FunFactCard'
+import { SEO, SEO_CONFIGS } from '@/components/ui/SEO'
 import { useGeolocation } from '@/hooks/useGeolocation'
 import type { RockFormData, AIAnalysisResult } from '@/types'
 
@@ -62,6 +63,7 @@ export function ScanView({
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-200 pb-20">
+      <SEO title={SEO_CONFIGS.scan.title} description={SEO_CONFIGS.scan.description} />
       {/* Image Preview */}
       <div className="h-[40vh] relative bg-black">
         {/* Back Button */}
