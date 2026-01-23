@@ -2,7 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom scrollbar for dark theme */
+/* ========================================
+   Mobile Stability & Performance
+   ======================================== */
+
+/* Fix mobile viewport height (accounts for browser chrome) */
+:root {
+  --vh: 1vh;
+}
+
+/* Prevent overscroll/bounce on iOS */
+html {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent pull-to-refresh on the body */
+body {
+  overscroll-behavior-y: contain;
+}
+
+/* Remove tap highlight on iOS */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent text selection on interactive elements */
+button, a, [role="button"] {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Fix input zoom on iOS (must be 16px minimum) */
+input, select, textarea {
+  font-size: 16px !important;
+}
+
+@media (min-width: 640px) {
+  input, select, textarea {
+    font-size: inherit !important;
+  }
+}
+
+/* Hardware acceleration for smooth scrolling */
+.gpu-accelerate {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* ========================================
+   Custom scrollbar for dark theme
+   ======================================== */
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
@@ -25,6 +76,36 @@
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+.px-safe {
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+}
+
+/* Full safe area padding */
+.p-safe {
+  padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+}
+
+/* Min-height accounting for mobile browser chrome */
+.min-h-screen-safe {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Smooth scrolling for scroll containers */
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+/* Momentum scrolling for iOS */
+.scroll-touch {
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Line clamping */
 .line-clamp-2 {
   display: -webkit-box;
@@ -37,6 +118,75 @@
 body {
   @apply bg-stone-950 text-stone-200 antialiased;
   font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ========================================
+   Touch & Active States
+   ======================================== */
+
+/* Better active state feedback for touch */
+button:active:not(:disabled),
+[role="button"]:active:not(:disabled) {
+  transform: scale(0.97);
+  transition: transform 0.1s ease-out;
+}
+
+/* Restore transform for specific animated buttons */
+.no-scale-active:active {
+  transform: none;
+}
+
+/* ========================================
+   Sticky Header Optimization
+   ======================================== */
+
+/* GPU-accelerated sticky headers */
+.sticky {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Prevent backdrop-blur jank */
+[class*="backdrop-blur"] {
+  will-change: backdrop-filter;
+  transform: translate3d(0, 0, 0);
+}
+
+/* ========================================
+   Image Loading States
+   ======================================== */
+
+/* Skeleton loading pulse */
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.skeleton {
+  @apply bg-stone-800;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* Image placeholder while loading */
+img {
+  background-color: #1c1917;
+}
+
+/* Smooth image load transition */
+img[src] {
+  opacity: 1;
+  transition: opacity 0.3s ease-out;
+}
+
+img:not([src]), img[src=""] {
+  opacity: 0;
 }
 
 /* Focus styles */

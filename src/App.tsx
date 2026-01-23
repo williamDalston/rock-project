@@ -145,7 +145,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-950 text-stone-200 pb-24 font-sans">
+    <div className="min-h-screen-safe bg-stone-950 text-stone-200 pb-24 font-sans">
       <ToastContainer toasts={toast.toasts} onDismiss={toast.dismissToast} />
 
       {view === 'market' && (

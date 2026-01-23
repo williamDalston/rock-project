@@ -1,18 +1,22 @@
 import { useState, useCallback } from 'react'
-import { User, Repeat, Bell } from 'lucide-react'
+import { User, Repeat, Bell, Flame } from 'lucide-react'
+import { RockFeed } from '@/components/feed'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { HeartGeode } from '@/components/ui/HeartGeode'
 import { LevelBadge } from '@/components/ui/LevelBadge'
 import { SelfCollectedBadge } from '@/components/ui/SelfCollectedBadge'
 import { VerificationBadge } from '@/components/ui/VerificationBadge'
 import { SellerBadge } from '@/components/ui/ReputationBadge'
+import { OptimizedImage } from '@/components/ui/OptimizedImage'
 import { AestheticFilters, filterRocksByAesthetic } from '@/components/filters/AestheticFilters'
 import { TrendingSection } from '@/components/market/TrendingSection'
 import { TradeModal } from '@/components/modals/TradeModal'
+import { RockDetailModal } from '@/components/modals/RockDetailModal'
 import type { Rock, AestheticFilter, UserProfile, User as UserType, UserReputation } from '@/types'
 import { useLikes } from '@/hooks/useLikes'
 import { useTrending } from '@/hooks/useTrending'
 import { useTradeProposals } from '@/hooks/useTradeProposals'
+import { useUserProfile } from '@/hooks/useUserProfile'
 
 interface MarketViewProps {
   marketRocks: Rock[]
@@ -20,6 +24,7 @@ interface MarketViewProps {
   user: UserType | null
   profile: UserProfile | null
   sellerReputations?: Map<string, UserReputation>
+  onNavigateToTrades?: () => void
 }
 
 export function MarketView({
@@ -27,12 +32,15 @@ export function MarketView({
   personalRocks,
   user,
   profile,
-  sellerReputations = new Map()
+  sellerReputations = new Map(),
+  onNavigateToTrades
 }: MarketViewProps) {
   const [showTradeModal, setShowTradeModal] = useState(false)
   const [tradeTarget, setTradeTarget] = useState<Rock | null>(null)
+  const [detailRock, setDetailRock] = useState<Rock | null>(null)
   const [activeFilter, setActiveFilter] = useState<AestheticFilter>('all')
   const [tradeSending, setTradeSending] = useState(false)
+  const [showRockFeed, setShowRockFeed] = useState(false)
 
   const { toggleLike, isLikedByUser, isLiking } = useLikes(user)
   const { trendingRocks, isTrending, getTrendingScore } = useTrending(marketRocks)
@@ -41,6 +49,7 @@ export function MarketView({
     pendingReceivedCount,
     loading: tradesLoading
   } = useTradeProposals(user)
+  const { addXP } = useUserProfile(user)
 
   const handleTradeProposal = (rock: Rock) => {
     if (!user) return
@@ -61,6 +70,8 @@ export function MarketView({
         tradeTarget.ownerId,
         message
       )
+      // Award XP for proposing a trade
+      await addXP('TRADE_PROPOSED')
       setShowTradeModal(false)
       setTradeTarget(null)
     } catch (err) {
@@ -68,12 +79,21 @@ export function MarketView({
     } finally {
       setTradeSending(false)
     }
-  }, [user, tradeTarget, createProposal])
+  }, [user, tradeTarget, createProposal, addXP])
 
   const handleCloseTradeModal = useCallback(() => {
     setShowTradeModal(false)
     setTradeTarget(null)
   }, [])
+
+  const handleRockClick = (rock: Rock) => {
+    setDetailRock(rock)
+  }
+
+  const handleVoteSubmitted = useCallback(async () => {
+    // Award XP for verification vote
+    await addXP('VERIFICATION_VOTE')
+  }, [addXP])
 
   // Apply aesthetic filter
   const filteredRocks = filterRocksByAesthetic(marketRocks, activeFilter)
@@ -96,9 +116,24 @@ export function MarketView({
             </p>
           </div>
           <div className="flex items-center space-x-3">
+            {/* Rock Porn Feed Button */}
+            <button
+              onClick={() => setShowRockFeed(true)}
+              className="relative p-2 bg-gradient-to-br from-orange-500 to-rose-600 rounded-lg
+                         hover:from-orange-400 hover:to-rose-500 transition-all shadow-lg
+                         shadow-orange-500/20 group"
+              title="Enter Rock Porn Mode"
+            >
+              <Flame className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+            </button>
+
             {/* Trade Notifications */}
             {pendingReceivedCount > 0 && (
-              <button className="relative p-2 bg-stone-800 rounded-lg hover:bg-stone-700 transition-colors">
+              <button
+                onClick={onNavigateToTrades}
+                className="relative p-2 bg-stone-800 rounded-lg hover:bg-stone-700 transition-colors"
+                title="View pending trade proposals"
+              >
                 <Bell className="w-5 h-5 text-amber-400" />
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                   {pendingReceivedCount > 9 ? '9+' : pendingReceivedCount}
@@ -192,12 +227,15 @@ export function MarketView({
                 </div>
               </div>
 
-              {/* Image */}
-              <div className="aspect-[4/5] w-full relative">
-                <img
+              {/* Image - Click to view details */}
+              <button
+                onClick={() => handleRockClick(rock)}
+                className="w-full relative block cursor-pointer"
+              >
+                <OptimizedImage
                   src={rock.imageUrl}
                   alt={rock.name}
-                  className="w-full h-full object-cover"
+                  aspectRatio="4/5"
                 />
 
                 {/* Visual Stats Overlay */}
@@ -220,7 +258,7 @@ export function MarketView({
                     )}
                   </div>
                 )}
-              </div>
+              </button>
 
               {/* Action Bar */}
               <div className="p-4 bg-stone-900 relative">
@@ -284,6 +322,21 @@ export function MarketView({
           sellerReputation={targetSellerReputation}
           loading={tradeSending}
         />
+      )}
+
+      {detailRock && (
+        <RockDetailModal
+          rock={detailRock}
+          user={user}
+          profile={profile}
+          onClose={() => setDetailRock(null)}
+          onVoteSubmitted={handleVoteSubmitted}
+        />
+      )}
+
+      {/* Full-screen Rock Porn Feed */}
+      {showRockFeed && (
+        <RockFeed onClose={() => setShowRockFeed(false)} />
       )}
     </>
   )
