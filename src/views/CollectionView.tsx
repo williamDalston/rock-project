@@ -17,6 +17,7 @@ import { WishlistModal } from '@/components/modals/WishlistModal'
 import { ReviewModal } from '@/components/modals/ReviewModal'
 import { RockDetailModal } from '@/components/modals/RockDetailModal'
 import { ProfileEditModal } from '@/components/modals/ProfileEditModal'
+import { UserProfileModal } from '@/components/modals/UserProfileModal'
 import { useWishlists } from '@/hooks/useWishlists'
 import { useTradeProposals } from '@/hooks/useTradeProposals'
 import { useReputation } from '@/hooks/useReputation'
@@ -66,6 +67,7 @@ export function CollectionView({
   }
   const [showWishlistModal, setShowWishlistModal] = useState(false)
   const [showProfileModal, setShowProfileModal] = useState(false)
+  const [viewProfileUserId, setViewProfileUserId] = useState<string | null>(null)
   const [tradeToReview, setTradeToReview] = useState<TradeProposal | null>(null)
   const [detailRock, setDetailRock] = useState<Rock | null>(null)
 
@@ -199,13 +201,24 @@ export function CollectionView({
                     </button>
 
                     {showUserMenu && (
-                      <div className="absolute right-0 top-full mt-1 w-40 bg-stone-800 border border-stone-700 rounded-lg shadow-xl z-50">
+                      <div className="absolute right-0 top-full mt-1 w-44 bg-stone-800 border border-stone-700 rounded-lg shadow-xl z-50 overflow-hidden">
+                        <button
+                          onClick={() => {
+                            setShowUserMenu(false)
+                            setShowProfileModal(true)
+                          }}
+                          className="w-full flex items-center space-x-2 px-3 py-2.5 text-sm text-stone-300 hover:bg-stone-700 transition-colors"
+                        >
+                          <Pencil className="w-4 h-4" />
+                          <span>Edit Profile</span>
+                        </button>
+                        <div className="border-t border-stone-700" />
                         <button
                           onClick={() => {
                             setShowUserMenu(false)
                             onSignOut?.()
                           }}
-                          className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-stone-300 hover:bg-stone-700 rounded-lg transition-colors"
+                          className="w-full flex items-center space-x-2 px-3 py-2.5 text-sm text-stone-300 hover:bg-stone-700 transition-colors"
                         >
                           <LogOut className="w-4 h-4" />
                           <span>Sign Out</span>
@@ -220,12 +233,22 @@ export function CollectionView({
             {/* XP Progress */}
             <XPBar xp={profile.xp} level={profile.level} />
 
-            {/* Bio */}
-            {profile.bio && (
-              <p className="text-sm text-stone-400 mt-3 italic">
-                "{profile.bio}"
-              </p>
-            )}
+            {/* Bio - clickable to edit */}
+            <button
+              onClick={() => setShowProfileModal(true)}
+              className="w-full text-left mt-3 group"
+            >
+              {profile.bio ? (
+                <p className="text-sm text-stone-400 italic group-hover:text-stone-300 transition-colors">
+                  "{profile.bio}"
+                </p>
+              ) : (
+                <p className="text-sm text-stone-600 group-hover:text-stone-500 transition-colors flex items-center gap-1">
+                  <Pencil className="w-3 h-3" />
+                  Add a bio to tell others about yourself...
+                </p>
+              )}
+            </button>
 
             {/* Badges */}
             {profile.badges.length > 0 && (
@@ -655,6 +678,10 @@ export function CollectionView({
           allRocks={[...personalRocks, ...marketRocks]}
           onSelectSimilar={(rock) => setDetailRock(rock)}
           onDelete={onDeleteRock}
+          onViewOwnerProfile={(ownerId) => {
+            setDetailRock(null)
+            setViewProfileUserId(ownerId)
+          }}
         />
       )}
 
@@ -664,6 +691,15 @@ export function CollectionView({
           profile={profile}
           onClose={() => setShowProfileModal(false)}
           onSave={updateProfile}
+        />
+      )}
+
+      {/* User Profile Modal - view other users */}
+      {viewProfileUserId && (
+        <UserProfileModal
+          userId={viewProfileUserId}
+          onClose={() => setViewProfileUserId(null)}
+          onRockClick={(rock) => setDetailRock(rock)}
         />
       )}
     </>

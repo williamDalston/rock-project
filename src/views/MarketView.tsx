@@ -16,6 +16,7 @@ import { AestheticFilters, filterRocksByAesthetic } from '@/components/filters/A
 import { TrendingSection } from '@/components/market/TrendingSection'
 import { TradeModal } from '@/components/modals/TradeModal'
 import { RockDetailModal } from '@/components/modals/RockDetailModal'
+import { UserProfileModal } from '@/components/modals/UserProfileModal'
 import type { Rock, AestheticFilter, UserProfile, User as UserType, UserReputation } from '@/types'
 import { useLikes } from '@/hooks/useLikes'
 import { useTrending } from '@/hooks/useTrending'
@@ -53,6 +54,7 @@ export function MarketView({
   const [searchQuery, setSearchQuery] = useState('')
   const [showSearch, setShowSearch] = useState(false)
   const [sellerReputations, setSellerReputations] = useState<Map<string, UserReputation>>(new Map())
+  const [viewProfileUserId, setViewProfileUserId] = useState<string | null>(null)
 
   const { toggleLike, isLikedByUser, isLiking } = useLikes(user)
   const { trendingRocks, isTrending } = useTrending(marketRocks)
@@ -523,6 +525,19 @@ export function MarketView({
           isLiked={user ? isLikedByUser(detailRock, user.uid) : false}
           isLiking={isLiking}
           onTrade={handleTradeProposal}
+          onViewOwnerProfile={(ownerId) => {
+            setDetailRock(null)
+            setViewProfileUserId(ownerId)
+          }}
+        />
+      )}
+
+      {/* User Profile Modal */}
+      {viewProfileUserId && (
+        <UserProfileModal
+          userId={viewProfileUserId}
+          onClose={() => setViewProfileUserId(null)}
+          onRockClick={(rock) => setDetailRock(rock)}
         />
       )}
 

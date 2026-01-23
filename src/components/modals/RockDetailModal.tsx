@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react'
 import {
   X, MapPin, Calendar, ThumbsUp, ThumbsDown, Shield, Users,
   Award, Sparkles, MessageSquare, ChevronDown, ChevronUp, Gem,
-  ChevronLeft, ChevronRight, Repeat, Bookmark, Trash2, Loader
+  ChevronLeft, ChevronRight, Repeat, Bookmark, Trash2, Loader, User as UserIcon
 } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { SelfCollectedBadge } from '@/components/ui/SelfCollectedBadge'
@@ -35,6 +35,7 @@ interface RockDetailModalProps {
   onWishlist?: (rock: Rock) => void
   isInWishlist?: boolean
   onDelete?: (rockId: string, rockName: string) => Promise<void>
+  onViewOwnerProfile?: (ownerId: string) => void
 }
 
 export function RockDetailModal({
@@ -57,7 +58,8 @@ export function RockDetailModal({
   onTrade,
   onWishlist,
   isInWishlist = false,
-  onDelete
+  onDelete,
+  onViewOwnerProfile
 }: RockDetailModalProps) {
   const [showVoteForm, setShowVoteForm] = useState(false)
   const [voteComment, setVoteComment] = useState('')
@@ -381,6 +383,27 @@ export function RockDetailModal({
                 <span className="text-sm">{formatDate(rock.createdAt)}</span>
               </div>
             </div>
+
+            {/* Owner Info - clickable to view profile */}
+            {onViewOwnerProfile && rock.ownerId !== user?.uid && (
+              <button
+                onClick={() => onViewOwnerProfile(rock.ownerId)}
+                className="w-full flex items-center gap-3 p-3 bg-stone-800/50 hover:bg-stone-800 rounded-xl transition-colors group"
+              >
+                <div className="w-10 h-10 rounded-full bg-stone-700 flex items-center justify-center">
+                  <UserIcon className="w-5 h-5 text-stone-400" />
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-sm text-stone-300 group-hover:text-white transition-colors">
+                    View Owner's Profile
+                  </p>
+                  <p className="text-xs text-stone-500">
+                    See their collection & reputation
+                  </p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-stone-500 group-hover:text-stone-400" />
+              </button>
+            )}
 
             {/* Description */}
             <p className="text-stone-300 text-sm leading-relaxed">
