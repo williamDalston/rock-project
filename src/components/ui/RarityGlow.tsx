@@ -80,11 +80,11 @@ export function RarityBorderGlow({ score, children, className = '' }: Omit<Rarit
   const isRare = score >= 7
 
   if (!isRare) {
-    return <div className={className}>{children}</div>
+    return <div className={`h-full ${className}`}>{children}</div>
   }
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative h-full ${className}`}>
       {/* Animated border */}
       <div
         className={`absolute -inset-[1px] rounded-3xl ${
@@ -99,7 +99,7 @@ export function RarityBorderGlow({ score, children, className = '' }: Omit<Rarit
       />
 
       {/* Content with background to create border effect */}
-      <div className="relative bg-stone-900 rounded-3xl">
+      <div className="relative h-full bg-stone-900 rounded-3xl">
         {children}
       </div>
 

@@ -435,7 +435,7 @@ export function MarketView({
             {filteredRocks.map((rock) => (
               <RarityBorderGlow key={rock.id} score={rock.rarityScore}>
                 <article
-                  className={`relative group rounded-2xl overflow-hidden shadow-xl bg-stone-900 border transition-all duration-500 ${
+                  className={`relative group rounded-2xl overflow-hidden shadow-xl bg-stone-900 border transition-all duration-500 flex flex-col h-full ${
                     isNewListing(rock.createdAt)
                       ? 'border-emerald-800/50 ring-1 ring-emerald-500/20'
                       : 'border-stone-800'
@@ -516,7 +516,7 @@ export function MarketView({
                 </button>
 
                 {/* Action Bar - Compact like Instagram */}
-                <div className="p-3 bg-stone-900">
+                <div className="p-3 bg-stone-900 flex-grow flex flex-col">
                   {/* Action buttons row */}
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-3">
@@ -561,12 +561,14 @@ export function MarketView({
                   </div>
 
                   {/* Title and description */}
-                  <h2 className="text-sm font-serif font-bold text-white mb-1">
-                    {rock.marketTitle || rock.name}
-                  </h2>
-                  <p className="text-xs text-stone-400 line-clamp-2 leading-relaxed">
-                    {rock.description}
-                  </p>
+                  <div className="mt-auto">
+                    <h2 className="text-sm font-serif font-bold text-white mb-1">
+                      {rock.marketTitle || rock.name}
+                    </h2>
+                    <p className="text-xs text-stone-400 line-clamp-2 leading-relaxed">
+                      {rock.description}
+                    </p>
+                  </div>
                 </div>
               </article>
               </RarityBorderGlow>
