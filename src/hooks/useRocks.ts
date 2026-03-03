@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore'
 import { db, getCollectionPaths } from '@/services/firebase'
-import { APP_CONFIG, isBlockedImageUrl } from '@/constants'
+import { APP_CONFIG, isBlockedImageUrl, getSpecimenPathForRock } from '@/constants'
 import type { Rock, RockFormData, User } from '@/types'
 
 interface UseRocksReturn {
@@ -33,8 +33,9 @@ export function useRocks(user: User | null): UseRocksReturn {
             const rocks = snapshot.docs.map((d) => {
               const rock = { id: d.id, ...d.data() } as Rock
               if (isBlockedImageUrl(rock.imageUrl)) {
-                rock.imageUrl = ''
-                updateDoc(doc(db, paths.userRocks!, d.id), { imageUrl: '' }).catch(() => {})
+                const correctPath = getSpecimenPathForRock(rock) || ''
+                rock.imageUrl = correctPath
+                updateDoc(doc(db, paths.userRocks!, d.id), { imageUrl: correctPath }).catch(() => {})
               }
               return rock
             })
@@ -55,8 +56,9 @@ export function useRocks(user: User | null): UseRocksReturn {
         const rocks = snapshot.docs.map((d) => {
           const rock = { id: d.id, ...d.data() } as Rock
           if (isBlockedImageUrl(rock.imageUrl)) {
-            rock.imageUrl = ''
-            updateDoc(doc(db, paths.marketRocks, d.id), { imageUrl: '' }).catch(() => {})
+            const correctPath = getSpecimenPathForRock(rock) || ''
+            rock.imageUrl = correctPath
+            updateDoc(doc(db, paths.marketRocks, d.id), { imageUrl: correctPath }).catch(() => {})
           }
           return rock
         })
@@ -82,8 +84,15 @@ export function useRocks(user: User | null): UseRocksReturn {
     const paths = getCollectionPaths(APP_CONFIG.APP_ID, user.uid)
     if (!paths.userRocks) throw new Error('Invalid user path')
 
+    // Store the correct image path from the start (specimen from name/marketTitle if imageUrl empty or blocked)
+    let imageUrl = data.imageUrl?.trim() || ''
+    if (!imageUrl || isBlockedImageUrl(imageUrl)) {
+      const specimenPath = getSpecimenPathForRock(data)
+      if (specimenPath) imageUrl = specimenPath
+    }
     const rockData = {
       ...data,
+      imageUrl,
       ownerId: user.uid,
       createdAt: serverTimestamp()
     }

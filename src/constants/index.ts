@@ -84,15 +84,53 @@ function isTrustedImageUrl(url: string): boolean {
   }
 }
 
+/** Map rock name keywords to specimen file name (so empty/blocked imageUrl still shows the right mineral). */
+const NAME_TO_SPECIMEN: [string, string][] = [
+  ['tiger\'s eye', 'tigers-eye'], ['tigers eye', 'tigers-eye'],
+  ['rose quartz', 'rose-quartz'], ['clear quartz', 'clear-quartz'], ['smoky quartz', 'smoky-quartz'],
+  ['lapis lazuli', 'lapis-lazuli'], ['grape agate', 'grape-agate'], ['moss agate', 'moss-agate'],
+  ['ocean jasper', 'ocean-jasper'], ['petrified wood', 'petrified-wood'], ['orange calcite', 'orange-calcite'],
+  ['pyrite', 'pyrite'], ['amethyst', 'amethyst'], ['malachite', 'malachite'], ['fluorite', 'fluorite'],
+  ['celestite', 'celestite'], ['citrine', 'citrine'], ['opal', 'opal'], ['emerald', 'emerald'],
+  ['sapphire', 'sapphire'], ['tourmaline', 'tourmaline'], ['vanadinite', 'vanadinite'], ['galena', 'galena'],
+  ['aquamarine', 'aquamarine'], ['kunzite', 'kunzite'], ['rhodochrosite', 'rhodochrosite'],
+  ['gold', 'gold'], ['charoite', 'charoite'], ['grape agate', 'grape-agate'], ['moonstone', 'moonstone'],
+  ['carnelian', 'carnelian'], ['morganite', 'morganite'], ['chalcanthite', 'chalcanthite'],
+  ['autunite', 'autunite'], ['moldavite', 'moldavite'], ['sodalite', 'sodalite'],
+]
+
+function specimenKeyFromName(name: string | null | undefined): string | null {
+  if (!name || typeof name !== 'string') return null
+  const lower = name.toLowerCase()
+  for (const [phrase, key] of NAME_TO_SPECIMEN) {
+    if (lower.includes(phrase)) return key
+  }
+  return null
+}
+
+/**
+ * Returns the relative specimen image path for a rock from its name/marketTitle, or null.
+ * Use when saving or sanitizing so Firestore stores the correct image path from the start.
+ */
+export function getSpecimenPathForRock(rock: { name?: string | null; marketTitle?: string | null }): string | null {
+  const key = specimenKeyFromName(rock?.name) ?? specimenKeyFromName(rock?.marketTitle)
+  return key ? SPECIMEN_PATH + key + '.jpg' : null
+}
+
 /**
  * Returns the full image URL for a rock. Use this everywhere a rock image is displayed.
- * Rejects blocked hosts (e.g. Unsplash) so old DB data never shows wrong images; trusts same-origin + Firebase Storage.
+ * When imageUrl is missing or blocked, uses specimen path from name/marketTitle so
+ * the correct image is shown (no generic fallback when we know the mineral).
  */
-export function getRockImageUrl(rock: { imageUrl?: string | null }): string {
+export function getRockImageUrl(rock: { imageUrl?: string | null; name?: string | null; marketTitle?: string | null }): string {
   const raw = rock?.imageUrl?.trim()
-  if (!raw) return getFallbackImageUrl()
+  const useSpecimenOrFallback = () => {
+    const rel = getSpecimenPathForRock(rock)
+    return rel ? getBase() + rel : getFallbackImageUrl()
+  }
+  if (!raw) return useSpecimenOrFallback()
   if (raw.startsWith('http://') || raw.startsWith('https://')) {
-    if (!isTrustedImageUrl(raw)) return getFallbackImageUrl()
+    if (!isTrustedImageUrl(raw)) return useSpecimenOrFallback()
     return raw
   }
   if (raw.startsWith('/')) return raw
