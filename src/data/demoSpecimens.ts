@@ -2,9 +2,9 @@ import type { Specimen, SpecimenCategory } from '@/types'
 
 /**
  * Demo specimens for the Rock Porn feed.
- * Use shared fallback URL so wiring matches app constants.
+ * Each specimen uses its own local image.
  */
-import { FALLBACK_IMAGE_URL } from '@/constants'
+import { specimenImage } from '@/constants'
 
 // Random usernames for demo
 const USERNAMES = [
@@ -37,7 +37,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/Ay-8VsuG_UA',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('pyrite'),
     likes: 5123,
     username: 'CubeCollector',
     category: 'metal'
@@ -51,7 +51,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/vIdRMp8IpO0',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('malachite'),
     likes: 3876,
     username: 'GreenStones',
     category: 'classic'
@@ -65,7 +65,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/eLeXwRx4ALs',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('gold'),
     likes: 6234,
     username: 'GoldRush',
     category: 'precious'
@@ -79,7 +79,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/BVjRFkvG4Kg',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('fluorite'),
     likes: 3456,
     username: 'FluoFan',
     category: 'classic'
@@ -93,7 +93,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/V0l3kUa6aBs',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('clear-quartz'),
     likes: 3789,
     username: 'HealerStones',
     category: 'classic'
@@ -107,7 +107,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/VPX6eeOI5s4',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('amethyst'),
     likes: 5432,
     username: 'GeodeGuru',
     category: 'classic'
@@ -125,7 +125,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('celestite'),
     likes: 3654,
     username: 'SkyStones',
     category: 'mystic'
@@ -139,7 +139,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('charoite'),
     likes: 3876,
     username: 'SiberianStones',
     category: 'mystic'
@@ -153,7 +153,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('moonstone'),
     likes: 3891,
     username: 'MoonChild',
     category: 'mystic'
@@ -167,7 +167,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('moldavite'),
     likes: 5234,
     username: 'CosmicCollector',
     category: 'mystic'
@@ -185,7 +185,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('rose-quartz'),
     likes: 4234,
     username: 'LoveStones',
     category: 'candy'
@@ -199,7 +199,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('rhodochrosite'),
     likes: 4567,
     username: 'PinkStones',
     category: 'candy'
@@ -213,7 +213,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('orange-calcite'),
     likes: 2876,
     username: 'CitrusStones',
     category: 'candy'
@@ -227,7 +227,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('grape-agate'),
     likes: 4234,
     username: 'GrapeGems',
     category: 'candy'
@@ -245,7 +245,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('autunite'),
     likes: 3421,
     username: 'ToxicTreasures',
     category: 'neon'
@@ -259,7 +259,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('chalcanthite'),
     likes: 2876,
     username: 'NeonCollector',
     category: 'neon'
@@ -273,7 +273,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('vanadinite'),
     likes: 3567,
     username: 'GeometryLover',
     category: 'neon'
@@ -291,7 +291,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('tourmaline'),
     likes: 3212,
     username: 'ShadowStones',
     category: 'abyssal'
@@ -305,7 +305,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('smoky-quartz'),
     likes: 2345,
     username: 'ShadowQuartz',
     category: 'abyssal'
@@ -319,7 +319,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('galena'),
     likes: 2345,
     username: 'HeavyMetal',
     category: 'metal'
@@ -337,7 +337,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('aquamarine'),
     likes: 3456,
     username: 'OceanicGems',
     category: 'ethereal'
@@ -351,7 +351,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('kunzite'),
     likes: 2654,
     username: 'LilacLover',
     category: 'ethereal'
@@ -365,7 +365,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('morganite'),
     likes: 3891,
     username: 'PastelStones',
     category: 'ethereal'
@@ -383,7 +383,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('emerald'),
     likes: 5678,
     username: 'RoyalGems',
     category: 'precious'
@@ -397,7 +397,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('sapphire'),
     likes: 4987,
     username: 'SapphireSeeker',
     category: 'precious'
@@ -411,7 +411,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('opal'),
     likes: 5432,
     username: 'OpalObsessed',
     category: 'precious'
@@ -429,7 +429,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('moss-agate'),
     likes: 3456,
     username: 'ForestStones',
     category: 'organic'
@@ -443,7 +443,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('ocean-jasper'),
     likes: 4123,
     username: 'OceanicGems',
     category: 'organic'
@@ -457,7 +457,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('petrified-wood'),
     likes: 2765,
     username: 'AncientWisdom',
     category: 'organic'
@@ -475,7 +475,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('tigers-eye'),
     likes: 2987,
     username: 'EverydayGems',
     category: 'common'
@@ -489,7 +489,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('carnelian'),
     likes: 2567,
     username: 'FireStones',
     category: 'common'
@@ -503,7 +503,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('citrine'),
     likes: 3456,
     username: 'WealthStones',
     category: 'common'
@@ -517,7 +517,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('lapis-lazuli'),
     likes: 3456,
     username: 'RoyalStones',
     category: 'common'
@@ -531,7 +531,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: FALLBACK_IMAGE_URL,
+    imageUrl: specimenImage('sodalite'),
     likes: 1987,
     username: 'BlueStones',
     category: 'common'
