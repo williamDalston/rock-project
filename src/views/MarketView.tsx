@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react'
-import { User, Repeat, Bell, Flame, LogIn, LogOut, ChevronDown, Search, X } from 'lucide-react'
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
+import { User, Repeat, Bell, Flame, LogIn, LogOut, ChevronDown, Search, X, ScanLine, Sparkles } from 'lucide-react'
 import { RockFeed } from '@/components/feed'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { HeartGeode } from '@/components/ui/HeartGeode'
@@ -33,6 +33,7 @@ interface MarketViewProps {
   onOpenAuth?: () => void
   isAnonymous?: boolean
   onSignOut?: () => void
+  onRequestScan?: () => void
 }
 
 export function MarketView({
@@ -43,7 +44,8 @@ export function MarketView({
   onNavigateToTrades,
   onOpenAuth,
   isAnonymous = true,
-  onSignOut
+  onSignOut,
+  onRequestScan
 }: MarketViewProps) {
   const [showTradeModal, setShowTradeModal] = useState(false)
   const [tradeTarget, setTradeTarget] = useState<Rock | null>(null)
@@ -52,9 +54,13 @@ export function MarketView({
   const [tradeSending, setTradeSending] = useState(false)
   const [showRockFeed, setShowRockFeed] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [showSearch, setShowSearch] = useState(false)
+  const searchTimerRef = useRef<NodeJS.Timeout | null>(null)
   const [sellerReputations, setSellerReputations] = useState<Map<string, UserReputation>>(new Map())
   const [viewProfileUserId, setViewProfileUserId] = useState<string | null>(null)
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement>(null)
 
   const { toggleLike, isLikedByUser, isLiking } = useLikes(user)
   const { trendingRocks, isTrending } = useTrending(marketRocks)
@@ -132,18 +138,41 @@ export function MarketView({
     await addXP('VERIFICATION_VOTE')
   }, [addXP])
 
-  // Apply aesthetic filter and search
-  const filteredRocks = filterRocksByAesthetic(marketRocks, activeFilter).filter(rock => {
-    if (!searchQuery.trim()) return true
-    const query = searchQuery.toLowerCase()
-    return (
-      rock.name?.toLowerCase().includes(query) ||
-      rock.marketTitle?.toLowerCase().includes(query) ||
-      rock.type?.toLowerCase().includes(query) ||
-      rock.location?.toLowerCase().includes(query) ||
-      rock.description?.toLowerCase().includes(query)
-    )
-  })
+  // Close user menu on outside click
+  useEffect(() => {
+    if (!showUserMenu) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showUserMenu])
+
+  // Debounce search input
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchQuery(value)
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current)
+    searchTimerRef.current = setTimeout(() => {
+      setDebouncedSearch(value)
+    }, 250)
+  }, [])
+
+  // Memoize filtered rocks to prevent recalculation on unrelated state changes
+  const filteredRocks = useMemo(() => {
+    return filterRocksByAesthetic(marketRocks, activeFilter).filter(rock => {
+      if (!debouncedSearch.trim()) return true
+      const query = debouncedSearch.toLowerCase()
+      return (
+        rock.name?.toLowerCase().includes(query) ||
+        rock.marketTitle?.toLowerCase().includes(query) ||
+        rock.type?.toLowerCase().includes(query) ||
+        rock.location?.toLowerCase().includes(query) ||
+        rock.description?.toLowerCase().includes(query)
+      )
+    })
+  }, [marketRocks, activeFilter, debouncedSearch])
 
   // Navigation helpers for rock detail modal
   const currentRockIndex = detailRock
@@ -172,27 +201,28 @@ export function MarketView({
 
   return (
     <>
-      <SEO title={SEO_CONFIGS.market.title} description={SEO_CONFIGS.market.description} />
-      <header className="sticky top-0 z-40 bg-stone-950/80 backdrop-blur-md px-4 py-4 border-b border-stone-800">
-        <div className="flex justify-between items-center mb-3">
+      <SEO {...SEO_CONFIGS.market} />
+      <header className="sticky top-0 z-40 bg-stone-950/80 backdrop-blur-md px-3 sm:px-4 py-3 sm:py-4 border-b border-stone-800">
+        <div className="max-w-7xl mx-auto flex justify-between items-center mb-3">
           <div>
-            <h1 className="font-serif text-2xl font-bold text-white tracking-tight">
+            <p className="font-serif text-2xl font-bold text-white tracking-tight" aria-hidden="true">
               Lithos<span className="text-emerald-500">.</span>
-            </h1>
-            <p className="text-[10px] text-stone-500 uppercase tracking-widest">
-              Global Stratum Feed
             </p>
+            <h1 className="text-[11px] text-stone-500 uppercase tracking-widest">
+              Rock & Mineral Marketplace
+            </h1>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {/* Search Toggle */}
             <button
               onClick={() => setShowSearch(!showSearch)}
               className={`p-2 rounded-lg transition-colors ${
                 showSearch ? 'bg-emerald-600 text-white' : 'bg-stone-800 text-stone-400 hover:bg-stone-700'
               }`}
-              title="Search rocks"
+              aria-label="Search rocks"
+              aria-expanded={showSearch}
             >
-              <Search className="w-5 h-5" />
+              <Search className="w-5 h-5" aria-hidden="true" />
             </button>
 
             {/* Gallery Feed Button */}
@@ -201,9 +231,9 @@ export function MarketView({
               className="relative p-2 bg-gradient-to-br from-orange-500 to-rose-600 rounded-lg
                          hover:from-orange-400 hover:to-rose-500 transition-all shadow-lg
                          shadow-orange-500/20 group"
-              title="Full-screen gallery"
+              aria-label="Open full-screen gallery"
             >
-              <Flame className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+              <Flame className="w-5 h-5 text-white group-hover:scale-110 transition-transform" aria-hidden="true" />
             </button>
 
             {/* Trade Notifications */}
@@ -211,10 +241,10 @@ export function MarketView({
               <button
                 onClick={onNavigateToTrades}
                 className="relative p-2 bg-stone-800 rounded-lg hover:bg-stone-700 transition-colors"
-                title="View pending trade proposals"
+                aria-label={`View ${pendingReceivedCount} pending trade proposals`}
               >
-                <Bell className="w-5 h-5 text-amber-400" />
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                <Bell className="w-5 h-5 text-amber-400" aria-hidden="true" />
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-amber-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center" aria-hidden="true">
                   {pendingReceivedCount > 9 ? '9+' : pendingReceivedCount}
                 </span>
               </button>
@@ -239,8 +269,13 @@ export function MarketView({
                 <span>Sign In</span>
               </button>
             ) : (
-              <div className="relative group">
-                <button className="flex items-center gap-2 p-1.5 bg-stone-800 hover:bg-stone-700 rounded-lg transition-colors">
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 p-1.5 bg-stone-800 hover:bg-stone-700 rounded-lg transition-colors"
+                  aria-label="Account menu"
+                  aria-expanded={showUserMenu}
+                >
                   {user?.photoURL ? (
                     <img
                       src={user.photoURL}
@@ -256,32 +291,37 @@ export function MarketView({
                 </button>
 
                 {/* Dropdown Menu */}
-                <div className="absolute right-0 top-full mt-1 w-48 py-1 bg-stone-800 rounded-lg shadow-xl
-                                border border-stone-700 opacity-0 invisible group-hover:opacity-100
-                                group-hover:visible transition-all z-50">
-                  <div className="px-3 py-2 border-b border-stone-700">
-                    <p className="text-sm font-medium text-white truncate">
-                      {user?.displayName || 'User'}
-                    </p>
-                    <p className="text-xs text-stone-400 truncate">
-                      {user?.email || 'No email'}
-                    </p>
+                {showUserMenu && (
+                  <div className="absolute right-0 top-full mt-1 w-48 py-1 bg-stone-800 rounded-lg shadow-xl
+                                  border border-stone-700 z-50">
+                    <div className="px-3 py-2 border-b border-stone-700">
+                      <p className="text-sm font-medium text-white truncate">
+                        {user?.displayName || 'User'}
+                      </p>
+                      <p className="text-xs text-stone-400 truncate">
+                        {user?.email || 'No email'}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false)
+                        onSignOut?.()
+                      }}
+                      className="w-full px-3 py-2.5 text-left text-sm text-stone-300 hover:bg-stone-700
+                                 flex items-center gap-2 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sign Out
+                    </button>
                   </div>
-                  <button
-                    onClick={onSignOut}
-                    className="w-full px-3 py-2 text-left text-sm text-stone-300 hover:bg-stone-700
-                               flex items-center gap-2 transition-colors"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Sign Out
-                  </button>
-                </div>
+                )}
               </div>
             )}
           </div>
         </div>
 
         {/* Aesthetic Filters */}
+        <div className="max-w-7xl mx-auto">
         <AestheticFilters
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
@@ -293,27 +333,61 @@ export function MarketView({
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-500" />
               <input
-                type="text"
+                type="search"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search by name, type, location..."
                 className="w-full bg-stone-800 border border-stone-700 rounded-lg pl-10 pr-10 py-2.5
                            text-white text-sm placeholder-stone-500
                            focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                aria-label="Search rocks by name, type, or location"
                 autoFocus
               />
               {searchQuery && (
                 <button
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => { setSearchQuery(''); setDebouncedSearch('') }}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-500 hover:text-white"
+                  aria-label="Clear search"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4" aria-hidden="true" />
                 </button>
               )}
             </div>
           </div>
         )}
+        </div>
       </header>
+
+      {/* AI Identify hero CTA - prominent and SEO-friendly */}
+      <section
+        className="max-w-7xl mx-auto px-3 sm:px-4 pt-4 pb-2"
+        aria-labelledby="ai-identify-heading"
+      >
+        <button
+          type="button"
+          onClick={() => onRequestScan?.()}
+          className="w-full text-left rounded-2xl border border-emerald-800/60 bg-gradient-to-br from-emerald-950/80 to-stone-900 p-4 sm:p-5 shadow-lg shadow-emerald-900/20 hover:shadow-emerald-800/30 hover:border-emerald-700/60 transition-all duration-300 group"
+        >
+          <div className="flex items-start gap-3 sm:gap-4">
+            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-105 transition-transform">
+              <ScanLine className="w-6 h-6 sm:w-7 sm:h-7" aria-hidden="true" />
+            </div>
+            <div className="flex-grow min-w-0">
+              <h2 id="ai-identify-heading" className="font-serif text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-400 flex-shrink-0" aria-hidden="true" />
+                Identify any rock with AI
+              </h2>
+              <p className="text-stone-400 text-sm sm:text-base mt-1">
+                Snap a photo → get instant ID, rarity, and geological details. Free rock & mineral identifier powered by AI.
+              </p>
+              <span className="inline-flex items-center gap-1.5 mt-3 text-emerald-400 text-sm font-medium">
+                Tap to scan a specimen
+                <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+              </span>
+            </div>
+          </div>
+        </button>
+      </section>
 
       {/* Responsive container - single column on mobile, multi-column on desktop */}
       <div className="max-w-7xl mx-auto px-2 md:px-4 lg:px-6 py-4">
@@ -357,7 +431,7 @@ export function MarketView({
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
             {filteredRocks.map((rock) => (
               <RarityBorderGlow key={rock.id} score={rock.rarityScore}>
                 <article
@@ -393,7 +467,7 @@ export function MarketView({
                           />
                         )}
                       </div>
-                      <p className="text-[10px] text-stone-500 flex items-center gap-1.5">
+                      <p className="text-[11px] text-stone-500 flex items-center gap-1.5">
                         <span className="truncate max-w-[100px]">{rock.location || 'Unknown'}</span>
                         <FreshnessBadge createdAt={rock.createdAt} />
                       </p>
@@ -406,7 +480,7 @@ export function MarketView({
                     )}
                     {rock.isSelfCollected && <SelfCollectedBadge size="sm" />}
                     {isTrending(rock) && (
-                      <span className="bg-orange-500/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                      <span className="bg-orange-500/90 text-white text-[11px] font-bold px-1.5 py-0.5 rounded-full leading-none">
                         🔥
                       </span>
                     )}
@@ -424,16 +498,16 @@ export function MarketView({
                     aspectRatio="square"
                   />
 
-                  {/* Visual Stats Overlay - On hover */}
+                  {/* Visual Stats Overlay - always visible on mobile, hover on desktop */}
                   {(rock.visuals?.luster || rock.visuals?.texture) && (
-                    <div className="absolute bottom-3 right-3 flex flex-col items-end space-y-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="absolute bottom-3 right-3 flex flex-col items-end space-y-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
                       {rock.visuals.luster && (
-                        <span className="bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded text-[9px] font-mono text-emerald-300">
+                        <span className="bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded text-[11px] font-mono text-emerald-300">
                           {rock.visuals.luster}
                         </span>
                       )}
                       {rock.visuals.texture && (
-                        <span className="bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded text-[9px] font-mono text-emerald-300">
+                        <span className="bg-black/70 backdrop-blur-sm px-2 py-0.5 rounded text-[11px] font-mono text-emerald-300">
                           {rock.visuals.texture}
                         </span>
                       )}
@@ -466,7 +540,7 @@ export function MarketView({
                           onClick={() => handleTradeProposal(rock)}
                           disabled={tradesLoading}
                           className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-stone-700
-                                     text-white rounded-lg text-[10px] font-bold uppercase tracking-wide
+                                     text-white rounded-lg text-[11px] font-bold uppercase tracking-wide
                                      flex items-center space-x-1 transition-colors"
                         >
                           <Repeat className="w-3 h-3" />
@@ -478,7 +552,7 @@ export function MarketView({
                     {(rock.hardness || rock.cleavage) && (
                       <div className="flex items-center gap-1">
                         {rock.hardness && (
-                          <span className="text-[9px] text-stone-500 bg-stone-800 px-1.5 py-0.5 rounded">
+                          <span className="text-[11px] text-stone-500 bg-stone-800 px-1.5 py-0.5 rounded">
                             H:{rock.hardness}
                           </span>
                         )}
@@ -549,7 +623,7 @@ export function MarketView({
         />
       )}
 
-      {/* Full-screen Rock Porn Feed */}
+      {/* Full-screen Rock Discovery Feed */}
       {showRockFeed && (
         <RockFeed onClose={() => setShowRockFeed(false)} />
       )}

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { FeedCard } from './FeedCard'
 import { demoSpecimens, CATEGORY_INFO } from '@/data/demoSpecimens'
 import { ChevronLeft } from 'lucide-react'
+import { SEO, SEO_CONFIGS } from '@/components/ui/SEO'
 import type { SpecimenCategory } from '@/types'
 
 interface RockFeedProps {
@@ -128,6 +129,7 @@ export function RockFeed({ onClose }: RockFeedProps) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black">
+      <SEO {...SEO_CONFIGS.feed} />
       {/* Back Button */}
       {onClose && (
         <button

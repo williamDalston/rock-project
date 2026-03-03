@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, Mail, Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react'
 
 interface AuthModalProps {
@@ -36,6 +36,14 @@ export function AuthModal({
   const [displayName, setDisplayName] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [resetSent, setResetSent] = useState(false)
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+      return () => { document.body.style.overflow = '' }
+    }
+  }, [isOpen])
 
   if (!isOpen) return null
 
@@ -95,7 +103,7 @@ export function AuthModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-stone-900 rounded-2xl w-full max-w-md overflow-hidden border border-stone-700/50 shadow-2xl">
+      <div className="bg-stone-900 rounded-2xl w-full max-w-md overflow-hidden border border-stone-700/50 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-stone-700/50">
           {view !== 'main' ? (
@@ -108,7 +116,7 @@ export function AuthModal({
           ) : (
             <div className="w-9" />
           )}
-          <h2 className="text-lg font-semibold text-white">
+          <h2 id="auth-modal-title" className="text-lg font-semibold text-white">
             {view === 'main' && (isAnonymous ? 'Create Account' : 'Sign In')}
             {view === 'email-signin' && 'Sign In with Email'}
             {view === 'email-signup' && 'Create Account'}
@@ -149,7 +157,7 @@ export function AuthModal({
                   <Loader2 className="w-5 h-5 animate-spin" />
                 ) : (
                   <>
-                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
                       <path
                         fill="#4285F4"
                         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -203,31 +211,35 @@ export function AuthModal({
           {view === 'email-signin' && (
             <form onSubmit={handleEmailSignIn} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-stone-300 mb-1">
+                <label htmlFor="signin-email" className="block text-sm font-medium text-stone-300 mb-1">
                   Email
                 </label>
                 <input
+                  id="signin-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-xl text-white placeholder-stone-500 focus:outline-none focus:border-amber-500"
                   placeholder="you@example.com"
                   required
+                  autoComplete="email"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-stone-300 mb-1">
+                <label htmlFor="signin-password" className="block text-sm font-medium text-stone-300 mb-1">
                   Password
                 </label>
                 <div className="relative">
                   <input
+                    id="signin-password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-xl text-white placeholder-stone-500 focus:outline-none focus:border-amber-500 pr-12"
                     placeholder="Enter your password"
                     required
+                    autoComplete="current-password"
                   />
                   <button
                     type="button"
@@ -261,38 +273,43 @@ export function AuthModal({
           {view === 'email-signup' && (
             <form onSubmit={handleEmailSignUp} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-stone-300 mb-1">
+                <label htmlFor="signup-name" className="block text-sm font-medium text-stone-300 mb-1">
                   Display Name (optional)
                 </label>
                 <input
+                  id="signup-name"
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-xl text-white placeholder-stone-500 focus:outline-none focus:border-amber-500"
                   placeholder="Your name"
+                  autoComplete="name"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-stone-300 mb-1">
+                <label htmlFor="signup-email" className="block text-sm font-medium text-stone-300 mb-1">
                   Email
                 </label>
                 <input
+                  id="signup-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-xl text-white placeholder-stone-500 focus:outline-none focus:border-amber-500"
                   placeholder="you@example.com"
                   required
+                  autoComplete="email"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-stone-300 mb-1">
+                <label htmlFor="signup-password" className="block text-sm font-medium text-stone-300 mb-1">
                   Password
                 </label>
                 <div className="relative">
                   <input
+                    id="signup-password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -300,6 +317,7 @@ export function AuthModal({
                     placeholder="At least 6 characters"
                     minLength={6}
                     required
+                    autoComplete="new-password"
                   />
                   <button
                     type="button"
@@ -341,16 +359,18 @@ export function AuthModal({
                   </p>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-300 mb-1">
+                    <label htmlFor="reset-email" className="block text-sm font-medium text-stone-300 mb-1">
                       Email
                     </label>
                     <input
+                      id="reset-email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full px-4 py-3 bg-stone-800 border border-stone-700 rounded-xl text-white placeholder-stone-500 focus:outline-none focus:border-amber-500"
                       placeholder="you@example.com"
                       required
+                      autoComplete="email"
                     />
                   </div>
 

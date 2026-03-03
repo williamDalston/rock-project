@@ -21,6 +21,7 @@ export default {
         'warning-flash': 'warning-flash 1s ease-in-out infinite',
         'fade-in': 'fade-in 0.2s ease-out',
         'slide-up': 'slide-up 0.3s ease-out',
+        'float': 'float 4s ease-in-out infinite',
       },
       keyframes: {
         'geode-crack': {
@@ -66,6 +67,10 @@ export default {
         'slide-up': {
           'from': { opacity: '0', transform: 'translateY(20px)' },
           'to': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'float': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
         },
       },
     },

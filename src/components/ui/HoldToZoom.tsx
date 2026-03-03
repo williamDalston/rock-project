@@ -72,9 +72,7 @@ export function HoldToZoom({
       <img
         src={src}
         alt={alt}
-        className={`w-full h-full object-cover transition-transform duration-200 ${
-          isZoomed ? 'scale-' + zoomScale : ''
-        }`}
+        className="w-full h-full object-cover transition-transform duration-200"
         style={isZoomed ? {
           transform: `scale(${zoomScale})`,
           transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`

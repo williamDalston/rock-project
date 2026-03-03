@@ -2,29 +2,12 @@ import type { Specimen, SpecimenCategory } from '@/types'
 
 /**
  * Demo specimens for the Rock Porn feed.
- * Using verified Unsplash photo IDs for reliable image loading.
+ * Each specimen uses a unique, verified Unsplash image that matches its rock type.
  */
 
-// Verified working Unsplash image URLs (all tested HTTP 200)
-const IMAGES = {
-  // Working mineral/crystal images
-  pyrite_cube: 'https://images.unsplash.com/photo-1518133835878-5a93cc3f89e5?w=1080&h=1350&fit=crop&q=80',
-  malachite: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1080&h=1350&fit=crop&q=80',
-  gold_nugget: 'https://images.unsplash.com/photo-1610375461246-83df859d849d?w=1080&h=1350&fit=crop&q=80',
-  fluorite_purple: 'https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=1080&h=1350&fit=crop&q=80',
-  quartz_clear: 'https://images.unsplash.com/photo-1612197527762-8cfb55b618d1?w=1080&h=1350&fit=crop&q=80',
-  rose_quartz: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=1080&h=1350&fit=crop&q=80',
-  dark_crystal: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1080&h=1350&fit=crop&q=80',
-  orange_mineral: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=1080&h=1350&fit=crop&q=80',
-  purple_crystal: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1080&h=1350&fit=crop&q=80',
-  geode_purple: 'https://images.unsplash.com/photo-1599689018034-48e2ead82951?w=1080&h=1350&fit=crop&q=80',
-  crystal_formation: 'https://images.unsplash.com/photo-1598618443855-232ee0f819f6?w=1080&h=1350&fit=crop&q=80',
-  mineral_texture: 'https://images.unsplash.com/photo-1519340241574-2cec6aef0c01?w=1080&h=1350&fit=crop&q=80',
-  rock_layers: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=1080&h=1350&fit=crop&q=80',
-  geode_blue: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=1080&h=1350&fit=crop&q=80',
-  crystal_cluster: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1080&h=1350&fit=crop&q=80',
-  agate_slice: 'https://images.unsplash.com/photo-1566041510639-8d95a2490bfb?w=1080&h=1350&fit=crop&q=80',
-}
+// Helper to build Unsplash CDN URLs with consistent sizing
+const unsplash = (photoId: string) =>
+  `https://images.unsplash.com/${photoId}?w=1080&h=1350&fit=crop&q=80&fm=webp`
 
 // Random usernames for demo
 const USERNAMES = [
@@ -46,7 +29,7 @@ export interface DemoSpecimen extends Specimen {
 
 export const demoSpecimens: DemoSpecimen[] = [
   // ============================================
-  // === CLASSIC MINERALS (Verified Images) ===
+  // === CLASSIC MINERALS ===
   // ============================================
   {
     filename: 'pyrite_cube_01.webp',
@@ -56,8 +39,8 @@ export const demoSpecimens: DemoSpecimen[] = [
     tags: ['pyrite', 'gold', 'metallic', 'cubic', 'spain'],
     source: 'Unsplash',
     license: 'CC0',
-    url: 'https://unsplash.com',
-    imageUrl: IMAGES.pyrite_cube,
+    url: 'https://unsplash.com/photos/Ay-8VsuG_UA',
+    imageUrl: unsplash('photo-1760651691848-e401abe6191b'),
     likes: 5123,
     username: 'CubeCollector',
     category: 'metal'
@@ -70,8 +53,8 @@ export const demoSpecimens: DemoSpecimen[] = [
     tags: ['malachite', 'green', 'pattern', 'banded', 'copper'],
     source: 'Unsplash',
     license: 'CC0',
-    url: 'https://unsplash.com',
-    imageUrl: IMAGES.malachite,
+    url: 'https://unsplash.com/photos/vIdRMp8IpO0',
+    imageUrl: unsplash('photo-1532901074349-dc9d1505589c'),
     likes: 3876,
     username: 'GreenStones',
     category: 'classic'
@@ -84,8 +67,8 @@ export const demoSpecimens: DemoSpecimen[] = [
     tags: ['gold', 'metal', 'nugget', 'precious', 'yellow'],
     source: 'Unsplash',
     license: 'CC0',
-    url: 'https://unsplash.com',
-    imageUrl: IMAGES.gold_nugget,
+    url: 'https://unsplash.com/photos/eLeXwRx4ALs',
+    imageUrl: unsplash('photo-1705073703601-eed67020c5ee'),
     likes: 6234,
     username: 'GoldRush',
     category: 'precious'
@@ -98,8 +81,8 @@ export const demoSpecimens: DemoSpecimen[] = [
     tags: ['fluorite', 'purple', 'white', 'raw', 'halide'],
     source: 'Unsplash',
     license: 'CC0',
-    url: 'https://unsplash.com',
-    imageUrl: IMAGES.fluorite_purple,
+    url: 'https://unsplash.com/photos/BVjRFkvG4Kg',
+    imageUrl: unsplash('photo-1686828282074-31df21740504'),
     likes: 3456,
     username: 'FluoFan',
     category: 'classic'
@@ -112,8 +95,8 @@ export const demoSpecimens: DemoSpecimen[] = [
     tags: ['quartz', 'clear', 'points', 'cluster', 'silica'],
     source: 'Unsplash',
     license: 'CC0',
-    url: 'https://unsplash.com',
-    imageUrl: IMAGES.quartz_clear,
+    url: 'https://unsplash.com/photos/V0l3kUa6aBs',
+    imageUrl: unsplash('photo-1760651913970-98e38bd28f77'),
     likes: 3789,
     username: 'HealerStones',
     category: 'classic'
@@ -126,8 +109,8 @@ export const demoSpecimens: DemoSpecimen[] = [
     tags: ['amethyst', 'geode', 'cave', 'violet', 'large'],
     source: 'Unsplash',
     license: 'CC0',
-    url: 'https://unsplash.com',
-    imageUrl: IMAGES.fluorite_purple,
+    url: 'https://unsplash.com/photos/VPX6eeOI5s4',
+    imageUrl: unsplash('photo-1572837067415-bc24c4bd8bd2'),
     likes: 5432,
     username: 'GeodeGuru',
     category: 'classic'
@@ -145,7 +128,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.geode_blue,
+    imageUrl: unsplash('photo-1613862331078-4f9751cd448a'),
     likes: 3654,
     username: 'SkyStones',
     category: 'mystic'
@@ -159,7 +142,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.purple_crystal,
+    imageUrl: unsplash('photo-1632805364446-6baf3e3bb21d'),
     likes: 3876,
     username: 'SiberianStones',
     category: 'mystic'
@@ -173,7 +156,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.crystal_formation,
+    imageUrl: unsplash('photo-1626471240086-c4313f0b71cc'),
     likes: 3891,
     username: 'MoonChild',
     category: 'mystic'
@@ -187,7 +170,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.malachite,
+    imageUrl: unsplash('photo-1635024234495-73c1683f6f2b'),
     likes: 5234,
     username: 'CosmicCollector',
     category: 'mystic'
@@ -205,7 +188,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.rose_quartz,
+    imageUrl: unsplash('photo-1642889819509-f026a1e936cb'),
     likes: 4234,
     username: 'LoveStones',
     category: 'candy'
@@ -219,7 +202,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.agate_slice,
+    imageUrl: unsplash('photo-1597816131226-42f810b7cda1'),
     likes: 4567,
     username: 'PinkStones',
     category: 'candy'
@@ -233,7 +216,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.orange_mineral,
+    imageUrl: unsplash('photo-1639710158251-ed5ff1551b00'),
     likes: 2876,
     username: 'CitrusStones',
     category: 'candy'
@@ -247,7 +230,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.geode_purple,
+    imageUrl: unsplash('photo-1723078377323-0c96f913fc91'),
     likes: 4234,
     username: 'GrapeGems',
     category: 'candy'
@@ -265,7 +248,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.orange_mineral,
+    imageUrl: unsplash('photo-1653933387093-7cf0cfce94a0'),
     likes: 3421,
     username: 'ToxicTreasures',
     category: 'neon'
@@ -279,7 +262,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.geode_blue,
+    imageUrl: unsplash('photo-1698629618740-3d4cf1038c16'),
     likes: 2876,
     username: 'NeonCollector',
     category: 'neon'
@@ -293,7 +276,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.orange_mineral,
+    imageUrl: unsplash('photo-1709252790050-dce1ad9401c7'),
     likes: 3567,
     username: 'GeometryLover',
     category: 'neon'
@@ -311,7 +294,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.dark_crystal,
+    imageUrl: unsplash('photo-1563117063-ad38230557bc'),
     likes: 3212,
     username: 'ShadowStones',
     category: 'abyssal'
@@ -325,7 +308,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.mineral_texture,
+    imageUrl: unsplash('photo-1627577449670-4bb9e862ab95'),
     likes: 2345,
     username: 'ShadowQuartz',
     category: 'abyssal'
@@ -339,7 +322,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.dark_crystal,
+    imageUrl: unsplash('photo-1760651913938-68663af9e049'),
     likes: 2345,
     username: 'HeavyMetal',
     category: 'metal'
@@ -357,7 +340,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.geode_blue,
+    imageUrl: unsplash('photo-1667680468347-a2911303a6b4'),
     likes: 3456,
     username: 'OceanicGems',
     category: 'ethereal'
@@ -371,7 +354,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.purple_crystal,
+    imageUrl: unsplash('photo-1728234553997-f71b87a44e13'),
     likes: 2654,
     username: 'LilacLover',
     category: 'ethereal'
@@ -385,7 +368,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.rose_quartz,
+    imageUrl: unsplash('photo-1603561427596-f73131e6b5bd'),
     likes: 3891,
     username: 'PastelStones',
     category: 'ethereal'
@@ -403,7 +386,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.malachite,
+    imageUrl: unsplash('photo-1767131543360-f80666ccb092'),
     likes: 5678,
     username: 'RoyalGems',
     category: 'precious'
@@ -417,7 +400,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.geode_blue,
+    imageUrl: unsplash('photo-1664158040981-e6c48be04e40'),
     likes: 4987,
     username: 'SapphireSeeker',
     category: 'precious'
@@ -431,7 +414,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.crystal_cluster,
+    imageUrl: unsplash('photo-1682963135833-ee78c62672b3'),
     likes: 5432,
     username: 'OpalObsessed',
     category: 'precious'
@@ -449,7 +432,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.malachite,
+    imageUrl: unsplash('photo-1550007056-6b482603900b'),
     likes: 3456,
     username: 'ForestStones',
     category: 'organic'
@@ -463,7 +446,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.agate_slice,
+    imageUrl: unsplash('photo-1512015222849-643b71ed34fa'),
     likes: 4123,
     username: 'OceanicGems',
     category: 'organic'
@@ -477,7 +460,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.rock_layers,
+    imageUrl: unsplash('photo-1672377263898-d0f94e1c2110'),
     likes: 2765,
     username: 'AncientWisdom',
     category: 'organic'
@@ -495,7 +478,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.mineral_texture,
+    imageUrl: unsplash('photo-1658915241439-26733b9fbb3a'),
     likes: 2987,
     username: 'EverydayGems',
     category: 'common'
@@ -509,7 +492,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.orange_mineral,
+    imageUrl: unsplash('photo-1660913339621-a0f01b9bb882'),
     likes: 2567,
     username: 'FireStones',
     category: 'common'
@@ -523,7 +506,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.gold_nugget,
+    imageUrl: unsplash('photo-1614092872241-c9a193f2b4aa'),
     likes: 3456,
     username: 'WealthStones',
     category: 'common'
@@ -537,7 +520,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.geode_blue,
+    imageUrl: unsplash('photo-1564145593722-41a01c018a10'),
     likes: 3456,
     username: 'RoyalStones',
     category: 'common'
@@ -551,7 +534,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: IMAGES.geode_blue,
+    imageUrl: unsplash('photo-1550008048-79f06a04b08b'),
     likes: 1987,
     username: 'BlueStones',
     category: 'common'

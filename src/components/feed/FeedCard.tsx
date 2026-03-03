@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react'
-import { Heart, MessageCircle, Share2, Bookmark, Sparkles, ZoomIn } from 'lucide-react'
+import { Heart, Share2, Bookmark, Sparkles, ZoomIn } from 'lucide-react'
 import type { Specimen } from '@/types'
 
 interface FeedCardProps {
@@ -42,9 +42,12 @@ export function FeedCard({ specimen, isActive }: FeedCardProps) {
   }, [isLiked])
 
   const handleLike = useCallback(() => {
-    setIsLiked((prev) => !prev)
-    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1))
-  }, [isLiked])
+    setIsLiked((prev) => {
+      // Use the functional update to get the current value and update count accordingly
+      setLikeCount((count) => prev ? count - 1 : count + 1)
+      return !prev
+    })
+  }, [])
 
   const handleSave = useCallback(() => {
     setIsSaved((prev) => !prev)
@@ -149,13 +152,13 @@ export function FeedCard({ specimen, isActive }: FeedCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Sparkles className="w-5 h-5 text-amber-400" />
-            <span className="text-[10px] font-bold text-white/80 uppercase tracking-wider">
-              Rock Porn
+            <span className="text-[11px] font-bold text-white/80 uppercase tracking-wider">
+              Discover
             </span>
           </div>
           <span
             className={`
-              px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide text-white
+              px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide text-white
               ${TYPE_COLORS[specimen.type] || 'bg-stone-500/80'}
             `}
           >
@@ -167,21 +170,19 @@ export function FeedCard({ specimen, isActive }: FeedCardProps) {
       {/* Right Action Bar */}
       <div className="absolute right-4 bottom-32 z-20 flex flex-col items-center space-y-5">
         {/* Profile */}
-        <button className="relative group">
+        <div className="relative">
           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 p-0.5">
             <div className="w-full h-full rounded-full bg-stone-900 flex items-center justify-center text-white font-bold text-sm">
               {specimen.username.charAt(0)}
             </div>
           </div>
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
-            <span className="text-white text-[10px] font-bold">+</span>
-          </div>
-        </button>
+        </div>
 
         {/* Like */}
         <button
           onClick={handleLike}
           className="flex flex-col items-center group"
+          aria-label={isLiked ? 'Unlike' : 'Like'}
         >
           <div
             className={`
@@ -201,18 +202,11 @@ export function FeedCard({ specimen, isActive }: FeedCardProps) {
           </span>
         </button>
 
-        {/* Comment */}
-        <button className="flex flex-col items-center group">
-          <div className="p-3 rounded-full bg-black/40 group-hover:bg-black/60 transition-colors">
-            <MessageCircle className="w-7 h-7 text-white" />
-          </div>
-          <span className="text-white text-xs font-bold mt-1">42</span>
-        </button>
-
         {/* Save */}
         <button
           onClick={handleSave}
           className="flex flex-col items-center group"
+          aria-label={isSaved ? 'Unsave' : 'Save'}
         >
           <div
             className={`
@@ -230,7 +224,7 @@ export function FeedCard({ specimen, isActive }: FeedCardProps) {
         </button>
 
         {/* Share */}
-        <button className="flex flex-col items-center group">
+        <button className="flex flex-col items-center group" aria-label="Share">
           <div className="p-3 rounded-full bg-black/40 group-hover:bg-black/60 transition-colors">
             <Share2 className="w-7 h-7 text-white" />
           </div>
@@ -273,7 +267,7 @@ export function FeedCard({ specimen, isActive }: FeedCardProps) {
         <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 animate-bounce opacity-60">
           <div className="flex flex-col items-center text-white/60">
             <div className="w-0.5 h-8 bg-white/40 rounded-full" />
-            <span className="text-[10px] mt-1 uppercase tracking-widest">Scroll</span>
+            <span className="text-[11px] mt-1 uppercase tracking-widest">Scroll</span>
           </div>
         </div>
       )}

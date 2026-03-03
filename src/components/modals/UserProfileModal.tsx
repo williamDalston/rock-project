@@ -79,7 +79,7 @@ export function UserProfileModal({ userId, currentUser, onClose, onRockClick, on
   }
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in">
+    <div role="dialog" aria-modal="true" aria-label="User profile" className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in">
       <div
         {...swipeProps}
         className="bg-stone-900 w-full max-w-lg sm:max-w-2xl lg:max-w-3xl sm:rounded-2xl border-t sm:border border-stone-800 shadow-2xl overflow-hidden animate-modal-enter max-h-[90vh] flex flex-col"

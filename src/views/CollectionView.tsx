@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import {
-  Share2, Eye, MapPin, Hexagon, Repeat, Heart, Plus, Check, X,
+  Share2, Eye, MapPin, Hexagon, Heart, Plus, Check, X,
   ArrowRightLeft, MessageSquare, PackageCheck, LogIn, LogOut, ChevronDown,
   Mail, User as UserIcon, Truck, Loader, Pencil
 } from 'lucide-react'
@@ -13,6 +13,7 @@ import { VerificationBadge } from '@/components/ui/VerificationBadge'
 import { ReputationBadge } from '@/components/ui/ReputationBadge'
 import { CollectionProgress } from '@/components/ui/CollectionProgress'
 import { SEO, SEO_CONFIGS } from '@/components/ui/SEO'
+import { EmptyState } from '@/components/ui/EmptyState'
 import { WishlistModal } from '@/components/modals/WishlistModal'
 import { ReviewModal } from '@/components/modals/ReviewModal'
 import { RockDetailModal } from '@/components/modals/RockDetailModal'
@@ -24,6 +25,7 @@ import { useReputation } from '@/hooks/useReputation'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import { getTradeStatusLabel, getTradeStatusColor, formatTradeDate } from '@/services/trading'
 import { formatWishlistCriteria } from '@/services/wishlist'
+import { getDemoTradeProposals, getDemoWishlists, isDemoId } from '@/data/demoData'
 import type { Rock, UserProfile, User, TradeProposal } from '@/types'
 
 type TabType = 'collection' | 'trades' | 'wishlists'
@@ -54,7 +56,20 @@ export function CollectionView({
   onDeleteRock
 }: CollectionViewProps) {
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement>(null)
   const [activeTab, setActiveTab] = useState<TabType>(initialTab)
+
+  // Close user menu on outside click
+  useEffect(() => {
+    if (!showUserMenu) return
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setShowUserMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showUserMenu])
 
   // Sync with external tab control
   useEffect(() => {
@@ -90,37 +105,59 @@ export function CollectionView({
   const { reputation, submitReview } = useReputation(user)
   const { addXP, incrementStat, updateProfile } = useUserProfile(user)
 
+  // Seed demo trades & wishlists when real data is empty
+  const demoTrades = useMemo(
+    () => getDemoTradeProposals(user?.uid || 'demo_self'),
+    [user?.uid]
+  )
+  const demoWishlistItems = useMemo(
+    () => getDemoWishlists(user?.uid || 'demo_self'),
+    [user?.uid]
+  )
+  const effectiveReceived = receivedProposals.length > 0 ? receivedProposals : demoTrades.received
+  const effectiveSent = sentProposals.length > 0 ? sentProposals : demoTrades.sent
+  const effectiveWishlists = wishlists.length > 0 ? wishlists : demoWishlistItems
+
   const formatDate = (timestamp: { seconds: number } | null) => {
     if (!timestamp?.seconds) return ''
     return new Date(timestamp.seconds * 1000).toLocaleDateString()
   }
 
-  // Calculate stats
-  const selfCollectedCount = personalRocks.filter(r => r.isSelfCollected).length
-  const rockTypes = new Set(personalRocks.map(r => r.type))
-
-  // Trade stats
-  const pendingReceivedCount = receivedProposals.filter(t => t.status === 'proposed' || t.status === 'countered').length
+  // Memoize stats to prevent recalculation on unrelated state changes
+  const selfCollectedCount = useMemo(() => personalRocks.filter(r => r.isSelfCollected).length, [personalRocks])
+  const rockTypes = useMemo(() => new Set(personalRocks.map(r => r.type)), [personalRocks])
+  const pendingReceivedCount = useMemo(() => effectiveReceived.filter(t => t.status === 'proposed' || t.status === 'countered').length, [effectiveReceived])
   const totalMatches = matches.length
 
   const handleRespondToTrade = async (tradeId: string, accept: boolean) => {
-    await respondToProposal(tradeId, accept ? 'accept' : 'reject')
+    if (isDemoId(tradeId)) return // Demo trades are display-only
+    try {
+      await respondToProposal(tradeId, accept ? 'accept' : 'reject')
+    } catch (err) {
+      console.error('Failed to respond to trade:', err)
+    }
   }
 
   const handleCompleteTrade = async (trade: TradeProposal) => {
-    await completeProposal(trade.id)
-    // Award XP for completed trade
-    await addXP('TRADE_COMPLETED')
-    await incrementStat('totalTrades')
-    // Show review modal after completing
-    setTradeToReview(trade)
+    if (isDemoId(trade.id)) return // Demo trades are display-only
+    try {
+      await completeProposal(trade.id)
+      await addXP('TRADE_COMPLETED')
+      await incrementStat('totalTrades')
+      setTradeToReview(trade)
+    } catch (err) {
+      console.error('Failed to complete trade:', err)
+    }
   }
 
   const handleSubmitReview = async (rating: 1 | 2 | 3 | 4 | 5, comment?: string) => {
     if (!tradeToReview) return
-
-    await submitReview(tradeToReview, rating, comment)
-    setTradeToReview(null)
+    try {
+      await submitReview(tradeToReview, rating, comment)
+      setTradeToReview(null)
+    } catch (err) {
+      console.error('Failed to submit review:', err)
+    }
   }
 
   const handleAddWishlistItem = async (item: Parameters<typeof addWishlistItem>[0]) => {
@@ -137,18 +174,19 @@ export function CollectionView({
 
   return (
     <>
-      <SEO title={SEO_CONFIGS.collection.title} description={SEO_CONFIGS.collection.description} />
-      {/* Profile Header */}
-      <header className="sticky top-0 z-40 bg-stone-950/80 backdrop-blur-md border-b border-stone-800">
+      <SEO {...SEO_CONFIGS.collection} />
+      <h1 className="sr-only">My Rock & Mineral Collection</h1>
+      {/* Profile Header - scrolls with content */}
+      <div className="bg-stone-950 border-b border-stone-800">
         {profile && (
-          <div className="px-4 py-4 border-b border-stone-800/50">
+          <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4 border-b border-stone-800/50">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-3">
                 {/* Avatar with edit button */}
                 <button
                   onClick={() => setShowProfileModal(true)}
                   className="relative group"
-                  title="Edit profile"
+                  aria-label="Edit profile"
                 >
                   <div className="w-14 h-14 rounded-full bg-stone-800 border-2 border-stone-700 overflow-hidden group-hover:border-emerald-500 transition-colors">
                     {profile.avatarUrl ? (
@@ -181,7 +219,7 @@ export function CollectionView({
               </div>
 
               {/* Auth Button */}
-              <div className="relative">
+              <div className="relative" ref={userMenuRef}>
                 {isAnonymous ? (
                   <button
                     onClick={onOpenAuth}
@@ -274,19 +312,19 @@ export function CollectionView({
             <div className="flex justify-between mt-4 pt-3 border-t border-stone-800">
               <div className="text-center">
                 <p className="text-lg font-bold text-white">{personalRocks.length}</p>
-                <p className="text-[10px] text-stone-500 uppercase tracking-wider">Specimens</p>
+                <p className="text-[11px] text-stone-500 uppercase tracking-wider">Specimens</p>
               </div>
               <div className="text-center">
                 <p className="text-lg font-bold text-emerald-400">{selfCollectedCount}</p>
-                <p className="text-[10px] text-stone-500 uppercase tracking-wider">Self-Found</p>
+                <p className="text-[11px] text-stone-500 uppercase tracking-wider">Self-Found</p>
               </div>
               <div className="text-center">
                 <p className="text-lg font-bold text-white">{rockTypes.size}</p>
-                <p className="text-[10px] text-stone-500 uppercase tracking-wider">Types</p>
+                <p className="text-[11px] text-stone-500 uppercase tracking-wider">Types</p>
               </div>
               <div className="text-center">
                 <p className="text-lg font-bold text-white">{profile.totalTrades}</p>
-                <p className="text-[10px] text-stone-500 uppercase tracking-wider">Trades</p>
+                <p className="text-[11px] text-stone-500 uppercase tracking-wider">Trades</p>
               </div>
             </div>
 
@@ -306,9 +344,16 @@ export function CollectionView({
           </div>
         )}
 
-        {/* Tabs Navigation */}
-        <div className="px-4 py-3 flex space-x-2 overflow-x-auto scrollbar-hide">
+      </div>
+
+      {/* Tabs Navigation - sticky */}
+      <div className="sticky top-0 z-40 bg-stone-950/80 backdrop-blur-md border-b border-stone-800">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex space-x-2 overflow-x-auto scrollbar-hide" role="tablist" aria-label="Collection sections">
           <button
+            role="tab"
+            id="tab-collection"
+            aria-selected={activeTab === 'collection'}
+            aria-controls="panel-collection"
             onClick={() => handleTabChange('collection')}
             className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors flex items-center space-x-2
               ${activeTab === 'collection'
@@ -316,14 +361,18 @@ export function CollectionView({
                 : 'bg-stone-800 text-stone-400 hover:bg-stone-700'
               }`}
           >
-            <Hexagon className="w-4 h-4" />
-            <span>Collection</span>
-            <span className="bg-black/30 px-1.5 py-0.5 rounded text-[10px]">
+            <Hexagon className="w-4 h-4" aria-hidden="true" />
+            <span>Vault</span>
+            <span className="bg-black/30 px-1.5 py-0.5 rounded text-[11px]">
               {personalRocks.length}
             </span>
           </button>
 
           <button
+            role="tab"
+            id="tab-trades"
+            aria-selected={activeTab === 'trades'}
+            aria-controls="panel-trades"
             onClick={() => handleTabChange('trades')}
             className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors flex items-center space-x-2
               ${activeTab === 'trades'
@@ -331,16 +380,20 @@ export function CollectionView({
                 : 'bg-stone-800 text-stone-400 hover:bg-stone-700'
               }`}
           >
-            <ArrowRightLeft className="w-4 h-4" />
+            <ArrowRightLeft className="w-4 h-4" aria-hidden="true" />
             <span>Trades</span>
             {pendingReceivedCount > 0 && (
-              <span className="bg-amber-500 text-white px-1.5 py-0.5 rounded-full text-[10px] font-bold">
+              <span className="bg-amber-500 text-white px-1.5 py-0.5 rounded-full text-[11px] font-bold">
                 {pendingReceivedCount}
               </span>
             )}
           </button>
 
           <button
+            role="tab"
+            id="tab-wishlists"
+            aria-selected={activeTab === 'wishlists'}
+            aria-controls="panel-wishlists"
             onClick={() => handleTabChange('wishlists')}
             className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-colors flex items-center space-x-2
               ${activeTab === 'wishlists'
@@ -348,27 +401,25 @@ export function CollectionView({
                 : 'bg-stone-800 text-stone-400 hover:bg-stone-700'
               }`}
           >
-            <Heart className="w-4 h-4" />
+            <Heart className="w-4 h-4" aria-hidden="true" />
             <span>Wishlists</span>
             {totalMatches > 0 && (
-              <span className="bg-rose-500 text-white px-1.5 py-0.5 rounded-full text-[10px] font-bold">
+              <span className="bg-rose-500 text-white px-1.5 py-0.5 rounded-full text-[11px] font-bold">
                 {totalMatches}
               </span>
             )}
           </button>
         </div>
-      </header>
+      </div>
 
       {/* Content Area */}
-      <div className="p-4">
+      <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-6 py-4">
         {/* Collection Tab */}
         {activeTab === 'collection' && (
-          <div className="grid grid-cols-2 gap-4">
+          <div role="tabpanel" id="panel-collection" aria-labelledby="tab-collection" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {personalRocks.length === 0 ? (
-              <div className="col-span-2 flex flex-col items-center justify-center py-20 text-stone-500">
-                <Hexagon className="w-12 h-12 mb-4 text-stone-700" />
-                <p className="text-lg font-serif">Your vault is empty</p>
-                <p className="text-sm mt-2">Scan your first specimen to begin!</p>
+              <div className="col-span-full">
+                <EmptyState type="collection" />
               </div>
             ) : (
               personalRocks.map((rock) => (
@@ -391,8 +442,8 @@ export function CollectionView({
                       <div className="flex flex-col space-y-1">
                         {rock.isSelfCollected && <SelfCollectedBadge size="sm" />}
                         {rock.isObservationOnly && (
-                          <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded-full bg-stone-800/80 text-stone-400 text-[8px]">
-                            <Eye className="w-2 h-2" />
+                          <span className="inline-flex items-center space-x-1 px-1.5 py-0.5 rounded-full bg-stone-800/80 text-stone-400 text-[11px]">
+                            <Eye className="w-2.5 h-2.5" />
                             <span>Observation</span>
                           </span>
                         )}
@@ -406,8 +457,8 @@ export function CollectionView({
                     {/* Location indicator */}
                     {rock.location && (
                       <div className="absolute bottom-2 left-2 flex items-center space-x-1 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 rounded">
-                        <MapPin className="w-2 h-2 text-emerald-400" />
-                        <span className="text-[8px] text-stone-300 max-w-[80px] truncate">
+                        <MapPin className="w-2.5 h-2.5 text-emerald-400" />
+                        <span className="text-[11px] text-stone-300 max-w-[80px] truncate">
                           {rock.location}
                         </span>
                       </div>
@@ -418,23 +469,23 @@ export function CollectionView({
                     <h3 className="font-serif font-bold text-white text-sm truncate">
                       {rock.name}
                     </h3>
-                    <p className="text-[10px] text-stone-500 uppercase tracking-wider mt-1">
+                    <p className="text-[11px] text-stone-500 uppercase tracking-wider mt-1">
                       {rock.type}
                     </p>
 
                     {rock.hardness && (
-                      <p className="text-[9px] text-stone-600 mt-1">
+                      <p className="text-[11px] text-stone-600 mt-1">
                         Hardness: {rock.hardness}
                       </p>
                     )}
 
                     <div className="mt-3 pt-3 border-t border-stone-800 flex justify-between items-center">
-                      <span className="text-[10px] text-stone-600 font-mono">
+                      <span className="text-[11px] text-stone-600 font-mono">
                         {formatDate(rock.createdAt)}
                       </span>
                       <div className="flex items-center space-x-2">
                         {rock.likes && rock.likes > 0 && (
-                          <span className="text-[10px] text-rose-400">
+                          <span className="text-[11px] text-rose-400">
                             ❤️ {rock.likes}
                           </span>
                         )}
@@ -452,26 +503,23 @@ export function CollectionView({
 
         {/* Trades Tab */}
         {activeTab === 'trades' && (
-          <div className="space-y-6">
+          <div role="tabpanel" id="panel-trades" aria-labelledby="tab-trades" className="space-y-6">
             {/* Received Proposals */}
             <section>
               <h2 className="text-sm font-bold text-white mb-3 flex items-center space-x-2">
                 <span>Incoming Proposals</span>
                 {pendingReceivedCount > 0 && (
-                  <span className="bg-amber-500 text-white px-2 py-0.5 rounded-full text-[10px]">
+                  <span className="bg-amber-500 text-white px-2 py-0.5 rounded-full text-[11px]">
                     {pendingReceivedCount} pending
                   </span>
                 )}
               </h2>
 
-              {receivedProposals.length === 0 ? (
-                <div className="bg-stone-900 rounded-xl p-6 text-center border border-stone-800">
-                  <Repeat className="w-8 h-8 text-stone-700 mx-auto mb-2" />
-                  <p className="text-stone-500 text-sm">No trade proposals received</p>
-                </div>
+              {effectiveReceived.length === 0 ? (
+                <EmptyState type="trades" title="No incoming proposals" description="When someone proposes a trade for your rocks, it will appear here." />
               ) : (
                 <div className="space-y-3">
-                  {receivedProposals.map((trade) => (
+                  {effectiveReceived.map((trade) => (
                     <TradeCard
                       key={trade.id}
                       trade={trade}
@@ -489,14 +537,11 @@ export function CollectionView({
             <section>
               <h2 className="text-sm font-bold text-white mb-3">Sent Proposals</h2>
 
-              {sentProposals.length === 0 ? (
-                <div className="bg-stone-900 rounded-xl p-6 text-center border border-stone-800">
-                  <Repeat className="w-8 h-8 text-stone-700 mx-auto mb-2" />
-                  <p className="text-stone-500 text-sm">No trade proposals sent</p>
-                </div>
+              {effectiveSent.length === 0 ? (
+                <EmptyState type="trades" title="No sent proposals" description="Browse the market and propose a trade to get started!" />
               ) : (
                 <div className="space-y-3">
-                  {sentProposals.map((trade) => (
+                  {effectiveSent.map((trade) => (
                     <TradeCard
                       key={trade.id}
                       trade={trade}
@@ -513,7 +558,7 @@ export function CollectionView({
 
         {/* Wishlists Tab */}
         {activeTab === 'wishlists' && (
-          <div className="space-y-4">
+          <div role="tabpanel" id="panel-wishlists" aria-labelledby="tab-wishlists" className="space-y-4">
             {/* Add Wishlist Button */}
             <button
               onClick={() => setShowWishlistModal(true)}
@@ -541,17 +586,11 @@ export function CollectionView({
             )}
 
             {/* Wishlist Items */}
-            {wishlists.length === 0 ? (
-              <div className="bg-stone-900 rounded-xl p-8 text-center border border-stone-800">
-                <Heart className="w-12 h-12 text-stone-700 mx-auto mb-3" />
-                <p className="text-stone-500 text-sm mb-2">No wishlist items yet</p>
-                <p className="text-stone-600 text-xs">
-                  Add items you're looking for and get notified when they appear!
-                </p>
-              </div>
+            {effectiveWishlists.length === 0 ? (
+              <EmptyState type="wishlist" />
             ) : (
               <div className="space-y-3">
-                {wishlists.map((item) => {
+                {effectiveWishlists.map((item) => {
                   const criteria = formatWishlistCriteria(item)
                   const itemMatches = matches.filter(m => m.wishlistItemId === item.id)
 
@@ -573,7 +612,7 @@ export function CollectionView({
                               <h3 className="text-white font-bold">Custom Criteria</h3>
                             )}
                             {item.isPublic && (
-                              <span className="text-[10px] bg-emerald-900/50 text-emerald-400 px-1.5 py-0.5 rounded">
+                              <span className="text-[11px] bg-emerald-900/50 text-emerald-400 px-1.5 py-0.5 rounded">
                                 Public
                               </span>
                             )}
@@ -581,7 +620,7 @@ export function CollectionView({
                         </div>
 
                         <button
-                          onClick={() => removeWishlistItem(item.id)}
+                          onClick={() => !isDemoId(item.id) && removeWishlistItem(item.id)}
                           className="text-stone-600 hover:text-rose-400 transition-colors"
                         >
                           <X className="w-4 h-4" />
@@ -593,7 +632,7 @@ export function CollectionView({
                         {criteria.map((c, i) => (
                           <span
                             key={i}
-                            className="text-[10px] bg-stone-800 text-stone-400 px-2 py-0.5 rounded"
+                            className="text-[11px] bg-stone-800 text-stone-400 px-2 py-0.5 rounded"
                           >
                             {c}
                           </span>
@@ -626,7 +665,7 @@ export function CollectionView({
                                       className="w-full h-full object-cover"
                                     />
                                   </div>
-                                  <p className="text-[9px] text-stone-400 mt-1 truncate text-center">
+                                  <p className="text-[11px] text-stone-400 mt-1 truncate text-center">
                                     {rock.name}
                                   </p>
                                 </button>
@@ -727,10 +766,10 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
       {/* Trade Header */}
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center space-x-2">
-          <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${statusColor}`}>
+          <span className={`text-[11px] font-medium px-2 py-0.5 rounded ${statusColor}`}>
             {statusLabel}
           </span>
-          <span className="text-[10px] text-stone-500">
+          <span className="text-[11px] text-stone-500">
             {formatTradeDate(trade.createdAt)}
           </span>
         </div>
@@ -740,11 +779,11 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
       <div className="flex items-center space-x-3">
         {/* What you'll give / What they're giving */}
         <div className="flex-1">
-          <p className={`text-[10px] font-medium mb-1 ${isReceived ? 'text-emerald-400' : 'text-amber-400'}`}>
+          <p className={`text-[11px] font-medium mb-1 ${isReceived ? 'text-emerald-400' : 'text-amber-400'}`}>
             {isReceived ? '🎁 You receive' : '📤 You give'}
           </p>
           <div className="flex items-center space-x-2">
-            <div className={`w-12 h-12 rounded-lg overflow-hidden ${isReceived ? 'ring-2 ring-emerald-500/50' : 'ring-2 ring-amber-500/50'}`}>
+            <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 ${isReceived ? 'ring-2 ring-emerald-500/50' : 'ring-2 ring-amber-500/50'}`}>
               <img
                 src={trade.offeredRock?.imageUrl}
                 alt={trade.offeredRock?.name}
@@ -764,11 +803,11 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
 
         {/* What you'll get / What they want */}
         <div className="flex-1">
-          <p className={`text-[10px] font-medium mb-1 ${isReceived ? 'text-amber-400' : 'text-emerald-400'}`}>
+          <p className={`text-[11px] font-medium mb-1 ${isReceived ? 'text-amber-400' : 'text-emerald-400'}`}>
             {isReceived ? '📤 You give' : '🎁 You receive'}
           </p>
           <div className="flex items-center space-x-2">
-            <div className={`w-12 h-12 rounded-lg overflow-hidden ${isReceived ? 'ring-2 ring-amber-500/50' : 'ring-2 ring-emerald-500/50'}`}>
+            <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 ${isReceived ? 'ring-2 ring-amber-500/50' : 'ring-2 ring-emerald-500/50'}`}>
               <img
                 src={trade.targetRock?.imageUrl}
                 alt={trade.targetRock?.name}
@@ -851,7 +890,7 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
               )}
             </div>
             <div className="mt-3 pt-2 border-t border-emerald-800/30">
-              <p className="text-[10px] text-emerald-300/60 flex items-start gap-1.5">
+              <p className="text-[11px] text-emerald-300/60 flex items-start gap-1.5">
                 <Truck className="w-3 h-3 mt-0.5 flex-shrink-0" />
                 <span>Coordinate shipping or local meetup via email. Once you've both exchanged specimens, come back here to complete the trade.</span>
               </p>
@@ -880,7 +919,7 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
                   </>
                 )}
               </button>
-              <p className="text-[10px] text-stone-500 text-center">
+              <p className="text-[11px] text-stone-500 text-center">
                 Only click after you've physically received the specimen
               </p>
             </>

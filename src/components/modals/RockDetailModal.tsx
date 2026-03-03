@@ -89,6 +89,12 @@ export function RockDetailModal({
     direction: 'down'
   })
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
   // Keyboard navigation
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape') {
@@ -122,12 +128,12 @@ export function RockDetailModal({
   }
 
   const formatDate = (timestamp: { seconds: number } | null) => {
-    if (!timestamp?.seconds) return 'Unknown'
-    return new Date(timestamp.seconds * 1000).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
+    if (!timestamp?.seconds) return { display: 'Unknown', iso: '' }
+    const date = new Date(timestamp.seconds * 1000)
+    return {
+      display: date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+      iso: date.toISOString()
+    }
   }
 
   const handleDelete = async () => {
@@ -145,7 +151,7 @@ export function RockDetailModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in">
+    <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in" role="dialog" aria-modal="true" aria-label={`${rock.name} details`}>
       {/* Navigation Arrows - Desktop only */}
       {hasPrev && onPrev && (
         <button
@@ -179,8 +185,8 @@ export function RockDetailModal({
         className="bg-stone-900 w-full max-w-lg lg:max-w-5xl xl:max-w-6xl sm:rounded-2xl border-t sm:border border-stone-800 shadow-2xl overflow-hidden animate-modal-enter max-h-[95vh] flex flex-col lg:flex-row"
       >
         {/* Swipe Handle Indicator - Mobile only */}
-        <div className="sm:hidden flex justify-center pt-2 pb-1">
-          <div className="w-10 h-1 bg-stone-600 rounded-full" />
+        <div className="sm:hidden flex justify-center pt-3 pb-1">
+          <div className="w-12 h-1.5 bg-stone-500 rounded-full" />
         </div>
 
         {/* Image Section - Larger on desktop */}
@@ -188,6 +194,8 @@ export function RockDetailModal({
           <img
             src={rock.imageUrl}
             alt={rock.name}
+            width={600}
+            height={600}
             className="w-full h-full object-cover lg:h-full lg:max-h-[95vh] transition-transform duration-700 hover:scale-105"
           />
 
@@ -380,7 +388,12 @@ export function RockDetailModal({
               )}
               <div className="flex items-center space-x-1.5 text-stone-400">
                 <Calendar className="w-4 h-4" />
-                <span className="text-sm">{formatDate(rock.createdAt)}</span>
+                {(() => {
+                  const d = formatDate(rock.createdAt)
+                  return d.iso
+                    ? <time dateTime={d.iso} className="text-sm">{d.display}</time>
+                    : <span className="text-sm">{d.display}</span>
+                })()}
               </div>
             </div>
 
@@ -707,6 +720,9 @@ export function RockDetailModal({
                           <img
                             src={similarRock.imageUrl}
                             alt={similarRock.name}
+                            width={112}
+                            height={112}
+                            loading="lazy"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                           />
                           <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black/70 to-transparent" />

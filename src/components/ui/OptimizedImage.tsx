@@ -69,6 +69,8 @@ export function OptimizedImage({
         <img
           src={src}
           alt={alt}
+          width={400}
+          height={aspectRatio === 'square' ? 400 : aspectRatio === '4/5' ? 500 : aspectRatio === '3/4' ? 533 : 225}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
           onLoad={() => setIsLoaded(true)}

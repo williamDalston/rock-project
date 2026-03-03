@@ -6,9 +6,10 @@ interface NavBarProps {
   currentView: ViewType
   onViewChange: (view: ViewType) => void
   onScan: (e: React.ChangeEvent<HTMLInputElement>) => void
+  scanInputRef?: React.MutableRefObject<HTMLInputElement | null>
 }
 
-export function NavBar({ currentView, onViewChange, onScan }: NavBarProps) {
+export function NavBar({ currentView, onViewChange, onScan, scanInputRef }: NavBarProps) {
   const [showScanHint, setShowScanHint] = useState(false)
 
   // Show scan hint for first-time users
@@ -32,7 +33,7 @@ export function NavBar({ currentView, onViewChange, onScan }: NavBarProps) {
       role="navigation"
       aria-label="Main navigation"
     >
-      <div className="flex justify-around items-center px-2 py-2">
+      <div className="flex justify-around items-center px-2 py-2 max-w-lg mx-auto">
         <button
           onClick={() => onViewChange('market')}
           aria-label="Market feed"
@@ -52,12 +53,12 @@ export function NavBar({ currentView, onViewChange, onScan }: NavBarProps) {
           </span>
         </button>
 
-        <div className="relative -top-5">
+        <div className="relative -top-5 flex flex-col items-center">
           {/* Scan hint tooltip for new users */}
           {showScanHint && (
             <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap animate-bounce">
               <div className="bg-emerald-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-lg">
-                Tap to scan a rock!
+                Identify with AI — tap to scan!
                 <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-emerald-600 rotate-45" />
               </div>
             </div>
@@ -72,20 +73,24 @@ export function NavBar({ currentView, onViewChange, onScan }: NavBarProps) {
             role="button"
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
-                e.currentTarget.querySelector('input')?.click()
+                scanInputRef?.current?.click()
               }
             }}
           >
             <ScanLine className="w-7 h-7 text-white" aria-hidden="true" />
             <input
+              ref={scanInputRef}
               type="file"
               accept="image/*"
               capture="environment"
               onChange={handleScan}
               className="hidden"
-              aria-label="Upload rock photo"
+              aria-label="Upload rock photo for AI identification"
             />
           </label>
+          <span className="text-[10px] font-bold tracking-wider uppercase mt-2 text-emerald-400">
+            Identify
+          </span>
         </div>
 
         <button

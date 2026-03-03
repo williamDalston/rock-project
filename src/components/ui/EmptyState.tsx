@@ -292,19 +292,6 @@ export function EmptyState({ type, title, description, action }: EmptyStateProps
         </button>
       )}
 
-      <style>{`
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-        .animate-float {
-          animation: float 4s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   )
 }

@@ -56,7 +56,7 @@ export function TrendingSection({
   if (trendingRocks.length === 0) return null
 
   return (
-    <section className="mb-6">
+    <section className="mb-6" aria-label="Trending rocks">
       {/* Header */}
       <div className="flex items-center justify-between px-4 mb-3">
         <div className="flex items-center space-x-2">
@@ -65,7 +65,7 @@ export function TrendingSection({
           </div>
           <div>
             <h2 className="font-serif font-bold text-white">Hot Magma</h2>
-            <p className="text-[10px] text-stone-500 uppercase tracking-wider">Trending Now</p>
+            <p className="text-[11px] text-stone-500 uppercase tracking-wider">Trending Now</p>
           </div>
         </div>
 
@@ -99,10 +99,8 @@ export function TrendingSection({
           <div className="absolute left-0 top-0 bottom-2 w-8 bg-gradient-to-r from-stone-950 to-transparent z-10 pointer-events-none" />
         )}
 
-        {/* Right fade gradient */}
-        {canScrollRight && (
-          <div className="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-stone-950 to-transparent z-10 pointer-events-none" />
-        )}
+        {/* Right fade gradient - always show on mobile as scroll hint */}
+        <div className={`absolute right-0 top-0 bottom-2 w-12 bg-gradient-to-l from-stone-950 to-transparent z-10 pointer-events-none transition-opacity ${canScrollRight ? 'opacity-100' : 'md:opacity-0'}`} />
 
         {/* Hover chevron - Left */}
         {canScrollLeft && (
@@ -158,7 +156,7 @@ export function TrendingSection({
       </div>
 
       {/* Mobile swipe hint */}
-      <p className="md:hidden text-center text-[10px] text-stone-500 mt-1">
+      <p className="md:hidden text-center text-[11px] text-stone-500 mt-1">
         Swipe to see more →
       </p>
     </section>
@@ -198,7 +196,7 @@ function TrendingCard({
       <div className="absolute top-2 left-2 z-10 w-6 h-6 md:w-7 md:h-7 rounded-full
                      bg-gradient-to-br from-orange-500 to-red-600
                      flex items-center justify-center shadow-lg">
-        <span className="text-[10px] md:text-xs font-bold text-white">
+        <span className="text-[11px] md:text-xs font-bold text-white">
           #{rank}
         </span>
       </div>
@@ -211,6 +209,8 @@ function TrendingCard({
         <img
           src={rock.imageUrl}
           alt={rock.name}
+          width={192}
+          height={192}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
         />
@@ -233,7 +233,7 @@ function TrendingCard({
 
         {/* Bottom info overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-2 md:p-3">
-          <span className="inline-block bg-orange-500/90 backdrop-blur-sm px-2 py-0.5 rounded text-[9px] md:text-[10px] text-white font-medium">
+          <span className="inline-block bg-orange-500/90 backdrop-blur-sm px-2 py-0.5 rounded text-[11px] md:text-[11px] text-white font-medium">
             {trendingReason}
           </span>
           <h3 className="text-xs md:text-sm font-serif font-bold text-white mt-1.5 truncate">
@@ -244,7 +244,7 @@ function TrendingCard({
 
       {/* Footer with type and like */}
       <div className="p-2 md:p-2.5 flex items-center justify-between bg-stone-900/95">
-        <span className="text-[9px] md:text-[10px] text-stone-400 uppercase tracking-wide truncate max-w-[60%]">
+        <span className="text-[11px] md:text-[11px] text-stone-400 uppercase tracking-wide truncate max-w-[60%]">
           {rock.type}
         </span>
         <HeartGeode

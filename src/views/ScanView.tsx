@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Loader, ScanLine, Sparkles, Droplets, MapPin, Navigation, Hexagon, ArrowLeft } from 'lucide-react'
+import { Loader, ScanLine, Sparkles, Droplets, MapPin, Navigation, Hexagon, ArrowLeft, Bot } from 'lucide-react'
 import { Toggle } from '@/components/ui/Toggle'
 import { ConfidenceMeter } from '@/components/ui/ConfidenceMeter'
 import { ProtectedAreaWarning, ProtectedAreaBanner } from '@/components/ui/ProtectedAreaWarning'
@@ -28,6 +28,7 @@ export function ScanView({
   onDiscard
 }: ScanViewProps) {
   const [showProtectedWarning, setShowProtectedWarning] = useState(false)
+  const [imageError, setImageError] = useState(false)
   const {
     coords,
     loading: geoLoading,
@@ -67,9 +68,9 @@ export function ScanView({
 
   return (
     <div className="min-h-screen bg-stone-950 text-stone-200 pb-20">
-      <SEO title={SEO_CONFIGS.scan.title} description={SEO_CONFIGS.scan.description} />
+      <SEO {...SEO_CONFIGS.scan} />
       {/* Image Preview */}
-      <div className="h-[40vh] relative bg-black">
+      <div className="h-[40vh] md:h-[50vh] relative bg-black max-w-4xl mx-auto">
         {/* Back Button */}
         <button
           onClick={onDiscard}
@@ -79,14 +80,20 @@ export function ScanView({
           <ArrowLeft className="w-5 h-5" />
           <span className="text-sm font-medium">Back</span>
         </button>
-        {formData.imageUrl ? (
+        {formData.imageUrl && !imageError ? (
           <img
             src={formData.imageUrl}
-            alt="Rock specimen"
+            alt={formData.name ? `Rock specimen: ${formData.name}` : 'Rock specimen being analyzed'}
             className="w-full h-full object-contain"
+            onError={() => setImageError(true)}
           />
+        ) : imageError ? (
+          <div className="w-full h-full flex flex-col items-center justify-center text-stone-500">
+            <Hexagon className="w-12 h-12 mb-2" />
+            <p className="text-sm">Failed to load image</p>
+          </div>
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center" role="status" aria-label="Loading image">
             <Loader className="w-8 h-8 animate-spin text-emerald-500" />
           </div>
         )}
@@ -110,10 +117,24 @@ export function ScanView({
       </div>
 
       {/* Form Panel */}
-      <div className="p-6 -mt-6 relative z-10 bg-stone-950 rounded-t-3xl border-t border-stone-800 min-h-[60vh]">
+      <div className="p-6 -mt-6 relative z-10 bg-stone-950 rounded-t-3xl border-t border-stone-800 min-h-[60vh] max-w-2xl mx-auto">
         <div className="w-12 h-1 bg-stone-800 rounded-full mx-auto mb-6" />
+        <h1 className="font-serif text-xl sm:text-2xl font-bold text-white mb-1">
+          AI Rock & Mineral Scanner
+        </h1>
+        <p className="text-stone-500 text-sm mb-5">
+          Take a photo and get instant identification, rarity, and geological details.
+        </p>
 
         <div className="space-y-5">
+          {/* Identified by AI badge - visible after analysis */}
+          {analysisResult && !isAnalyzing && formData.name && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-800/50 text-emerald-400 text-sm">
+              <Bot className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              <span>Identified by AI</span>
+            </div>
+          )}
+
           {/* Protected Area Banner */}
           {protectedArea?.isProtected && (
             <ProtectedAreaBanner area={protectedArea} />
@@ -160,7 +181,8 @@ export function ScanView({
                 min={1}
                 value={formData.rarityScore}
                 onChange={(e) => {
-                  const val = parseInt(e.target.value) || 1
+                  const parsed = parseInt(e.target.value)
+                  const val = isNaN(parsed) ? 1 : parsed
                   onFormChange({ rarityScore: Math.max(1, Math.min(10, val)) })
                 }}
                 className="bg-stone-900 border border-stone-800 text-center text-white w-full sm:w-16 h-12 rounded-lg focus:border-emerald-500 focus:outline-none text-lg"
@@ -186,12 +208,13 @@ export function ScanView({
               <button
                 onClick={handleCaptureLocation}
                 disabled={geoLoading}
-                className="flex items-center space-x-1.5 px-3 py-1.5 bg-stone-800 hover:bg-stone-700 rounded-lg text-xs text-stone-300 transition-colors"
+                className="flex items-center space-x-1.5 px-3 py-1.5 bg-stone-800 hover:bg-stone-700 disabled:opacity-50 rounded-lg text-xs text-stone-300 transition-colors"
+                aria-label={geoLoading ? 'Capturing location...' : coords ? 'Update GPS location' : 'Capture GPS location'}
               >
                 {geoLoading ? (
-                  <Loader className="w-3 h-3 animate-spin" />
+                  <Loader className="w-3 h-3 animate-spin" aria-hidden="true" />
                 ) : (
-                  <Navigation className="w-3 h-3" />
+                  <Navigation className="w-3 h-3" aria-hidden="true" />
                 )}
                 <span>{coords ? 'Update' : 'Capture'}</span>
               </button>

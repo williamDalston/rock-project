@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react'
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useRocks } from '@/hooks/useRocks'
 import { useUserProfile } from '@/hooks/useUserProfile'
@@ -7,6 +7,7 @@ import { useNotifications } from '@/hooks/useNotifications'
 import { identifyRockWithAI, validateImage } from '@/services/gemini'
 import { compressImage } from '@/utils/imageCompression'
 import { DEFAULT_FORM_DATA, XP_REWARDS } from '@/constants'
+import { demoMarketRocks, demoCollectionRocks, isDemoId } from '@/data/demoData'
 import { LoadingScreen } from '@/components/ui/LoadingScreen'
 import { NavBar } from '@/components/layout/NavBar'
 import { ToastContainer, useToast } from '@/components/ui/Toast'
@@ -22,11 +23,39 @@ const MarketView = lazy(() => import('@/views/MarketView').then(m => ({ default:
 const ScanView = lazy(() => import('@/views/ScanView').then(m => ({ default: m.ScanView })))
 const CollectionView = lazy(() => import('@/views/CollectionView').then(m => ({ default: m.CollectionView })))
 
-// Simple loading fallback for lazy components
+// Skeleton loading fallback for lazy components
 function ViewLoader() {
   return (
-    <div className="flex items-center justify-center min-h-[50vh]">
-      <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 py-6 space-y-4">
+      {/* Header skeleton */}
+      <div className="flex justify-between items-center">
+        <div className="space-y-2">
+          <div className="h-6 w-24 bg-stone-800 rounded skeleton-shimmer" />
+          <div className="h-3 w-40 bg-stone-800 rounded skeleton-shimmer" />
+        </div>
+        <div className="flex gap-2">
+          <div className="w-9 h-9 bg-stone-800 rounded-lg skeleton-shimmer" />
+          <div className="w-9 h-9 bg-stone-800 rounded-lg skeleton-shimmer" />
+        </div>
+      </div>
+      {/* Filter skeleton */}
+      <div className="flex gap-2">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="h-8 w-20 bg-stone-800 rounded-full skeleton-shimmer" />
+        ))}
+      </div>
+      {/* Card grid skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+        {[1, 2, 3, 4, 5, 6].map(i => (
+          <div key={i} className="bg-stone-900 rounded-2xl overflow-hidden border border-stone-800">
+            <div className="aspect-square bg-stone-800 skeleton-shimmer" />
+            <div className="p-3 space-y-2">
+              <div className="h-4 w-3/4 bg-stone-800 rounded skeleton-shimmer" />
+              <div className="h-3 w-full bg-stone-800 rounded skeleton-shimmer" />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -50,14 +79,48 @@ export default function App() {
   const { receivedProposals, sentProposals } = useTradeProposals(user)
   const toast = useToast()
 
-  const [view, setView] = useState<ViewType>('market')
+  // Seed demo data when real data is empty so the app feels populated
+  const effectiveMarketRocks = marketRocks.length > 0 ? marketRocks : demoMarketRocks
+  const effectivePersonalRocks = personalRocks.length > 0
+    ? personalRocks
+    : demoCollectionRocks.map(r => ({ ...r, ownerId: user?.uid || 'demo_self' }))
+
+  // URL-based routing: read initial view from pathname for SEO crawlability
+  const getViewFromPath = (): ViewType => {
+    const path = window.location.pathname.replace(/^\//, '')
+    if (path === 'collection') return 'collection'
+    if (path === 'scan') return 'scan'
+    return 'market'
+  }
+
+  const [view, setViewState] = useState<ViewType>(getViewFromPath)
   const [collectionTab, setCollectionTab] = useState<'collection' | 'trades' | 'wishlists'>('collection')
+
+  // Sync URL with view state and scroll to top
+  const setView = useCallback((newView: ViewType) => {
+    setViewState(newView)
+    window.scrollTo(0, 0)
+    const path = newView === 'market' ? '/' : `/${newView}`
+    if (window.location.pathname !== path) {
+      window.history.pushState({ view: newView }, '', path)
+    }
+  }, [])
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      setViewState(getViewFromPath())
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [])
   const [formData, setFormData] = useState<RockFormData>(DEFAULT_FORM_DATA)
   const [analysisResult, setAnalysisResult] = useState<AIAnalysisResult | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [tradeCelebration, setTradeCelebration] = useState<TradeProposal | null>(null)
+  const scanInputRef = useRef<HTMLInputElement | null>(null)
 
   // Level up celebration
   const { celebration, celebrate, closeCelebration } = useLevelUpCelebration()
@@ -197,9 +260,9 @@ export default function App() {
     }
   }
 
-  const handleFormChange = (updates: Partial<RockFormData>) => {
+  const handleFormChange = useCallback((updates: Partial<RockFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }))
-  }
+  }, [])
 
   const handleSave = async () => {
     if (!formData.name) return
@@ -268,6 +331,10 @@ export default function App() {
   }
 
   const handleDeleteRock = async (rockId: string, rockName: string) => {
+    if (isDemoId(rockId)) {
+      toast.warning('Demo specimen', 'Scan your own rocks to build a real collection!')
+      return
+    }
     try {
       await deleteRock(rockId, rockName)
       toast.success('Deleted', `"${rockName}" has been removed from your collection`)
@@ -308,17 +375,19 @@ export default function App() {
         onUpgradeAccount={upgradeAnonymousAccount}
       />
 
+      <main role="main">
       <Suspense fallback={<ViewLoader />}>
         {view === 'market' && (
           <MarketView
-            marketRocks={marketRocks}
-            personalRocks={personalRocks}
+            marketRocks={effectiveMarketRocks}
+            personalRocks={effectivePersonalRocks}
             user={user}
             profile={profile}
             onNavigateToTrades={navigateToTrades}
             onOpenAuth={() => setShowAuthModal(true)}
             isAnonymous={isAnonymous}
             onSignOut={handleSignOut}
+            onRequestScan={() => scanInputRef.current?.click()}
           />
         )}
 
@@ -336,10 +405,10 @@ export default function App() {
 
         {view === 'collection' && (
           <CollectionView
-            personalRocks={personalRocks}
+            personalRocks={effectivePersonalRocks}
             profile={profile}
             user={user}
-            marketRocks={marketRocks}
+            marketRocks={effectiveMarketRocks}
             initialTab={collectionTab}
             onTabChange={setCollectionTab}
             onOpenAuth={() => setShowAuthModal(true)}
@@ -349,9 +418,15 @@ export default function App() {
           />
         )}
       </Suspense>
+      </main>
 
       {view !== 'scan' && (
-        <NavBar currentView={view} onViewChange={setView} onScan={handleScan} />
+        <NavBar
+          currentView={view}
+          onViewChange={setView}
+          onScan={handleScan}
+          scanInputRef={scanInputRef}
+        />
       )}
 
       {/* Notification permission prompt */}

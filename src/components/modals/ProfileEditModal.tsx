@@ -103,7 +103,7 @@ export function ProfileEditModal({ profile, onClose, onSave }: ProfileEditModalP
     avatarUrl !== (profile.avatarUrl || '')
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+    <div role="dialog" aria-modal="true" aria-label="Edit profile" className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
       <div
         {...swipeProps}
         className="bg-stone-900 w-full max-w-md rounded-2xl border border-stone-800 shadow-2xl overflow-hidden animate-slide-up"

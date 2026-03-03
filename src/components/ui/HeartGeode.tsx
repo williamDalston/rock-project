@@ -63,6 +63,7 @@ export function HeartGeode({ isLiked, count, onToggle, disabled, size = 'md' }: 
         style={{ willChange: isAnimating ? 'transform' : 'auto' }}
         fill="none"
         strokeWidth="1.5"
+        aria-hidden="true"
       >
         {/* Outer geode shell */}
         <path

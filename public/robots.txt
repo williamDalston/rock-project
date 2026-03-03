@@ -1,10 +1,9 @@
-# Robots.txt for Lithos - AI Rock & Mineral Identification
+# Robots.txt for Lithos - AI Rock Identifier
 # https://www.lithoshub.com
 
-# Allow all crawlers to access the site
+# Allow all crawlers (Crawl-delay removed; Google ignores it, and it can slow Bing)
 User-agent: *
 Allow: /
-Crawl-delay: 1
 
 # Sitemap location
 Sitemap: https://www.lithoshub.com/sitemap.xml
