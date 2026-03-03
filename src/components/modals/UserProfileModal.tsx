@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { X, Hexagon, Calendar, Loader, Repeat, WifiOff, RefreshCw } from 'lucide-react'
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '@/services/firebase'
-import { APP_CONFIG, FALLBACK_IMAGE_URL } from '@/constants'
+import { APP_CONFIG, getRockImageUrl } from '@/constants'
 import { LevelBadge } from '@/components/ui/LevelBadge'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { ReputationBadge } from '@/components/ui/ReputationBadge'
@@ -221,7 +221,7 @@ export function UserProfileModal({ userId, currentUser, onClose, onRockClick, on
                         className="w-full aspect-square relative"
                       >
                         <img
-                          src={rock.imageUrl || FALLBACK_IMAGE_URL}
+                          src={getRockImageUrl(rock)}
                           alt={rock.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                         />

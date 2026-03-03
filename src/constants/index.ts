@@ -38,14 +38,42 @@ export const DEFAULT_FORM_DATA: RockFormData = {
   isSelfCollected: false
 }
 
-/** Base path from Vite — respects the `base` config for GitHub Pages. */
-const BASE = import.meta.env.BASE_URL
+// ============================================
+// Image URLs (runtime-resolved so deploy path is always correct)
+// ============================================
 
-/** Fallback when rock/specimen imageUrl is missing or fails to load. */
-export const FALLBACK_IMAGE_URL = `${BASE}images/specimens/fallback.jpg`
+const SPECIMEN_PATH = 'images/specimens/'
 
-/** Helper to get a specimen image path by mineral name. */
-export const specimenImage = (name: string) => `${BASE}images/specimens/${name}.jpg`
+/** Runtime base path: works on GitHub Pages (/rock-project/) and Vercel (/) so images always load. */
+export function getBase(): string {
+  if (typeof window === 'undefined') return import.meta.env.BASE_URL || '/'
+  const p = window.location.pathname
+  return p.startsWith('/rock-project') ? '/rock-project/' : '/'
+}
+
+/** Full URL for the fallback specimen image. Use this instead of a constant. */
+export function getFallbackImageUrl(): string {
+  return getBase() + SPECIMEN_PATH + 'fallback.jpg'
+}
+
+/**
+ * Returns the full image URL for a rock. Use this everywhere a rock image is displayed.
+ * Handles: missing imageUrl, relative paths (demo data), absolute paths, and full URLs.
+ */
+export function getRockImageUrl(rock: { imageUrl?: string | null }): string {
+  const raw = rock?.imageUrl?.trim()
+  if (!raw) return getFallbackImageUrl()
+  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw
+  if (raw.startsWith('/')) return raw
+  return getBase() + raw.replace(/^\.\//, '')
+}
+
+/** Relative path only — for demo data. Resolved at render via getRockImageUrl(rock). */
+export function specimenImage(name: string): string {
+  return SPECIMEN_PATH + name + '.jpg'
+}
+
+// All image URLs must go through getRockImageUrl(rock) or getFallbackImageUrl() at render time.
 
 // ============================================
 // Rarity System

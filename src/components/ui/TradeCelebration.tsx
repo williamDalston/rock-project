@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { CheckCircle, Sparkles, ArrowLeftRight } from 'lucide-react'
-import { FALLBACK_IMAGE_URL } from '@/constants'
+import { getRockImageUrl } from '@/constants'
 
 interface TradeCelebrationProps {
   yourRock: {
@@ -88,7 +88,7 @@ export function TradeCelebration({ yourRock, theirRock, onComplete }: TradeCeleb
           >
             <div className="bg-stone-800 rounded-xl overflow-hidden border-2 border-emerald-500">
               <img
-                src={yourRock.imageUrl || FALLBACK_IMAGE_URL}
+                src={getRockImageUrl(yourRock)}
                 alt={yourRock.name}
                 className="w-full aspect-square object-cover"
               />
@@ -119,7 +119,7 @@ export function TradeCelebration({ yourRock, theirRock, onComplete }: TradeCeleb
           >
             <div className="bg-stone-800 rounded-xl overflow-hidden border-2 border-amber-500">
               <img
-                src={theirRock.imageUrl || FALLBACK_IMAGE_URL}
+                src={getRockImageUrl(theirRock)}
                 alt={theirRock.name}
                 className="w-full aspect-square object-cover"
               />

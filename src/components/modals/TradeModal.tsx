@@ -5,7 +5,7 @@ import { SellerBadge } from '@/components/ui/ReputationBadge'
 import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { calculateTradeFairness, getFairnessLabel } from '@/services/trading'
-import { FALLBACK_IMAGE_URL } from '@/constants'
+import { getRockImageUrl } from '@/constants'
 import type { Rock, UserReputation } from '@/types'
 
 interface TradeModalProps {
@@ -104,7 +104,7 @@ export function TradeModal({
             <div className="bg-stone-800/50 rounded-xl p-3 mb-4 flex items-center space-x-3">
               <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                 <img
-                  src={targetRock.imageUrl || FALLBACK_IMAGE_URL}
+                  src={getRockImageUrl(targetRock)}
                   alt={targetRock.name}
                   className="w-full h-full object-cover"
                 />
@@ -141,7 +141,7 @@ export function TradeModal({
                   >
                     <div className="aspect-square rounded bg-black mb-2 overflow-hidden relative">
                       <img
-                        src={rock.imageUrl || FALLBACK_IMAGE_URL}
+                        src={getRockImageUrl(rock)}
                         alt={rock.name}
                         className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                       />
@@ -168,7 +168,7 @@ export function TradeModal({
                 </p>
                 <div className="w-20 h-20 rounded-xl overflow-hidden mx-auto border-2 border-emerald-600">
                   <img
-                    src={selectedRock?.imageUrl || FALLBACK_IMAGE_URL}
+                    src={selectedRock ? getRockImageUrl(selectedRock) : getRockImageUrl({ imageUrl: '' })}
                     alt={selectedRock?.name}
                     className="w-full h-full object-cover"
                   />
@@ -191,7 +191,7 @@ export function TradeModal({
                 </p>
                 <div className="w-20 h-20 rounded-xl overflow-hidden mx-auto border-2 border-amber-600">
                   <img
-                    src={targetRock.imageUrl || FALLBACK_IMAGE_URL}
+                    src={getRockImageUrl(targetRock)}
                     alt={targetRock.name}
                     className="w-full h-full object-cover"
                   />

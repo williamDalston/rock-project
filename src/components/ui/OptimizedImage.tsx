@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { FALLBACK_IMAGE_URL } from '@/constants'
+import { getFallbackImageUrl } from '@/constants'
 
 interface OptimizedImageProps {
   src: string
@@ -20,7 +20,7 @@ export function OptimizedImage({
   showVignette = true,
   hoverZoom = true
 }: OptimizedImageProps) {
-  const src = srcProp && srcProp.trim() ? srcProp : FALLBACK_IMAGE_URL
+  const src = srcProp && srcProp.trim() ? srcProp : getFallbackImageUrl()
   const [isLoaded, setIsLoaded] = useState(false)
   const [isInView, setIsInView] = useState(priority)
   const [currentSrc, setCurrentSrc] = useState(src)
@@ -84,8 +84,9 @@ export function OptimizedImage({
           decoding="async"
           onLoad={() => setIsLoaded(true)}
           onError={() => {
-            if (currentSrc !== FALLBACK_IMAGE_URL) {
-              setCurrentSrc(FALLBACK_IMAGE_URL)
+            const fallback = getFallbackImageUrl()
+            if (currentSrc !== fallback) {
+              setCurrentSrc(fallback)
             } else {
               setIsLoaded(true)
             }

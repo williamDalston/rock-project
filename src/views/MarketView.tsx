@@ -23,7 +23,7 @@ import { useTrending } from '@/hooks/useTrending'
 import { useTradeProposals } from '@/hooks/useTradeProposals'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import { useReputation } from '@/hooks/useReputation'
-import { FALLBACK_IMAGE_URL } from '@/constants'
+import { getRockImageUrl } from '@/constants'
 
 interface MarketViewProps {
   marketRocks: Rock[]
@@ -507,7 +507,7 @@ export function MarketView({
                   className="w-full relative block cursor-pointer"
                 >
                   <OptimizedImage
-                    src={rock.imageUrl || FALLBACK_IMAGE_URL}
+                    src={getRockImageUrl(rock)}
                     alt={rock.name}
                     aspectRatio="square"
                   />

@@ -26,7 +26,7 @@ import { useUserProfile } from '@/hooks/useUserProfile'
 import { getTradeStatusLabel, getTradeStatusColor, formatTradeDate } from '@/services/trading'
 import { formatWishlistCriteria } from '@/services/wishlist'
 import { getDemoTradeProposals, getDemoWishlists, isDemoId } from '@/data/demoData'
-import { FALLBACK_IMAGE_URL } from '@/constants'
+import { getRockImageUrl } from '@/constants'
 import type { Rock, UserProfile, User, TradeProposal } from '@/types'
 
 type TabType = 'collection' | 'trades' | 'wishlists'
@@ -447,7 +447,7 @@ export function CollectionView({
                 >
                   <div className="aspect-square relative">
                     <OptimizedImage
-                      src={rock.imageUrl || FALLBACK_IMAGE_URL}
+                      src={getRockImageUrl(rock)}
                       alt={rock.name}
                       aspectRatio="square"
                       hoverZoom={true}
@@ -697,7 +697,7 @@ export function CollectionView({
                                 >
                                   <div className="w-16 h-16 rounded-lg overflow-hidden ring-2 ring-rose-500/50">
                                     <img
-                                      src={rock.imageUrl || FALLBACK_IMAGE_URL}
+                                      src={getRockImageUrl(rock)}
                                       alt={rock.name}
                                       className="w-full h-full object-cover"
                                     />
@@ -822,7 +822,7 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
           <div className="flex items-center space-x-2">
             <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 ${isReceived ? 'ring-2 ring-emerald-500/50' : 'ring-2 ring-amber-500/50'}`}>
               <img
-                src={trade.offeredRock?.imageUrl || FALLBACK_IMAGE_URL}
+                src={getRockImageUrl(trade.offeredRock ?? { imageUrl: '' })}
                 alt={trade.offeredRock?.name}
                 className="w-full h-full object-cover"
               />
@@ -846,7 +846,7 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
           <div className="flex items-center space-x-2">
             <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 ${isReceived ? 'ring-2 ring-amber-500/50' : 'ring-2 ring-emerald-500/50'}`}>
               <img
-                src={trade.targetRock?.imageUrl || FALLBACK_IMAGE_URL}
+                src={getRockImageUrl(trade.targetRock ?? { imageUrl: '' })}
                 alt={trade.targetRock?.name}
                 className="w-full h-full object-cover"
               />

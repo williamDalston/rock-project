@@ -13,7 +13,7 @@ import { useVerification } from '@/hooks/useVerification'
 import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
 import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { findSimilarRocks, getSimilarityReason } from '@/services/similarity'
-import { FALLBACK_IMAGE_URL } from '@/constants'
+import { getRockImageUrl } from '@/constants'
 import type { Rock, User, UserProfile } from '@/types'
 
 interface RockDetailModalProps {
@@ -196,7 +196,7 @@ export function RockDetailModal({
         {/* Image Section - Larger on desktop */}
         <div className="relative aspect-square sm:aspect-video lg:aspect-auto lg:w-1/2 xl:w-3/5 flex-shrink-0 lg:flex-shrink lg:min-h-0 overflow-hidden">
           <img
-            src={rock.imageUrl || FALLBACK_IMAGE_URL}
+            src={getRockImageUrl(rock)}
             alt={rock.name}
             width={600}
             height={600}
@@ -732,7 +732,7 @@ export function RockDetailModal({
                         <div className="relative aspect-square rounded-lg overflow-hidden mb-1.5
                                         ring-2 ring-transparent group-hover:ring-purple-500 transition-all">
                           <img
-                            src={similarRock.imageUrl || FALLBACK_IMAGE_URL}
+                            src={getRockImageUrl(similarRock)}
                             alt={similarRock.name}
                             width={112}
                             height={112}

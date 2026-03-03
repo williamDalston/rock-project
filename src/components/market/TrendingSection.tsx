@@ -3,7 +3,7 @@ import { Flame, ChevronLeft, ChevronRight, Expand } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { HeartGeode } from '@/components/ui/HeartGeode'
 import { getTrendingReason } from '@/services/trending'
-import { FALLBACK_IMAGE_URL } from '@/constants'
+import { getRockImageUrl } from '@/constants'
 import type { Rock, User } from '@/types'
 
 interface TrendingSectionProps {
@@ -208,7 +208,7 @@ function TrendingCard({
         className="w-full aspect-square relative block cursor-pointer"
       >
         <img
-          src={rock.imageUrl || FALLBACK_IMAGE_URL}
+          src={getRockImageUrl(rock)}
           alt={rock.name}
           width={192}
           height={192}
