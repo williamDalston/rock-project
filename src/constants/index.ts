@@ -38,11 +38,14 @@ export const DEFAULT_FORM_DATA: RockFormData = {
   isSelfCollected: false
 }
 
+/** Base path from Vite — respects the `base` config for GitHub Pages. */
+const BASE = import.meta.env.BASE_URL
+
 /** Fallback when rock/specimen imageUrl is missing or fails to load. */
-export const FALLBACK_IMAGE_URL = '/images/specimens/fallback.jpg'
+export const FALLBACK_IMAGE_URL = `${BASE}images/specimens/fallback.jpg`
 
 /** Helper to get a specimen image path by mineral name. */
-export const specimenImage = (name: string) => `/images/specimens/${name}.jpg`
+export const specimenImage = (name: string) => `${BASE}images/specimens/${name}.jpg`
 
 // ============================================
 // Rarity System

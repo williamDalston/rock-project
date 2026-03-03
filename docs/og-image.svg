@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0c0a09"/>
+
+  <!-- Subtle grid pattern -->
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1c1917" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="gemOG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#059669"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff" stop-opacity="0.3"/>
+      <stop offset="100%" style="stop-color:#ffffff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Large gem icon -->
+  <g transform="translate(100, 115) scale(4)">
+    <polygon points="50,5 95,35 80,95 20,95 5,35" fill="url(#gemOG)" stroke="#064e3b" stroke-width="2"/>
+    <polygon points="50,15 80,38 70,80 30,80 20,38" fill="#0d9488" opacity="0.5"/>
+    <polygon points="50,25 65,42 58,65 42,65 35,42" fill="#14b8a6" opacity="0.3"/>
+  </g>
+
+  <!-- Text -->
+  <text x="550" y="260" font-family="system-ui, -apple-system, sans-serif" font-size="72" font-weight="700" fill="#ffffff">Lithos</text>
+  <text x="550" y="330" font-family="system-ui, -apple-system, sans-serif" font-size="28" fill="#a8a29e">AI-Powered Rock Identification</text>
+  <text x="550" y="375" font-family="system-ui, -apple-system, sans-serif" font-size="28" fill="#a8a29e">&amp; Collector Trading</text>
+
+  <!-- Feature pills -->
+  <g transform="translate(550, 420)">
+    <rect x="0" y="0" width="120" height="36" rx="18" fill="#10b981" opacity="0.2"/>
+    <text x="60" y="24" font-family="system-ui, sans-serif" font-size="14" fill="#10b981" text-anchor="middle">Scan Rocks</text>
+
+    <rect x="140" y="0" width="140" height="36" rx="18" fill="#f59e0b" opacity="0.2"/>
+    <text x="210" y="24" font-family="system-ui, sans-serif" font-size="14" fill="#f59e0b" text-anchor="middle">Build Collection</text>
+
+    <rect x="300" y="0" width="150" height="36" rx="18" fill="#3b82f6" opacity="0.2"/>
+    <text x="375" y="24" font-family="system-ui, sans-serif" font-size="14" fill="#3b82f6" text-anchor="middle">Trade Worldwide</text>
+  </g>
+
+  <!-- URL -->
+  <text x="600" y="580" font-family="system-ui, sans-serif" font-size="20" fill="#57534e" text-anchor="middle">lithoshub.com</text>
+</svg>

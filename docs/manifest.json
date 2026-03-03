@@ -1,0 +1,55 @@
+{
+  "name": "Lithos - Rock Identification & Trading",
+  "short_name": "Lithos",
+  "description": "AI-powered rock and mineral identification with social trading",
+  "id": "com.lithoshub.app",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0c0a09",
+  "theme_color": "#0c0a09",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/og-image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["education", "lifestyle", "social"],
+  "shortcuts": [
+    {
+      "name": "Scan Rock",
+      "short_name": "Scan",
+      "description": "Identify a rock with AI",
+      "url": "/scan"
+    },
+    {
+      "name": "My Collection",
+      "short_name": "Vault",
+      "description": "View your rock collection",
+      "url": "/collection"
+    },
+    {
+      "name": "Marketplace",
+      "short_name": "Market",
+      "description": "Browse and trade specimens",
+      "url": "/"
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
