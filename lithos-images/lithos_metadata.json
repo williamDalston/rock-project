@@ -4,10 +4,16 @@
     "title": "Amethyst Cluster",
     "type": "crystal",
     "description": "Deep purple quartz geode cluster with sharp terminations.",
-    "tags": ["amethyst", "quartz", "purple", "geode", "cluster"],
-    "source": "Unsplash",
+    "tags": [
+      "amethyst",
+      "quartz",
+      "purple",
+      "geode",
+      "cluster"
+    ],
+    "source": "Local",
     "license": "CC0",
-    "url": "https://unsplash.com/photos/a-bunch-of-purple-crystals-sitting-on-top-of-a-table-ON0jlgkd8R0",
+    "url": "",
     "category": "classic"
   },
   {
@@ -15,10 +21,16 @@
     "title": "Pyrite Cube Cluster",
     "type": "mineral",
     "description": "Metallic iron sulfide crystals with cubic geometry (Fool's Gold).",
-    "tags": ["pyrite", "gold", "metallic", "cubic", "sulfide"],
-    "source": "Unsplash",
+    "tags": [
+      "pyrite",
+      "gold",
+      "metallic",
+      "cubic",
+      "sulfide"
+    ],
+    "source": "Local",
     "license": "CC0",
-    "url": "https://unsplash.com/photos/a-cluster-of-metallic-minerals-with-brown-and-gray-crystals-Ay-8VsuG_UA",
+    "url": "",
     "category": "classic"
   },
   {
@@ -26,10 +38,16 @@
     "title": "Bismuth Crystal",
     "type": "metal",
     "description": "Synthetic bismuth exhibiting staircase 'hopper' crystal structure and rainbow oxidation.",
-    "tags": ["bismuth", "rainbow", "geometric", "iridescent", "metal"],
-    "source": "Unsplash",
+    "tags": [
+      "bismuth",
+      "rainbow",
+      "geometric",
+      "iridescent",
+      "metal"
+    ],
+    "source": "Local",
     "license": "CC0",
-    "url": "https://unsplash.com/photos/green-and-gold-beaded-accessory-fOxeT3Wt-9c",
+    "url": "",
     "category": "classic"
   },
   {
@@ -37,10 +55,16 @@
     "title": "Malachite Banding",
     "type": "texture",
     "description": "Polished surface showing deep green botryoidal banding patterns.",
-    "tags": ["malachite", "green", "pattern", "banded", "copper"],
-    "source": "Unsplash",
+    "tags": [
+      "malachite",
+      "green",
+      "pattern",
+      "banded",
+      "copper"
+    ],
+    "source": "Local",
     "license": "CC0",
-    "url": "https://unsplash.com/photos/brown-ceramic-tiles-vIdRMp8IpO0",
+    "url": "",
     "category": "classic"
   },
   {
@@ -48,10 +72,16 @@
     "title": "Native Gold Nugget",
     "type": "metal",
     "description": "Raw native gold nugget with textured surface.",
-    "tags": ["gold", "metal", "nugget", "precious", "yellow"],
-    "source": "Unsplash",
+    "tags": [
+      "gold",
+      "metal",
+      "nugget",
+      "precious",
+      "yellow"
+    ],
+    "source": "Local",
     "license": "CC0",
-    "url": "https://unsplash.com/photos/a-close-up-of-a-gold-nugget-eLeXwRx4ALs",
+    "url": "",
     "category": "classic"
   },
   {
@@ -59,10 +89,16 @@
     "title": "Raw Fluorite",
     "type": "crystal",
     "description": "Rough fluorite specimen showing purple and white zoning.",
-    "tags": ["fluorite", "purple", "white", "raw", "halide"],
-    "source": "Unsplash",
+    "tags": [
+      "fluorite",
+      "purple",
+      "white",
+      "raw",
+      "halide"
+    ],
+    "source": "Local",
     "license": "CC0",
-    "url": "https://unsplash.com/photos/a-pile-of-purple-and-white-rocks-sitting-next-to-each-other-BVjRFkvG4Kg",
+    "url": "",
     "category": "classic"
   },
   {
@@ -70,10 +106,16 @@
     "title": "Clear Quartz Points",
     "type": "crystal",
     "description": "Pristine clear quartz points rising from a dark matrix.",
-    "tags": ["quartz", "clear", "points", "cluster", "silica"],
-    "source": "Unsplash",
+    "tags": [
+      "quartz",
+      "clear",
+      "points",
+      "cluster",
+      "silica"
+    ],
+    "source": "Local",
     "license": "CC0",
-    "url": "https://unsplash.com/photos/clear-quartz-crystals-on-dark-metallic-mineral-matrix-V0l3kUa6aBs",
+    "url": "",
     "category": "classic"
   },
   {
@@ -81,10 +123,16 @@
     "title": "Obsidian Shard",
     "type": "rock",
     "description": "Black volcanic glass fragment with conchoidal fracture.",
-    "tags": ["obsidian", "black", "glass", "volcanic", "sharp"],
-    "source": "Unsplash",
+    "tags": [
+      "obsidian",
+      "black",
+      "glass",
+      "volcanic",
+      "sharp"
+    ],
+    "source": "Local",
     "license": "CC0",
-    "url": "https://unsplash.com/photos/gray-and-black-stone-fragment-XdBlNr0WHJY",
+    "url": "",
     "category": "classic"
   },
   {
@@ -92,10 +140,16 @@
     "title": "Amethyst Geode",
     "type": "crystal",
     "description": "Large split geode revealing deep violet amethyst interior.",
-    "tags": ["amethyst", "geode", "cave", "violet", "large"],
-    "source": "Unsplash",
+    "tags": [
+      "amethyst",
+      "geode",
+      "cave",
+      "violet",
+      "large"
+    ],
+    "source": "Local",
     "license": "CC0",
-    "url": "https://unsplash.com/photos/purple-geode-VPX6eeOI5s4",
+    "url": "",
     "category": "classic"
   },
   {
@@ -103,10 +157,16 @@
     "title": "Orange Calcite",
     "type": "mineral",
     "description": "Waxy, opaque orange calcite chunk.",
-    "tags": ["calcite", "orange", "waxy", "soft", "carbonate"],
-    "source": "Unsplash",
+    "tags": [
+      "calcite",
+      "orange",
+      "waxy",
+      "soft",
+      "carbonate"
+    ],
+    "source": "Local",
     "license": "CC0",
-    "url": "https://unsplash.com/s/photos/orange-calcite",
+    "url": "",
     "category": "classic"
   },
   {
@@ -114,10 +174,16 @@
     "title": "Labradorite Flash",
     "type": "mineral",
     "description": "Polished feldspar showing blue and gold labradorescence.",
-    "tags": ["labradorite", "flash", "blue", "magic", "feldspar"],
+    "tags": [
+      "labradorite",
+      "flash",
+      "blue",
+      "magic",
+      "feldspar"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/labradorite-macro",
+    "url": "",
     "category": "classic"
   },
   {
@@ -125,10 +191,16 @@
     "title": "Boulder Opal",
     "type": "gem",
     "description": "Ironstone matrix with veins of iridescent precious opal.",
-    "tags": ["opal", "iridescent", "rainbow", "australian", "gem"],
+    "tags": [
+      "opal",
+      "iridescent",
+      "rainbow",
+      "australian",
+      "gem"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/opal-stone",
+    "url": "",
     "category": "classic"
   },
   {
@@ -136,10 +208,16 @@
     "title": "Rhodochrosite",
     "type": "mineral",
     "description": "Pink manganese carbonate with distinct white zigzag banding.",
-    "tags": ["rhodochrosite", "pink", "banded", "rose", "soft"],
+    "tags": [
+      "rhodochrosite",
+      "pink",
+      "banded",
+      "rose",
+      "soft"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/rhodochrosite",
+    "url": "",
     "category": "classic"
   },
   {
@@ -147,10 +225,16 @@
     "title": "Celestite Geode",
     "type": "crystal",
     "description": "Sky-blue strontium sulfate crystals inside a geode.",
-    "tags": ["celestite", "blue", "sky", "angelic", "sulfate"],
+    "tags": [
+      "celestite",
+      "blue",
+      "sky",
+      "angelic",
+      "sulfate"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/celestite",
+    "url": "",
     "category": "ethereal"
   },
   {
@@ -158,10 +242,16 @@
     "title": "Lapis Lazuli Rough",
     "type": "rock",
     "description": "Deep blue metamorphic rock with gold pyrite flecks.",
-    "tags": ["lapis", "blue", "gold", "royal", "ancient"],
+    "tags": [
+      "lapis",
+      "blue",
+      "gold",
+      "royal",
+      "ancient"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/lapis-lazuli",
+    "url": "",
     "category": "classic"
   },
   {
@@ -169,10 +259,16 @@
     "title": "Raw Aquamarine",
     "type": "gem",
     "description": "Pale blue-green beryl crystal column.",
-    "tags": ["aquamarine", "beryl", "blue", "sea", "gem"],
+    "tags": [
+      "aquamarine",
+      "beryl",
+      "blue",
+      "sea",
+      "gem"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/aquamarine-crystal",
+    "url": "",
     "category": "classic"
   },
   {
@@ -180,10 +276,16 @@
     "title": "Almandine Garnet",
     "type": "gem",
     "description": "Deep red dodecahedral garnet crystal in matrix.",
-    "tags": ["garnet", "red", "dark", "raw", "january"],
+    "tags": [
+      "garnet",
+      "red",
+      "dark",
+      "raw",
+      "january"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/garnet-stone",
+    "url": "",
     "category": "classic"
   },
   {
@@ -191,10 +293,16 @@
     "title": "Selenite Tower",
     "type": "crystal",
     "description": "Translucent white gypsum tower with fiber-optic sheen.",
-    "tags": ["selenite", "white", "cleansing", "gypsum", "moon"],
+    "tags": [
+      "selenite",
+      "white",
+      "cleansing",
+      "gypsum",
+      "moon"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/selenite-crystal",
+    "url": "",
     "category": "classic"
   },
   {
@@ -202,10 +310,16 @@
     "title": "Hematite",
     "type": "mineral",
     "description": "Metallic gunmetal-grey iron oxide with bubbly botryoidal form.",
-    "tags": ["hematite", "metallic", "grey", "heavy", "iron"],
+    "tags": [
+      "hematite",
+      "metallic",
+      "grey",
+      "heavy",
+      "iron"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/hematite",
+    "url": "",
     "category": "classic"
   },
   {
@@ -213,10 +327,16 @@
     "title": "Peacock Ore",
     "type": "mineral",
     "description": "Chalcopyrite treated with acid to show vibrant purple and blue iridescence.",
-    "tags": ["chalcopyrite", "colorful", "iridescent", "copper", "peacock"],
+    "tags": [
+      "chalcopyrite",
+      "colorful",
+      "iridescent",
+      "copper",
+      "peacock"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/mineral-iridescent",
+    "url": "",
     "category": "classic"
   },
   {
@@ -224,10 +344,16 @@
     "title": "Autunite",
     "type": "mineral",
     "description": "Radioactive uranium mineral with an intense, natural neon-yellow glow.",
-    "tags": ["autunite", "neon", "yellow", "radioactive", "toxic"],
+    "tags": [
+      "autunite",
+      "neon",
+      "yellow",
+      "radioactive",
+      "toxic"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/autunite-mineral",
+    "url": "",
     "category": "neon"
   },
   {
@@ -235,10 +361,16 @@
     "title": "Chalcanthite",
     "type": "crystal",
     "description": "Lab-grown copper sulfate crystals with an electric, unnatural deep blue hue.",
-    "tags": ["chalcanthite", "blue", "electric", "copper", "lab-grown"],
+    "tags": [
+      "chalcanthite",
+      "blue",
+      "electric",
+      "copper",
+      "lab-grown"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/copper-sulfate-crystal",
+    "url": "",
     "category": "neon"
   },
   {
@@ -246,10 +378,16 @@
     "title": "UV Fluorite",
     "type": "crystal",
     "description": "Specimen photographed under UV light revealing hidden alien-blue fluorescence.",
-    "tags": ["fluorite", "uv", "fluorescent", "glow", "night"],
+    "tags": [
+      "fluorite",
+      "uv",
+      "fluorescent",
+      "glow",
+      "night"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/fluorescent-mineral",
+    "url": "",
     "category": "neon"
   },
   {
@@ -257,10 +395,16 @@
     "title": "Realgar",
     "type": "mineral",
     "description": "Arsenic sulfide mineral with a piercing, toxic ruby-red color.",
-    "tags": ["realgar", "red", "arsenic", "toxic", "danger"],
+    "tags": [
+      "realgar",
+      "red",
+      "arsenic",
+      "toxic",
+      "danger"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/red-mineral-crystal",
+    "url": "",
     "category": "neon"
   },
   {
@@ -268,10 +412,16 @@
     "title": "Celestite Geode",
     "type": "crystal",
     "description": "Soft sky-blue crystals that look like frozen clouds.",
-    "tags": ["celestite", "blue", "pastel", "sky", "angelic"],
+    "tags": [
+      "celestite",
+      "blue",
+      "pastel",
+      "sky",
+      "angelic"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/celestite",
+    "url": "",
     "category": "ethereal"
   },
   {
@@ -279,10 +429,16 @@
     "title": "Raw Morganite",
     "type": "gem",
     "description": "Pale pink to peach beryl, known as the 'Pink Emerald'.",
-    "tags": ["morganite", "pink", "peach", "soft", "romance"],
+    "tags": [
+      "morganite",
+      "pink",
+      "peach",
+      "soft",
+      "romance"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/morganite-crystal",
+    "url": "",
     "category": "ethereal"
   },
   {
@@ -290,10 +446,16 @@
     "title": "Kunzite Blade",
     "type": "crystal",
     "description": "Lilac-colored spodumene crystal with a glass-like vertical structure.",
-    "tags": ["kunzite", "lilac", "purple", "blade", "clarity"],
+    "tags": [
+      "kunzite",
+      "lilac",
+      "purple",
+      "blade",
+      "clarity"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/kunzite",
+    "url": "",
     "category": "ethereal"
   },
   {
@@ -301,10 +463,16 @@
     "title": "Angelite Tumble",
     "type": "rock",
     "description": "Opaque, matte glacier-blue anhydrite stone.",
-    "tags": ["angelite", "blue", "matte", "smooth", "glacier"],
+    "tags": [
+      "angelite",
+      "blue",
+      "matte",
+      "smooth",
+      "glacier"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/blue-stone-texture",
+    "url": "",
     "category": "ethereal"
   },
   {
@@ -312,10 +480,16 @@
     "title": "Stibnite Swords",
     "type": "metal",
     "description": "Metallic antimony sulfide forming long, sharp, sword-like clusters.",
-    "tags": ["stibnite", "grey", "metallic", "sharp", "weapon"],
+    "tags": [
+      "stibnite",
+      "grey",
+      "metallic",
+      "sharp",
+      "weapon"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/stibnite",
+    "url": "",
     "category": "abyssal"
   },
   {
@@ -323,10 +497,16 @@
     "title": "Vanadinite",
     "type": "mineral",
     "description": "Deep blood-red hexagonal crystals sitting on pale rock.",
-    "tags": ["vanadinite", "red", "hexagonal", "blood", "geometry"],
+    "tags": [
+      "vanadinite",
+      "red",
+      "hexagonal",
+      "blood",
+      "geometry"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/vanadinite",
+    "url": "",
     "category": "abyssal"
   },
   {
@@ -334,10 +514,16 @@
     "title": "Schorl (Black Tourmaline)",
     "type": "crystal",
     "description": "Deep black, striated columns that absorb almost all light.",
-    "tags": ["tourmaline", "black", "schorl", "protection", "dark"],
+    "tags": [
+      "tourmaline",
+      "black",
+      "schorl",
+      "protection",
+      "dark"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/black-tourmaline",
+    "url": "",
     "category": "abyssal"
   },
   {
@@ -345,10 +531,16 @@
     "title": "Garnet in Schist",
     "type": "rock",
     "description": "Dark grey metallic rock studded with blood-red garnet jewels.",
-    "tags": ["garnet", "schist", "red", "grey", "contrast"],
+    "tags": [
+      "garnet",
+      "schist",
+      "red",
+      "grey",
+      "contrast"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/garnet-in-rock",
+    "url": "",
     "category": "abyssal"
   },
   {
@@ -356,10 +548,16 @@
     "title": "Moldavite",
     "type": "tektite",
     "description": "A high-frequency green tektite formed by a meteorite impact. Known as the 'Stone of Transformation' for rapid spiritual evolution.",
-    "tags": ["moldavite", "alien", "transformation", "meteorite", "high-vibration"],
+    "tags": [
+      "moldavite",
+      "alien",
+      "transformation",
+      "meteorite",
+      "high-vibration"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/moldavite",
+    "url": "",
     "category": "mystic"
   },
   {
@@ -367,10 +565,16 @@
     "title": "Nuummite",
     "type": "mineral",
     "description": "The 'Sorcerer's Stone.' One of the oldest minerals on Earth (3B years), used for deep journeying, shadow work, and reclaiming personal power.",
-    "tags": ["nuummite", "ancient", "magic", "sorcery", "black"],
+    "tags": [
+      "nuummite",
+      "ancient",
+      "magic",
+      "sorcery",
+      "black"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/dark-stone-texture",
+    "url": "",
     "category": "mystic"
   },
   {
@@ -378,10 +582,16 @@
     "title": "Elite Shungite",
     "type": "mineral",
     "description": "A rare, non-crystalline carbon mineral from Russia containing fullerenes. Revered for EMF protection and energetic purification.",
-    "tags": ["shungite", "protection", "purification", "carbon", "black"],
+    "tags": [
+      "shungite",
+      "protection",
+      "purification",
+      "carbon",
+      "black"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/shungite",
+    "url": "",
     "category": "mystic"
   },
   {
@@ -389,10 +599,16 @@
     "title": "Lapis Lazuli",
     "type": "rock",
     "description": "The stone of royalty and truth. Associated with the Third Eye chakra, enhancing intuition, inner vision, and intellectual clarity.",
-    "tags": ["lapis", "thirdeye", "wisdom", "truth", "royal"],
+    "tags": [
+      "lapis",
+      "thirdeye",
+      "wisdom",
+      "truth",
+      "royal"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/lapis-lazuli",
+    "url": "",
     "category": "mystic"
   },
   {
@@ -400,10 +616,16 @@
     "title": "Super Seven",
     "type": "crystal",
     "description": "Also known as the 'Melody Stone.' A rare combination of seven minerals (Amethyst, Cacoxenite, Goethite, Lepidocrocite, Rutile, Smoky Quartz, and Quartz) in one.",
-    "tags": ["super seven", "rare", "ascension", "quartz", "harmony"],
+    "tags": [
+      "super seven",
+      "rare",
+      "ascension",
+      "quartz",
+      "harmony"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/amethyst-rutile",
+    "url": "",
     "category": "mystic"
   },
   {
@@ -411,10 +633,16 @@
     "title": "Rainbow Moonstone",
     "type": "feldspar",
     "description": "A stone of new beginnings and feminine energy. Its blue flash (adularescence) represents the light of the moon guiding the way through the subconscious.",
-    "tags": ["moonstone", "intuition", "feminine", "mystic", "flash"],
+    "tags": [
+      "moonstone",
+      "intuition",
+      "feminine",
+      "mystic",
+      "flash"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/moonstone",
+    "url": "",
     "category": "mystic"
   },
   {
@@ -422,10 +650,16 @@
     "title": "Blue Kyanite",
     "type": "crystal",
     "description": "A powerful transmitter of energy that creates pathways where there were none. One of the few stones that never retains negative energy and requires no clearing.",
-    "tags": ["kyanite", "alignment", "cleansing", "blue", "blade"],
+    "tags": [
+      "kyanite",
+      "alignment",
+      "cleansing",
+      "blue",
+      "blade"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/kyanite",
+    "url": "",
     "category": "mystic"
   },
   {
@@ -433,10 +667,16 @@
     "title": "Lemurian Seed Quartz",
     "type": "crystal",
     "description": "Quartz points with distinct horizontal striations (barcodes). Legend says they hold the ancient knowledge of the lost civilization of Lemuria.",
-    "tags": ["lemurian", "ancient", "knowledge", "quartz", "record-keeper"],
+    "tags": [
+      "lemurian",
+      "ancient",
+      "knowledge",
+      "quartz",
+      "record-keeper"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/clear-quartz-point",
+    "url": "",
     "category": "mystic"
   },
   {
@@ -444,10 +684,16 @@
     "title": "Charoite",
     "type": "mineral",
     "description": "Found only in Siberia, this swirling purple stone is the 'Stone of the Spirit.' It connects the heart and crown chakras for deep unconditional love.",
-    "tags": ["charoite", "purple", "siberia", "spirit", "swirl"],
+    "tags": [
+      "charoite",
+      "purple",
+      "siberia",
+      "spirit",
+      "swirl"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/purple-stone-texture",
+    "url": "",
     "category": "mystic"
   },
   {
@@ -455,10 +701,16 @@
     "title": "Herkimer Diamond",
     "type": "crystal",
     "description": "Not a true diamond, but a double-terminated quartz with extreme clarity and high frequency. Used for attunement and dream work.",
-    "tags": ["herkimer", "dream", "clarity", "attunement", "quartz"],
+    "tags": [
+      "herkimer",
+      "dream",
+      "clarity",
+      "attunement",
+      "quartz"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/diamond-quartz",
+    "url": "",
     "category": "mystic"
   },
   {
@@ -466,10 +718,16 @@
     "title": "Golden Tiger's Eye",
     "type": "mineral",
     "description": "A metamorphic rock with a silky luster and golden bands that shift light (chatoyancy) like a cat's eye.",
-    "tags": ["tigers eye", "gold", "chatoyancy", "protection", "common"],
+    "tags": [
+      "tigers eye",
+      "gold",
+      "chatoyancy",
+      "protection",
+      "common"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/tigers-eye-stone",
+    "url": "",
     "category": "common"
   },
   {
@@ -477,10 +735,16 @@
     "title": "Moss Agate",
     "type": "chalcedony",
     "description": "Semi-transparent chalcedony containing green minerals that look like floating moss, ferns, or forests.",
-    "tags": ["agate", "moss", "green", "nature", "garden"],
+    "tags": [
+      "agate",
+      "moss",
+      "green",
+      "nature",
+      "garden"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/moss-agate",
+    "url": "",
     "category": "common"
   },
   {
@@ -488,10 +752,16 @@
     "title": "Smoky Quartz",
     "type": "crystal",
     "description": "A translucent grey-to-black quartz variety. Its shadowy color comes from natural irradiation.",
-    "tags": ["quartz", "smoky", "black", "grounding", "shadow"],
+    "tags": [
+      "quartz",
+      "smoky",
+      "black",
+      "grounding",
+      "shadow"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/smoky-quartz",
+    "url": "",
     "category": "common"
   },
   {
@@ -499,10 +769,16 @@
     "title": "Sodalite",
     "type": "rock",
     "description": "Rich royal blue stone crossed with white calcite veins, resembling a stormy ocean or denim.",
-    "tags": ["sodalite", "blue", "ocean", "storm", "insight"],
+    "tags": [
+      "sodalite",
+      "blue",
+      "ocean",
+      "storm",
+      "insight"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/sodalite",
+    "url": "",
     "category": "common"
   },
   {
@@ -510,10 +786,16 @@
     "title": "Carnelian",
     "type": "mineral",
     "description": "Glassy, translucent orange-red chalcedony that seems to glow from within like a dying ember.",
-    "tags": ["carnelian", "orange", "fire", "vitality", "sacral"],
+    "tags": [
+      "carnelian",
+      "orange",
+      "fire",
+      "vitality",
+      "sacral"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/carnelian",
+    "url": "",
     "category": "common"
   },
   {
@@ -521,10 +803,16 @@
     "title": "Optical Calcite (Iceland Spar)",
     "type": "mineral",
     "description": "A perfectly clear, rhomboid calcite crystal famous for its double-refraction property (splitting images in two).",
-    "tags": ["calcite", "clear", "optical", "science", "prism"],
+    "tags": [
+      "calcite",
+      "clear",
+      "optical",
+      "science",
+      "prism"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/calcite-crystal",
+    "url": "",
     "category": "common"
   },
   {
@@ -532,10 +820,16 @@
     "title": "Bumblebee Jasper",
     "type": "rock",
     "description": "A sedimentary rock (not true jasper) featuring vivid bands of sulfur yellow, black manganese, and grey ash.",
-    "tags": ["jasper", "yellow", "bumblebee", "volcanic", "banded"],
+    "tags": [
+      "jasper",
+      "yellow",
+      "bumblebee",
+      "volcanic",
+      "banded"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/yellow-stone-texture",
+    "url": "",
     "category": "common"
   },
   {
@@ -543,10 +837,16 @@
     "title": "Lepidolite Mica",
     "type": "mineral",
     "description": "Lilac-grey mica rich in lithium. It forms in flaky, glittering sheets that sparkle intensely.",
-    "tags": ["lepidolite", "purple", "mica", "glitter", "calm"],
+    "tags": [
+      "lepidolite",
+      "purple",
+      "mica",
+      "glitter",
+      "calm"
+    ],
     "source": "Unsplash Search",
     "license": "Check Source",
-    "url": "https://unsplash.com/s/photos/purple-mineral",
+    "url": "",
     "category": "common"
   }
 ]

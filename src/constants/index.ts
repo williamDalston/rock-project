@@ -56,14 +56,45 @@ export function getFallbackImageUrl(): string {
   return getBase() + SPECIMEN_PATH + 'fallback.jpg'
 }
 
+/** Hosts we never use (old/broken URLs in DB). Show fallback instead. */
+const BLOCKED_IMAGE_HOSTS = [
+  'images.unsplash.com',
+  'plus.unsplash.com',
+  'unsplash.com'
+]
+
+/** True if imageUrl is from a blocked host (e.g. Unsplash). Use to sanitize DB or in-memory rocks. */
+export function isBlockedImageUrl(url: string | null | undefined): boolean {
+  if (!url || typeof url !== 'string' || !url.trim()) return false
+  if (!url.startsWith('http')) return false
+  return url.toLowerCase().includes('unsplash.com')
+}
+
+/** True if URL is same-origin or Firebase Storage (trusted). */
+function isTrustedImageUrl(url: string): boolean {
+  if (typeof window === 'undefined') return false
+  try {
+    const u = new URL(url, window.location.origin)
+    const host = u.hostname.toLowerCase()
+    if (BLOCKED_IMAGE_HOSTS.some(h => host === h || host.endsWith('.' + h))) return false
+    if (host === 'firebasestorage.googleapis.com') return true
+    return u.origin === window.location.origin
+  } catch {
+    return false
+  }
+}
+
 /**
  * Returns the full image URL for a rock. Use this everywhere a rock image is displayed.
- * Handles: missing imageUrl, relative paths (demo data), absolute paths, and full URLs.
+ * Rejects blocked hosts (e.g. Unsplash) so old DB data never shows wrong images; trusts same-origin + Firebase Storage.
  */
 export function getRockImageUrl(rock: { imageUrl?: string | null }): string {
   const raw = rock?.imageUrl?.trim()
   if (!raw) return getFallbackImageUrl()
-  if (raw.startsWith('http://') || raw.startsWith('https://')) return raw
+  if (raw.startsWith('http://') || raw.startsWith('https://')) {
+    if (!isTrustedImageUrl(raw)) return getFallbackImageUrl()
+    return raw
+  }
   if (raw.startsWith('/')) return raw
   return getBase() + raw.replace(/^\.\//, '')
 }

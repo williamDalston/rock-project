@@ -1,5 +1,5 @@
 /**
- * Database seeding script
+ * Database seeding script — uses only local specimen images (no external URLs).
  * Run with: npx tsx scripts/seedDatabase.ts
  */
 
@@ -19,116 +19,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
-// Demo specimens data
+// Local specimen paths only (resolved at runtime by app with getBase() + path)
+const SPECIMEN = (name: string) => `images/specimens/${name}.jpg`
+
 const demoSpecimens = [
-  {
-    name: 'Amethyst Cluster',
-    type: 'crystal',
-    description: 'Purple quartz. A meditative and calming stone that promotes balance.',
-    imageUrl: 'https://images.unsplash.com/photo-1610123581698-5a93cc3f89e5?w=800&h=800&fit=crop',
-    tags: ['purple', 'calm', 'classic', 'quartz'],
-    rarity: 3,
-    likes: 4567
-  },
-  {
-    name: 'Pyrite Cubes',
-    type: 'mineral',
-    description: 'Naturally forming perfect cubes of iron sulfide found in Navajún, Spain.',
-    imageUrl: 'https://images.unsplash.com/photo-1518133835878-5a93cc3f89e5?w=800&h=800&fit=crop',
-    tags: ['cube', 'gold', 'geometric', 'spain'],
-    rarity: 4,
-    likes: 5123
-  },
-  {
-    name: 'Bismuth Crystal',
-    type: 'metal',
-    description: 'Post-transition metal with iridescent oxide tarnish and distinct hopper crystal structure.',
-    imageUrl: 'https://images.unsplash.com/photo-1635070040705-ed06a3d19089?w=800&h=800&fit=crop',
-    tags: ['geometric', 'rainbow', 'metal', 'synthetic'],
-    rarity: 4,
-    likes: 4891
-  },
-  {
-    name: 'Malachite',
-    type: 'mineral',
-    description: 'Striking green banded copper carbonate mineral with concentric rings.',
-    imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=800&fit=crop',
-    tags: ['green', 'banded', 'copper', 'swirl'],
-    rarity: 3,
-    likes: 3421
-  },
-  {
-    name: 'Rose Quartz',
-    type: 'crystal',
-    description: 'Pink quartz. The universal stone of unconditional love and peace.',
-    imageUrl: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800&h=800&fit=crop',
-    tags: ['pink', 'love', 'heart', 'gentle'],
-    rarity: 2,
-    likes: 4234
-  },
-  {
-    name: 'Labradorite',
-    type: 'feldspar',
-    description: 'A high-grade Labradorite showing the full spectrum of colors with stunning flash.',
-    imageUrl: 'https://images.unsplash.com/photo-1571115764595-44f2c9c5cd21?w=800&h=800&fit=crop',
-    tags: ['rainbow', 'flash', 'magic', 'shielding'],
-    rarity: 4,
-    likes: 4521
-  },
-  {
-    name: 'Obsidian',
-    type: 'rock',
-    description: 'Volcanic glass with hidden rainbow sheen visible when polished.',
-    imageUrl: 'https://images.unsplash.com/photo-1558171813-4c2a0a7d0f9a?w=800&h=800&fit=crop',
-    tags: ['obsidian', 'volcanic', 'glass', 'dark'],
-    rarity: 2,
-    likes: 2876
-  },
-  {
-    name: 'Citrine Point',
-    type: 'crystal',
-    description: "Yellow-to-orange quartz. Known as the 'Merchant's Stone' for attracting wealth.",
-    imageUrl: 'https://images.unsplash.com/photo-1610375461246-83df859d849d?w=800&h=800&fit=crop',
-    tags: ['yellow', 'wealth', 'sun', 'energy'],
-    rarity: 3,
-    likes: 3456
-  },
-  {
-    name: 'Clear Quartz',
-    type: 'crystal',
-    description: "Pure silicon dioxide. Known as the 'Master Healer' and amplifier of energy.",
-    imageUrl: 'https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=800&h=800&fit=crop',
-    tags: ['clear', 'healer', 'amplifier', 'master'],
-    rarity: 2,
-    likes: 3789
-  },
-  {
-    name: 'Fluorite Rainbow',
-    type: 'mineral',
-    description: 'Transparent crystal showing distinct bands of purple, green, and clear colors.',
-    imageUrl: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&h=800&fit=crop',
-    tags: ['purple', 'green', 'striped', 'clarity'],
-    rarity: 3,
-    likes: 3789
-  },
-  {
-    name: 'Tiger Eye',
-    type: 'mineral',
-    description: 'Chatoyant gemstone with a golden to red-brown color and silky luster.',
-    imageUrl: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=800&h=800&fit=crop',
-    tags: ['brown', 'gold', 'protection', 'grounding'],
-    rarity: 2,
-    likes: 2987
-  },
-  {
-    name: 'Celestite Cluster',
-    type: 'mineral',
-    description: 'Delicate, sky-blue crystals found in geodes. Known for promoting peace.',
-    imageUrl: 'https://images.unsplash.com/photo-1612197527762-8cfb55b618d1?w=800&h=800&fit=crop',
-    tags: ['blue', 'sky', 'peace', 'fragile'],
-    rarity: 4,
-    likes: 3654
-  }
+  { name: 'Amethyst Cluster', type: 'crystal', description: 'Purple quartz. A meditative and calming stone that promotes balance.', imageUrl: SPECIMEN('amethyst'), tags: ['purple', 'calm', 'classic', 'quartz'], rarity: 3, likes: 4567 },
+  { name: 'Pyrite Cubes', type: 'mineral', description: 'Naturally forming perfect cubes of iron sulfide found in Navajún, Spain.', imageUrl: SPECIMEN('pyrite'), tags: ['cube', 'gold', 'geometric', 'spain'], rarity: 4, likes: 5123 },
+  { name: 'Bismuth Crystal', type: 'metal', description: 'Post-transition metal with iridescent oxide tarnish and distinct hopper crystal structure.', imageUrl: SPECIMEN('fallback'), tags: ['geometric', 'rainbow', 'metal', 'synthetic'], rarity: 4, likes: 4891 },
+  { name: 'Malachite', type: 'mineral', description: 'Striking green banded copper carbonate mineral with concentric rings.', imageUrl: SPECIMEN('malachite'), tags: ['green', 'banded', 'copper', 'swirl'], rarity: 3, likes: 3421 },
+  { name: 'Rose Quartz', type: 'crystal', description: 'Pink quartz. The universal stone of unconditional love and peace.', imageUrl: SPECIMEN('rose-quartz'), tags: ['pink', 'love', 'heart', 'gentle'], rarity: 2, likes: 4234 },
+  { name: 'Labradorite', type: 'feldspar', description: 'A high-grade Labradorite showing the full spectrum of colors with stunning flash.', imageUrl: SPECIMEN('fallback'), tags: ['rainbow', 'flash', 'magic', 'shielding'], rarity: 4, likes: 4521 },
+  { name: 'Obsidian', type: 'rock', description: 'Volcanic glass with hidden rainbow sheen visible when polished.', imageUrl: SPECIMEN('fallback'), tags: ['obsidian', 'volcanic', 'glass', 'dark'], rarity: 2, likes: 2876 },
+  { name: 'Citrine Point', type: 'crystal', description: "Yellow-to-orange quartz. Known as the 'Merchant's Stone' for attracting wealth.", imageUrl: SPECIMEN('citrine'), tags: ['yellow', 'wealth', 'sun', 'energy'], rarity: 3, likes: 3456 },
+  { name: 'Clear Quartz', type: 'crystal', description: "Pure silicon dioxide. Known as the 'Master Healer' and amplifier of energy.", imageUrl: SPECIMEN('clear-quartz'), tags: ['clear', 'healer', 'amplifier', 'master'], rarity: 2, likes: 3789 },
+  { name: 'Fluorite Rainbow', type: 'mineral', description: 'Transparent crystal showing distinct bands of purple, green, and clear colors.', imageUrl: SPECIMEN('fluorite'), tags: ['purple', 'green', 'striped', 'clarity'], rarity: 3, likes: 3789 },
+  { name: 'Tiger Eye', type: 'mineral', description: 'Chatoyant gemstone with a golden to red-brown color and silky luster.', imageUrl: SPECIMEN('tigers-eye'), tags: ['brown', 'gold', 'protection', 'grounding'], rarity: 2, likes: 2987 },
+  { name: 'Celestite Cluster', type: 'mineral', description: 'Delicate, sky-blue crystals found in geodes. Known for promoting peace.', imageUrl: SPECIMEN('celestite'), tags: ['blue', 'sky', 'peace', 'fragile'], rarity: 4, likes: 3654 }
 ]
 
 const APP_ID = 'default-app-id'

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { collection, onSnapshot, addDoc, deleteDoc, doc, query, where, getDocs, serverTimestamp } from 'firebase/firestore'
+import { collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore'
 import { db, getCollectionPaths } from '@/services/firebase'
-import { APP_CONFIG } from '@/constants'
+import { APP_CONFIG, isBlockedImageUrl } from '@/constants'
 import type { Rock, RockFormData, User } from '@/types'
 
 interface UseRocksReturn {
@@ -25,34 +25,46 @@ export function useRocks(user: User | null): UseRocksReturn {
 
     const paths = getCollectionPaths(APP_CONFIG.APP_ID, user.uid)
 
-    // Subscribe to personal rocks
+    // Subscribe to personal rocks; sanitize and persist-fix blocked imageUrls
     const unsubPersonal = paths.userRocks
       ? onSnapshot(
           collection(db, paths.userRocks),
           (snapshot) => {
-            const rocks = snapshot.docs
-              .map((doc) => ({ id: doc.id, ...doc.data() } as Rock))
-              .sort((a, b) => {
-                const aTime = a.createdAt?.seconds || 0
-                const bTime = b.createdAt?.seconds || 0
-                return bTime - aTime
-              })
+            const rocks = snapshot.docs.map((d) => {
+              const rock = { id: d.id, ...d.data() } as Rock
+              if (isBlockedImageUrl(rock.imageUrl)) {
+                rock.imageUrl = ''
+                updateDoc(doc(db, paths.userRocks!, d.id), { imageUrl: '' }).catch(() => {})
+              }
+              return rock
+            })
+            rocks.sort((a, b) => {
+              const aTime = a.createdAt?.seconds || 0
+              const bTime = b.createdAt?.seconds || 0
+              return bTime - aTime
+            })
             setPersonalRocks(rocks)
           }
         )
       : () => {}
 
-    // Subscribe to market rocks
+    // Subscribe to market rocks; sanitize and persist-fix blocked imageUrls (e.g. old Unsplash)
     const unsubMarket = onSnapshot(
       collection(db, paths.marketRocks),
       (snapshot) => {
-        const rocks = snapshot.docs
-          .map((doc) => ({ id: doc.id, ...doc.data() } as Rock))
-          .sort((a, b) => {
-            const aTime = a.createdAt?.seconds || 0
-            const bTime = b.createdAt?.seconds || 0
-            return bTime - aTime
-          })
+        const rocks = snapshot.docs.map((d) => {
+          const rock = { id: d.id, ...d.data() } as Rock
+          if (isBlockedImageUrl(rock.imageUrl)) {
+            rock.imageUrl = ''
+            updateDoc(doc(db, paths.marketRocks, d.id), { imageUrl: '' }).catch(() => {})
+          }
+          return rock
+        })
+        rocks.sort((a, b) => {
+          const aTime = a.createdAt?.seconds || 0
+          const bTime = b.createdAt?.seconds || 0
+          return bTime - aTime
+        })
         setMarketRocks(rocks)
         setLoading(false)
       }
