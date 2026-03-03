@@ -90,24 +90,36 @@ export default function App() {
     ? demoCollectionRocks.map(r => ({ ...r, ownerId: user?.uid || 'demo_self' }))
     : personalRocks
 
-  // URL-based routing: read initial view from pathname for SEO crawlability
+  // URL-based routing: respect base path (e.g. /rock-project/) for GitHub Pages
+  const BASE = import.meta.env.BASE_URL || '/'
   const getViewFromPath = (): ViewType => {
-    const path = window.location.pathname.replace(/^\//, '')
-    if (path === 'collection') return 'collection'
-    if (path === 'scan') return 'scan'
+    const pathname = window.location.pathname
+    const p = pathname.replace(/^\//, '')
+    const basePrefix = BASE.replace(/^\/|\/$/g, '')
+    const segment = !basePrefix
+      ? p.split('/')[0] ?? ''
+      : p === basePrefix || p === basePrefix + '/'
+        ? ''
+        : p.startsWith(basePrefix + '/')
+          ? p.slice((basePrefix + '/').length).split('/')[0] ?? ''
+          : p.split('/')[0] ?? ''
+    if (segment === 'collection') return 'collection'
+    if (segment === 'scan') return 'scan'
     return 'market'
   }
 
   const [view, setViewState] = useState<ViewType>(getViewFromPath)
   const [collectionTab, setCollectionTab] = useState<'collection' | 'trades' | 'wishlists'>('collection')
 
-  // Sync URL with view state and scroll to top
+  // Sync URL with view state and scroll to top (paths include base for deploy)
   const setView = useCallback((newView: ViewType) => {
     setViewState(newView)
     window.scrollTo(0, 0)
-    const path = newView === 'market' ? '/' : `/${newView}`
-    if (window.location.pathname !== path) {
-      window.history.pushState({ view: newView }, '', path)
+    const fullPath = BASE + (newView === 'market' ? '' : newView)
+    const current = (window.location.pathname || '/').replace(/\/$/, '') || '/'
+    const target = fullPath.replace(/\/$/, '') || '/'
+    if (current !== target) {
+      window.history.pushState({ view: newView }, '', fullPath)
     }
   }, [])
 
