@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
-  base: '/rock-project/',
+  // Relative base so assets load on both GitHub Pages (/rock-project/) and Vercel (/)
+  base: './',
   plugins: [react()],
   build: {
     outDir: 'docs',

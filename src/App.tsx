@@ -90,19 +90,19 @@ export default function App() {
     ? demoCollectionRocks.map(r => ({ ...r, ownerId: user?.uid || 'demo_self' }))
     : personalRocks
 
-  // URL-based routing: respect base path (e.g. /rock-project/) for GitHub Pages
-  const BASE = import.meta.env.BASE_URL || '/'
+  // URL-based routing: detect deploy base so it works on GitHub Pages (/rock-project/) and Vercel (/)
+  const getDeployBase = () =>
+    typeof window !== 'undefined' && window.location.pathname.startsWith('/rock-project')
+      ? '/rock-project/'
+      : '/'
   const getViewFromPath = (): ViewType => {
     const pathname = window.location.pathname
-    const p = pathname.replace(/^\//, '')
-    const basePrefix = BASE.replace(/^\/|\/$/g, '')
-    const segment = !basePrefix
-      ? p.split('/')[0] ?? ''
-      : p === basePrefix || p === basePrefix + '/'
+    const pathWithoutBase = pathname.startsWith('/rock-project/')
+      ? pathname.slice('/rock-project/'.length)
+      : pathname.startsWith('/rock-project')
         ? ''
-        : p.startsWith(basePrefix + '/')
-          ? p.slice((basePrefix + '/').length).split('/')[0] ?? ''
-          : p.split('/')[0] ?? ''
+        : pathname.replace(/^\//, '')
+    const segment = (pathWithoutBase || '').split('/')[0] ?? ''
     if (segment === 'collection') return 'collection'
     if (segment === 'scan') return 'scan'
     return 'market'
@@ -111,11 +111,12 @@ export default function App() {
   const [view, setViewState] = useState<ViewType>(getViewFromPath)
   const [collectionTab, setCollectionTab] = useState<'collection' | 'trades' | 'wishlists'>('collection')
 
-  // Sync URL with view state and scroll to top (paths include base for deploy)
+  // Sync URL with view state and scroll to top
   const setView = useCallback((newView: ViewType) => {
     setViewState(newView)
     window.scrollTo(0, 0)
-    const fullPath = BASE + (newView === 'market' ? '' : newView)
+    const base = getDeployBase()
+    const fullPath = base + (newView === 'market' ? '' : newView)
     const current = (window.location.pathname || '/').replace(/\/$/, '') || '/'
     const target = fullPath.replace(/\/$/, '') || '/'
     if (current !== target) {
