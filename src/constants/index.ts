@@ -86,17 +86,38 @@ function isTrustedImageUrl(url: string): boolean {
 
 /** Map rock name keywords to specimen file name (so empty/blocked imageUrl still shows the right mineral). */
 const NAME_TO_SPECIMEN: [string, string][] = [
-  ['tiger\'s eye', 'tigers-eye'], ['tigers eye', 'tigers-eye'],
+  // Tiger's eye variants (specific first)
+  ['tiger\'s eye', 'tigers-eye'], ['tigers eye', 'tigers-eye'], ['tiger eye', 'tigers-eye'],
+  ['golden tiger\'s eye', 'tigers-eye'], ['golden tiger eye', 'tigers-eye'],
+  // Quartz variants (specific first so "quartz" alone is last)
   ['rose quartz', 'rose-quartz'], ['clear quartz', 'clear-quartz'], ['smoky quartz', 'smoky-quartz'],
+  ['lemurian', 'clear-quartz'], ['seed quartz', 'clear-quartz'], ['herkimer', 'clear-quartz'],
+  ['super seven', 'clear-quartz'], ['iceland spar', 'clear-quartz'], ['optical calcite', 'clear-quartz'],
+  ['quartz', 'clear-quartz'],
+  // Agates, jaspers, feldspars
   ['lapis lazuli', 'lapis-lazuli'], ['grape agate', 'grape-agate'], ['moss agate', 'moss-agate'],
   ['ocean jasper', 'ocean-jasper'], ['petrified wood', 'petrified-wood'], ['orange calcite', 'orange-calcite'],
+  ['bumblebee jasper', 'carnelian'],
+  // Opal variants
+  ['welo opal', 'opal'], ['welo', 'opal'], ['boulder opal', 'opal'],
+  // Tourmaline / schorl
+  ['schorl', 'tourmaline'], ['black tourmaline', 'tourmaline'],
+  // Single-word minerals we have images for
   ['pyrite', 'pyrite'], ['amethyst', 'amethyst'], ['malachite', 'malachite'], ['fluorite', 'fluorite'],
   ['celestite', 'celestite'], ['citrine', 'citrine'], ['opal', 'opal'], ['emerald', 'emerald'],
   ['sapphire', 'sapphire'], ['tourmaline', 'tourmaline'], ['vanadinite', 'vanadinite'], ['galena', 'galena'],
   ['aquamarine', 'aquamarine'], ['kunzite', 'kunzite'], ['rhodochrosite', 'rhodochrosite'],
-  ['gold', 'gold'], ['charoite', 'charoite'], ['grape agate', 'grape-agate'], ['moonstone', 'moonstone'],
+  ['gold', 'gold'], ['charoite', 'charoite'], ['moonstone', 'moonstone'],
   ['carnelian', 'carnelian'], ['morganite', 'morganite'], ['chalcanthite', 'chalcanthite'],
   ['autunite', 'autunite'], ['moldavite', 'moldavite'], ['sodalite', 'sodalite'],
+  ['bismuth', 'bismuth'], ['labradorite', 'labradorite'], ['obsidian', 'obsidian'],
+  // Fun-fact / lithos minerals → closest specimen (no dedicated image yet)
+  ['diamond', 'diamond'], ['garnet', 'garnet'], ['almandine', 'garnet'],
+  ['turquoise', 'turquoise'], ['selenite', 'selenite'],
+  ['hematite', 'pyrite'], ['peacock ore', 'malachite'], ['bornite', 'malachite'],
+  ['kyanite', 'lapis-lazuli'], ['angelite', 'sodalite'],
+  ['stibnite', 'tourmaline'], ['nuummite', 'obsidian'], ['shungite', 'obsidian'],
+  ['lepidolite', 'fluorite'], ['realgar', 'carnelian'],
 ]
 
 function specimenKeyFromName(name: string | null | undefined): string | null {

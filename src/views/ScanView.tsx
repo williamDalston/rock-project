@@ -131,10 +131,10 @@ export function ScanView({
       <div className="p-6 -mt-6 relative z-10 bg-stone-950 rounded-t-3xl border-t border-stone-800 min-h-[60vh] max-w-2xl mx-auto">
         <div className="w-12 h-1 bg-stone-800 rounded-full mx-auto mb-6" />
         <h1 className="font-serif text-xl sm:text-2xl font-bold text-white mb-1">
-          AI Rock & Mineral Scanner
+          Identify Rocks &amp; Minerals from Photo
         </h1>
         <p className="text-stone-500 text-sm mb-5">
-          Take a photo and get instant identification, rarity, and geological details.
+          Free rock identifier: take or upload a photo for instant name, rarity, hardness, and geological details. No app download.
         </p>
 
         <div className="space-y-5">

@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 
-const DEFAULT_IMAGE_ALT = 'Lithos - AI rock and mineral identifier: identify rocks from a photo'
+const DEFAULT_IMAGE_ALT = 'Free rock identifier – identify rocks and minerals from a photo with AI'
 
 interface SEOProps {
   title?: string
@@ -14,8 +14,8 @@ interface SEOProps {
 }
 
 const BASE_URL = 'https://www.lithoshub.com'
-const DEFAULT_TITLE = 'Lithos - AI Rock Identifier | Identify Rocks & Minerals from Photo'
-const DEFAULT_DESCRIPTION = 'Free AI rock identifier: take a photo and identify rocks and minerals instantly. Get species name, rarity, and geological details. Build your collection and trade with collectors worldwide.'
+const DEFAULT_TITLE = 'Free Rock Identifier – Identify Rocks & Minerals from Photo with AI'
+const DEFAULT_DESCRIPTION = 'Identify any rock or mineral from a photo in seconds. Free AI rock identifier: take a picture for instant name, rarity, hardness & geology. No app download—works in browser. Collect and trade specimens worldwide.'
 const DEFAULT_IMAGE = `${BASE_URL}/og-image.png`
 
 export function SEO({
@@ -94,6 +94,24 @@ export function SEO({
         </script>
       )}
 
+      {/* HowTo schema on scan page for "how to identify a rock" queries */}
+      {path === '/scan' && (
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'HowTo',
+            name: 'How to Identify a Rock or Mineral from a Photo',
+            description: 'Use Lithos free rock identifier to identify any rock or mineral from a photo in seconds. No app download.',
+            url: `${BASE_URL}/scan`,
+            step: [
+              { '@type': 'HowToStep', name: 'Open the rock identifier', text: 'Go to Lithos and tap Identify or open the scan page.', url: `${BASE_URL}/scan` },
+              { '@type': 'HowToStep', name: 'Take or upload a photo', text: 'Take a clear photo of your rock or mineral, or upload one from your device.' },
+              { '@type': 'HowToStep', name: 'Get your identification', text: 'The AI shows the species name, scientific name, rarity, hardness, and other geological properties.' }
+            ]
+          })}
+        </script>
+      )}
+
       {/* Rock-specific structured data */}
       {rockName && (
         <script type="application/ld+json">
@@ -123,26 +141,26 @@ export function SEO({
   )
 }
 
-// Pre-defined SEO configs for different views
+// Pre-defined SEO configs for different views (keyword-rich for organic traffic)
 export const SEO_CONFIGS = {
   market: {
-    title: 'Rock Marketplace - Trade Specimens with Collectors Worldwide',
-    description: 'Browse and trade rocks and minerals with collectors worldwide. Find rare specimens, explore trending geology finds, and expand your collection on Lithos.',
+    title: 'Free Rock Identifier & Marketplace – Identify & Trade Rocks from Photo',
+    description: 'Identify rocks and minerals from a photo with AI, then browse and trade specimens with collectors worldwide. Free rock identifier, rare finds, and trending geology on Lithos.',
     path: '/'
   },
   collection: {
-    title: 'My Rock Collection - Track & Organize Specimens',
-    description: 'Manage your rock and mineral collection. Track specimens, view statistics, earn XP, and organize your geological finds with Lithos.',
+    title: 'My Rock Collection – Track & Organize Your Specimens',
+    description: 'Manage your rock and mineral collection. Track specimens you identified from photos, view stats, earn XP, and organize your geological finds. Free on Lithos.',
     path: '/collection'
   },
   scan: {
-    title: 'AI Rock Identifier - Identify Rocks & Minerals from Photo',
-    description: 'Identify any rock or mineral from a photo. Free AI rock scanner: upload a picture for instant identification, rarity score, hardness, and geological details. No app download required.',
+    title: 'Identify Rocks from Photo – Free AI Rock & Mineral Identifier',
+    description: 'Identify any rock or mineral from a photo in seconds. Free AI rock identifier: upload or take a picture for instant name, rarity, hardness, and geological details. No app download—works in browser.',
     path: '/scan'
   },
   feed: {
-    title: 'Rock Discovery Feed - Trending Specimens & Rare Finds',
-    description: 'Discover amazing rocks and minerals from collectors worldwide. Explore trending specimens, rare geological finds, and beautiful crystals.',
+    title: 'Rock Discovery Feed – Trending Specimens & Rare Finds',
+    description: 'Discover rocks and minerals from collectors worldwide. Explore trending specimens, rare geological finds, and crystals. Identify yours with our free rock identifier.',
     path: '/feed'
   }
 }

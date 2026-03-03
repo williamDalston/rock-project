@@ -214,9 +214,12 @@ export function MarketView({
             <p className="font-serif text-2xl font-bold text-white tracking-tight" aria-hidden="true">
               Lithos<span className="text-emerald-500">.</span>
             </p>
-            <h1 className="text-[11px] text-stone-500 uppercase tracking-widest">
-              Rock & Mineral Marketplace
+            <h1 className="sr-only">
+              Lithos – Free rock identifier and rock &amp; mineral marketplace. Identify rocks from photo with AI, then trade specimens worldwide.
             </h1>
+            <p className="text-[11px] text-stone-500 uppercase tracking-widest" aria-hidden="true">
+              Rock &amp; Mineral Marketplace
+            </p>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
             {/* Search Toggle */}
@@ -381,10 +384,10 @@ export function MarketView({
             <div className="flex-grow min-w-0">
               <h2 id="ai-identify-heading" className="font-serif text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-amber-400 flex-shrink-0" aria-hidden="true" />
-                Identify any rock with AI
+                Identify any rock from a photo with AI
               </h2>
               <p className="text-stone-400 text-sm sm:text-base mt-1">
-                Snap a photo → get instant ID, rarity, and geological details. Free rock & mineral identifier powered by AI.
+                Snap a photo → get instant ID, rarity, and geological details. Free rock and mineral identifier—no app download.
               </p>
               <span className="inline-flex items-center gap-1.5 mt-3 text-emerald-400 text-sm font-medium">
                 Tap to scan a specimen
