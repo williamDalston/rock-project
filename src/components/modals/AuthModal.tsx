@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { X, Mail, Eye, EyeOff, ArrowLeft, Loader2 } from 'lucide-react'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 
 interface AuthModalProps {
   isOpen: boolean
@@ -45,6 +46,8 @@ export function AuthModal({
     }
   }, [isOpen])
 
+  const focusTrapRef = useFocusTrap<HTMLDivElement>(isOpen)
+
   if (!isOpen) return null
 
   const handleClose = () => {
@@ -67,28 +70,40 @@ export function AuthModal({
   }
 
   const handleGoogleSignIn = async () => {
-    if (isAnonymous && onUpgradeAccount) {
-      await onUpgradeAccount('google')
-    } else {
-      await onSignInWithGoogle()
+    try {
+      if (isAnonymous && onUpgradeAccount) {
+        await onUpgradeAccount('google')
+      } else {
+        await onSignInWithGoogle()
+      }
+      handleClose()
+    } catch {
+      // Error is displayed via the error prop from the auth hook
     }
-    if (!error) handleClose()
   }
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
-    await onSignInWithEmail(email, password)
-    if (!error) handleClose()
+    try {
+      await onSignInWithEmail(email, password)
+      handleClose()
+    } catch {
+      // Error is displayed via the error prop from the auth hook
+    }
   }
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (isAnonymous && onUpgradeAccount) {
-      await onUpgradeAccount('email', email, password)
-    } else {
-      await onSignUpWithEmail(email, password, displayName)
+    try {
+      if (isAnonymous && onUpgradeAccount) {
+        await onUpgradeAccount('email', email, password)
+      } else {
+        await onSignUpWithEmail(email, password, displayName)
+      }
+      handleClose()
+    } catch {
+      // Error is displayed via the error prop from the auth hook
     }
-    if (!error) handleClose()
   }
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -102,7 +117,7 @@ export function AuthModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div ref={focusTrapRef} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-stone-900 rounded-2xl w-full max-w-md overflow-hidden border border-stone-700/50 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-stone-700/50">

@@ -38,6 +38,10 @@ export const DEFAULT_FORM_DATA: RockFormData = {
   isSelfCollected: false
 }
 
+/** Fallback when rock/specimen imageUrl is missing or fails to load (Unsplash, hotlink-friendly). */
+export const FALLBACK_IMAGE_URL =
+  'https://images.unsplash.com/photo-1461988320302-91bde64fc8e4?w=1080&q=80'
+
 // ============================================
 // Rarity System
 // ============================================

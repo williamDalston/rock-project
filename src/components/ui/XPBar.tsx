@@ -8,8 +8,9 @@ interface XPBarProps {
 }
 
 export function XPBar({ xp, level, showDetails = true }: XPBarProps) {
-  const progress = calculateLevelProgress(xp, level)
-  const nextLevelXP = getXPForNextLevel(level)
+  const isMaxLevel = level >= 100
+  const progress = isMaxLevel ? 100 : calculateLevelProgress(xp, level)
+  const nextLevelXP = isMaxLevel ? 0 : getXPForNextLevel(level)
 
   return (
     <div className="w-full">
@@ -22,7 +23,7 @@ export function XPBar({ xp, level, showDetails = true }: XPBarProps) {
             </span>
           </div>
           <span className="text-[10px] text-stone-500">
-            {formatXP(nextLevelXP)} to Lvl {level + 1}
+            {isMaxLevel ? 'Max Level' : `${formatXP(nextLevelXP)} to Lvl ${level + 1}`}
           </span>
         </div>
       )}

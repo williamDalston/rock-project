@@ -64,30 +64,25 @@ export function NavBar({ currentView, onViewChange, onScan, scanInputRef }: NavB
             </div>
           )}
 
-          <label
+          <button
+            type="button"
+            onClick={() => scanInputRef?.current?.click()}
             className={`bg-gradient-to-tr from-emerald-500 to-emerald-700 w-16 h-16 rounded-full flex items-center justify-center shadow-lg shadow-emerald-900/50 border-4 border-stone-950 cursor-pointer hover:scale-105 transition-transform active:scale-95 ${
               showScanHint ? 'ring-4 ring-emerald-400/50 ring-offset-2 ring-offset-stone-950' : ''
             }`}
             aria-label="Scan new rock specimen"
-            tabIndex={0}
-            role="button"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                scanInputRef?.current?.click()
-              }
-            }}
           >
             <ScanLine className="w-7 h-7 text-white" aria-hidden="true" />
-            <input
-              ref={scanInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={handleScan}
-              className="hidden"
-              aria-label="Upload rock photo for AI identification"
-            />
-          </label>
+          </button>
+          <input
+            ref={scanInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleScan}
+            className="hidden"
+            aria-label="Upload rock photo for AI identification"
+          />
           <span className="text-[10px] font-bold tracking-wider uppercase mt-2 text-emerald-400">
             Identify
           </span>

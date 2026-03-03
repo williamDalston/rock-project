@@ -11,7 +11,9 @@ import { ShareButton, generateRockShareData } from '@/components/ui/ShareButton'
 import { HeartGeode } from '@/components/ui/HeartGeode'
 import { useVerification } from '@/hooks/useVerification'
 import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { findSimilarRocks, getSimilarityReason } from '@/services/similarity'
+import { FALLBACK_IMAGE_URL } from '@/constants'
 import type { Rock, User, UserProfile } from '@/types'
 
 interface RockDetailModalProps {
@@ -89,6 +91,8 @@ export function RockDetailModal({
     direction: 'down'
   })
 
+  const focusTrapRef = useFocusTrap<HTMLDivElement>()
+
   // Prevent body scroll when modal is open
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -151,7 +155,7 @@ export function RockDetailModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in" role="dialog" aria-modal="true" aria-label={`${rock.name} details`}>
+    <div ref={focusTrapRef} className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-sm flex items-end sm:items-center justify-center animate-fade-in" role="dialog" aria-modal="true" aria-label={`${rock.name} details`}>
       {/* Navigation Arrows - Desktop only */}
       {hasPrev && onPrev && (
         <button
@@ -192,15 +196,20 @@ export function RockDetailModal({
         {/* Image Section - Larger on desktop */}
         <div className="relative aspect-square sm:aspect-video lg:aspect-auto lg:w-1/2 xl:w-3/5 flex-shrink-0 lg:flex-shrink lg:min-h-0 overflow-hidden">
           <img
-            src={rock.imageUrl}
+            src={rock.imageUrl || FALLBACK_IMAGE_URL}
             alt={rock.name}
             width={600}
             height={600}
             className="w-full h-full object-cover lg:h-full lg:max-h-[95vh] transition-transform duration-700 hover:scale-105"
           />
 
-          {/* Header Actions */}
-          <div className="absolute top-4 right-4 flex items-center gap-2">
+          {/* Header Actions - stopPropagation prevents swipe-to-dismiss from swallowing taps */}
+          <div
+            className="absolute top-4 right-4 flex items-center gap-2 z-10"
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
+          >
             {/* Share Button */}
             <ShareButton
               {...generateRockShareData({
@@ -249,7 +258,12 @@ export function RockDetailModal({
 
           {/* Mobile Navigation Hints */}
           {(hasPrev || hasNext) && (
-            <div className="lg:hidden absolute bottom-16 left-0 right-0 flex justify-center gap-3">
+            <div
+              className="lg:hidden absolute bottom-16 left-0 right-0 flex justify-center gap-3 z-10"
+              onTouchStart={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
+              onTouchEnd={(e) => e.stopPropagation()}
+            >
               {hasPrev && (
                 <button
                   onClick={onPrev}
@@ -718,7 +732,7 @@ export function RockDetailModal({
                         <div className="relative aspect-square rounded-lg overflow-hidden mb-1.5
                                         ring-2 ring-transparent group-hover:ring-purple-500 transition-all">
                           <img
-                            src={similarRock.imageUrl}
+                            src={similarRock.imageUrl || FALLBACK_IMAGE_URL}
                             alt={similarRock.name}
                             width={112}
                             height={112}

@@ -92,9 +92,20 @@ export function ScanView({
             <Hexagon className="w-12 h-12 mb-2" />
             <p className="text-sm">Failed to load image</p>
           </div>
-        ) : (
+        ) : isAnalyzing ? (
           <div className="w-full h-full flex items-center justify-center" role="status" aria-label="Loading image">
             <Loader className="w-8 h-8 animate-spin text-emerald-500" />
+          </div>
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center text-stone-500">
+            <ScanLine className="w-12 h-12 mb-2" />
+            <p className="text-sm">No image selected</p>
+            <button
+              onClick={onDiscard}
+              className="mt-3 px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded-lg text-sm transition-colors"
+            >
+              Go back
+            </button>
           </div>
         )}
 

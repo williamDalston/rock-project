@@ -35,6 +35,8 @@ interface MarketViewProps {
   isAnonymous?: boolean
   onSignOut?: () => void
   onRequestScan?: () => void
+  onShowError?: (title: string, description?: string) => void
+  isDemoData?: boolean
 }
 
 export function MarketView({
@@ -46,7 +48,9 @@ export function MarketView({
   onOpenAuth,
   isAnonymous = true,
   onSignOut,
-  onRequestScan
+  onRequestScan,
+  onShowError,
+  isDemoData = false
 }: MarketViewProps) {
   const [showTradeModal, setShowTradeModal] = useState(false)
   const [tradeTarget, setTradeTarget] = useState<Rock | null>(null)
@@ -120,10 +124,11 @@ export function MarketView({
       setTradeTarget(null)
     } catch (err) {
       console.error('Failed to send trade proposal:', err)
+      onShowError?.('Trade failed', 'Could not send your trade proposal. Please try again.')
     } finally {
       setTradeSending(false)
     }
-  }, [user, tradeTarget, createProposal, addXP])
+  }, [user, tradeTarget, createProposal, addXP, onShowError])
 
   const handleCloseTradeModal = useCallback(() => {
     setShowTradeModal(false)
@@ -392,6 +397,14 @@ export function MarketView({
 
       {/* Responsive container - single column on mobile, multi-column on desktop */}
       <div className="max-w-7xl mx-auto px-2 md:px-4 lg:px-6 py-4">
+        {/* Demo data banner */}
+        {isDemoData && (
+          <div className="mb-4 px-4 py-3 bg-amber-900/20 border border-amber-800/40 rounded-xl text-center">
+            <p className="text-amber-400 text-sm font-medium">Sample specimens shown below</p>
+            <p className="text-amber-500/70 text-xs mt-0.5">Scan your first rock to start building the real marketplace!</p>
+          </div>
+        )}
+
         {/* Hot Magma Trending Section */}
         {trendingRocks.length > 0 && activeFilter === 'all' && (
           <TrendingSection

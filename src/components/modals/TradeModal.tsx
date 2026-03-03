@@ -3,7 +3,9 @@ import { X, Repeat, ArrowRight, MessageSquare, Scale } from 'lucide-react'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { SellerBadge } from '@/components/ui/ReputationBadge'
 import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
+import { useFocusTrap } from '@/hooks/useFocusTrap'
 import { calculateTradeFairness, getFairnessLabel } from '@/services/trading'
+import { FALLBACK_IMAGE_URL } from '@/constants'
 import type { Rock, UserReputation } from '@/types'
 
 interface TradeModalProps {
@@ -33,6 +35,8 @@ export function TradeModal({
     direction: 'down'
   })
 
+  const focusTrapRef = useFocusTrap<HTMLDivElement>()
+
   const handleSelectRock = (rock: Rock) => {
     setSelectedRock(rock)
     setStep('confirm')
@@ -59,7 +63,7 @@ export function TradeModal({
   }, [selectedRock, targetRock])
 
   return (
-    <div role="dialog" aria-modal="true" aria-label="Trade proposal" className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
+    <div ref={focusTrapRef} role="dialog" aria-modal="true" aria-label="Trade proposal" className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4">
       <div
         {...swipeProps}
         className="bg-stone-900 w-full max-w-md rounded-2xl border border-stone-800 shadow-2xl overflow-hidden animate-slide-up"
@@ -100,7 +104,7 @@ export function TradeModal({
             <div className="bg-stone-800/50 rounded-xl p-3 mb-4 flex items-center space-x-3">
               <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                 <img
-                  src={targetRock.imageUrl}
+                  src={targetRock.imageUrl || FALLBACK_IMAGE_URL}
                   alt={targetRock.name}
                   className="w-full h-full object-cover"
                 />
@@ -137,7 +141,7 @@ export function TradeModal({
                   >
                     <div className="aspect-square rounded bg-black mb-2 overflow-hidden relative">
                       <img
-                        src={rock.imageUrl}
+                        src={rock.imageUrl || FALLBACK_IMAGE_URL}
                         alt={rock.name}
                         className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                       />
@@ -164,7 +168,7 @@ export function TradeModal({
                 </p>
                 <div className="w-20 h-20 rounded-xl overflow-hidden mx-auto border-2 border-emerald-600">
                   <img
-                    src={selectedRock?.imageUrl}
+                    src={selectedRock?.imageUrl || FALLBACK_IMAGE_URL}
                     alt={selectedRock?.name}
                     className="w-full h-full object-cover"
                   />
@@ -187,7 +191,7 @@ export function TradeModal({
                 </p>
                 <div className="w-20 h-20 rounded-xl overflow-hidden mx-auto border-2 border-amber-600">
                   <img
-                    src={targetRock.imageUrl}
+                    src={targetRock.imageUrl || FALLBACK_IMAGE_URL}
                     alt={targetRock.name}
                     className="w-full h-full object-cover"
                   />

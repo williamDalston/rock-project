@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { X, Hexagon, Calendar, Loader, Repeat } from 'lucide-react'
+import { X, Hexagon, Calendar, Loader, Repeat, WifiOff, RefreshCw } from 'lucide-react'
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '@/services/firebase'
-import { APP_CONFIG } from '@/constants'
+import { APP_CONFIG, FALLBACK_IMAGE_URL } from '@/constants'
 import { LevelBadge } from '@/components/ui/LevelBadge'
 import { RarityBadge } from '@/components/ui/RarityBadge'
 import { ReputationBadge } from '@/components/ui/ReputationBadge'
@@ -21,6 +21,7 @@ export function UserProfileModal({ userId, currentUser, onClose, onRockClick, on
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [rocks, setRocks] = useState<Rock[]>([])
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState(false)
 
   const { swipeProps } = useSwipeToDismiss({
     onDismiss: onClose,
@@ -28,45 +29,47 @@ export function UserProfileModal({ userId, currentUser, onClose, onRockClick, on
     direction: 'down'
   })
 
-  useEffect(() => {
-    async function fetchUserData() {
-      setLoading(true)
-      try {
-        // Fetch user profile
-        const profilePath = `artifacts/${APP_CONFIG.APP_ID}/users/${userId}/profile`
-        const profileRef = doc(db, profilePath, 'data')
-        const profileSnap = await getDoc(profileRef)
+  const fetchUserData = async () => {
+    setLoading(true)
+    setFetchError(false)
+    try {
+      // Fetch user profile
+      const profilePath = `artifacts/${APP_CONFIG.APP_ID}/users/${userId}/profile`
+      const profileRef = doc(db, profilePath, 'data')
+      const profileSnap = await getDoc(profileRef)
 
-        if (profileSnap.exists()) {
-          setProfile(profileSnap.data() as UserProfile)
-        }
-
-        // Fetch user's public rocks from market
-        const marketPath = `artifacts/${APP_CONFIG.APP_ID}/public/market/rocks`
-        const rocksRef = collection(db, marketPath)
-        const rocksQuery = query(rocksRef, where('ownerId', '==', userId))
-        const rocksSnap = await getDocs(rocksQuery)
-
-        const userRocks = rocksSnap.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Rock[]
-
-        // Sort by creation date
-        userRocks.sort((a, b) => {
-          const aTime = a.createdAt?.seconds || 0
-          const bTime = b.createdAt?.seconds || 0
-          return bTime - aTime
-        })
-
-        setRocks(userRocks)
-      } catch (err) {
-        console.error('Failed to fetch user data:', err)
-      } finally {
-        setLoading(false)
+      if (profileSnap.exists()) {
+        setProfile(profileSnap.data() as UserProfile)
       }
-    }
 
+      // Fetch user's public rocks from market
+      const marketPath = `artifacts/${APP_CONFIG.APP_ID}/public/market/rocks`
+      const rocksRef = collection(db, marketPath)
+      const rocksQuery = query(rocksRef, where('ownerId', '==', userId))
+      const rocksSnap = await getDocs(rocksQuery)
+
+      const userRocks = rocksSnap.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Rock[]
+
+      // Sort by creation date
+      userRocks.sort((a, b) => {
+        const aTime = a.createdAt?.seconds || 0
+        const bTime = b.createdAt?.seconds || 0
+        return bTime - aTime
+      })
+
+      setRocks(userRocks)
+    } catch (err) {
+      console.error('Failed to fetch user data:', err)
+      setFetchError(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchUserData()
   }, [userId])
 
@@ -218,7 +221,7 @@ export function UserProfileModal({ userId, currentUser, onClose, onRockClick, on
                         className="w-full aspect-square relative"
                       >
                         <img
-                          src={rock.imageUrl}
+                          src={rock.imageUrl || FALLBACK_IMAGE_URL}
                           alt={rock.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                         />
@@ -257,6 +260,19 @@ export function UserProfileModal({ userId, currentUser, onClose, onRockClick, on
               )}
             </div>
           </>
+        ) : fetchError ? (
+          <div className="text-center py-20">
+            <WifiOff className="w-12 h-12 text-stone-700 mx-auto mb-3" />
+            <p className="text-stone-500 mb-1">Could not load profile</p>
+            <p className="text-stone-600 text-sm mb-4">Check your connection and try again</p>
+            <button
+              onClick={fetchUserData}
+              className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded-lg text-sm transition-colors inline-flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Retry
+            </button>
+          </div>
         ) : (
           <div className="text-center py-20">
             <Hexagon className="w-12 h-12 text-stone-700 mx-auto mb-3" />

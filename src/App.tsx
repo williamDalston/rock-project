@@ -16,6 +16,8 @@ import { AuthModal } from '@/components/modals/AuthModal'
 import { NotificationPrompt } from '@/components/ui/NotificationPrompt'
 import { LevelUpCelebration, useLevelUpCelebration } from '@/components/ui/LevelUpCelebration'
 import { TradeCelebration } from '@/components/ui/TradeCelebration'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+import { useOnlineStatus } from '@/hooks/useOnlineStatus'
 import type { ViewType, RockFormData, AIAnalysisResult, TradeProposal } from '@/types'
 
 // Lazy load views for code splitting
@@ -78,12 +80,15 @@ export default function App() {
   const { profile, addXP, incrementStat } = useUserProfile(user)
   const { receivedProposals, sentProposals } = useTradeProposals(user)
   const toast = useToast()
+  const isOnline = useOnlineStatus()
 
   // Seed demo data when real data is empty so the app feels populated
-  const effectiveMarketRocks = marketRocks.length > 0 ? marketRocks : demoMarketRocks
-  const effectivePersonalRocks = personalRocks.length > 0
-    ? personalRocks
-    : demoCollectionRocks.map(r => ({ ...r, ownerId: user?.uid || 'demo_self' }))
+  const isMarketDemo = marketRocks.length === 0
+  const isCollectionDemo = personalRocks.length === 0
+  const effectiveMarketRocks = isMarketDemo ? demoMarketRocks : marketRocks
+  const effectivePersonalRocks = isCollectionDemo
+    ? demoCollectionRocks.map(r => ({ ...r, ownerId: user?.uid || 'demo_self' }))
+    : personalRocks
 
   // URL-based routing: read initial view from pathname for SEO crawlability
   const getViewFromPath = (): ViewType => {
@@ -375,7 +380,15 @@ export default function App() {
         onUpgradeAccount={upgradeAnonymousAccount}
       />
 
+      {/* Offline banner */}
+      {!isOnline && (
+        <div className="sticky top-0 z-[100] bg-amber-600 text-white text-center py-2 text-sm font-medium">
+          You're offline — some features may not work
+        </div>
+      )}
+
       <main role="main">
+      <ErrorBoundary>
       <Suspense fallback={<ViewLoader />}>
         {view === 'market' && (
           <MarketView
@@ -388,6 +401,8 @@ export default function App() {
             isAnonymous={isAnonymous}
             onSignOut={handleSignOut}
             onRequestScan={() => scanInputRef.current?.click()}
+            onShowError={(title, desc) => toast.error(title, desc)}
+            isDemoData={isMarketDemo}
           />
         )}
 
@@ -415,9 +430,12 @@ export default function App() {
             isAnonymous={isAnonymous}
             onSignOut={handleSignOut}
             onDeleteRock={handleDeleteRock}
+            onShowError={(title, desc) => toast.error(title, desc)}
+            isDemoData={isCollectionDemo}
           />
         )}
       </Suspense>
+      </ErrorBoundary>
       </main>
 
       {view !== 'scan' && (

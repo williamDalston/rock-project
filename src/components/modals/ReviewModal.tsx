@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { X, Star } from 'lucide-react'
 import type { TradeProposal } from '@/types'
-import { REPUTATION_CONFIG } from '@/constants'
+import { REPUTATION_CONFIG, FALLBACK_IMAGE_URL } from '@/constants'
 import { useSwipeToDismiss } from '@/hooks/useSwipeToDismiss'
 
 interface ReviewModalProps {
@@ -76,7 +76,7 @@ export function ReviewModal({ trade, onClose, onSubmit }: ReviewModalProps) {
           {/* Trade Info */}
           <div className="bg-stone-800/50 rounded-xl p-3 flex items-center space-x-3">
             <img
-              src={trade.targetRock.imageUrl}
+              src={trade.targetRock.imageUrl || FALLBACK_IMAGE_URL}
               alt={trade.targetRock.name}
               className="w-12 h-12 rounded-lg object-cover"
             />

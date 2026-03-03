@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { FALLBACK_IMAGE_URL } from '@/constants'
 
 interface OptimizedImageProps {
   src: string
@@ -11,7 +12,7 @@ interface OptimizedImageProps {
 }
 
 export function OptimizedImage({
-  src,
+  src: srcProp,
   alt,
   className = '',
   aspectRatio = 'square',
@@ -19,9 +20,17 @@ export function OptimizedImage({
   showVignette = true,
   hoverZoom = true
 }: OptimizedImageProps) {
+  const src = srcProp && srcProp.trim() ? srcProp : FALLBACK_IMAGE_URL
   const [isLoaded, setIsLoaded] = useState(false)
   const [isInView, setIsInView] = useState(priority)
+  const [currentSrc, setCurrentSrc] = useState(src)
   const imgRef = useRef<HTMLDivElement>(null)
+
+  // Reset state when src changes (e.g. after fallback)
+  useEffect(() => {
+    setCurrentSrc(src)
+    setIsLoaded(false)
+  }, [src])
 
   // Aspect ratio classes
   const aspectClasses = {
@@ -64,16 +73,23 @@ export function OptimizedImage({
         </div>
       )}
 
-      {/* Actual image */}
+      {/* Actual image - onError try fallback once so we don't stay on skeleton */}
       {isInView && (
         <img
-          src={src}
+          src={currentSrc}
           alt={alt}
           width={400}
           height={aspectRatio === 'square' ? 400 : aspectRatio === '4/5' ? 500 : aspectRatio === '3/4' ? 533 : 225}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
           onLoad={() => setIsLoaded(true)}
+          onError={() => {
+            if (currentSrc !== FALLBACK_IMAGE_URL) {
+              setCurrentSrc(FALLBACK_IMAGE_URL)
+            } else {
+              setIsLoaded(true)
+            }
+          }}
           className={`
             w-full h-full object-cover
             transition-all duration-500 ease-out

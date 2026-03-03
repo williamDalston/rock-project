@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
 import { Heart, Share2, Bookmark, Sparkles, ZoomIn } from 'lucide-react'
+import { FALLBACK_IMAGE_URL } from '@/constants'
 import type { Specimen } from '@/types'
 
 interface FeedCardProps {
@@ -105,7 +106,7 @@ export function FeedCard({ specimen, isActive }: FeedCardProps) {
         style={{ touchAction: 'none' }}
       >
         <img
-          src={specimen.imageUrl}
+          src={specimen.imageUrl || FALLBACK_IMAGE_URL}
           alt={specimen.title}
           className={`
             w-full h-full object-cover

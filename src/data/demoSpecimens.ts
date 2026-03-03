@@ -2,12 +2,9 @@ import type { Specimen, SpecimenCategory } from '@/types'
 
 /**
  * Demo specimens for the Rock Porn feed.
- * Each specimen uses a unique, verified Unsplash image that matches its rock type.
+ * Use shared fallback URL so wiring matches app constants.
  */
-
-// Helper to build Unsplash CDN URLs with consistent sizing
-const unsplash = (photoId: string) =>
-  `https://images.unsplash.com/${photoId}?w=1080&h=1350&fit=crop&q=80&fm=webp`
+import { FALLBACK_IMAGE_URL } from '@/constants'
 
 // Random usernames for demo
 const USERNAMES = [
@@ -40,7 +37,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/Ay-8VsuG_UA',
-    imageUrl: unsplash('photo-1760651691848-e401abe6191b'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 5123,
     username: 'CubeCollector',
     category: 'metal'
@@ -54,7 +51,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/vIdRMp8IpO0',
-    imageUrl: unsplash('photo-1532901074349-dc9d1505589c'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3876,
     username: 'GreenStones',
     category: 'classic'
@@ -68,7 +65,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/eLeXwRx4ALs',
-    imageUrl: unsplash('photo-1705073703601-eed67020c5ee'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 6234,
     username: 'GoldRush',
     category: 'precious'
@@ -82,7 +79,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/BVjRFkvG4Kg',
-    imageUrl: unsplash('photo-1686828282074-31df21740504'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3456,
     username: 'FluoFan',
     category: 'classic'
@@ -96,7 +93,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/V0l3kUa6aBs',
-    imageUrl: unsplash('photo-1760651913970-98e38bd28f77'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3789,
     username: 'HealerStones',
     category: 'classic'
@@ -110,7 +107,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com/photos/VPX6eeOI5s4',
-    imageUrl: unsplash('photo-1572837067415-bc24c4bd8bd2'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 5432,
     username: 'GeodeGuru',
     category: 'classic'
@@ -128,7 +125,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1613862331078-4f9751cd448a'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3654,
     username: 'SkyStones',
     category: 'mystic'
@@ -142,7 +139,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1632805364446-6baf3e3bb21d'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3876,
     username: 'SiberianStones',
     category: 'mystic'
@@ -156,7 +153,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1626471240086-c4313f0b71cc'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3891,
     username: 'MoonChild',
     category: 'mystic'
@@ -170,7 +167,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1635024234495-73c1683f6f2b'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 5234,
     username: 'CosmicCollector',
     category: 'mystic'
@@ -188,7 +185,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1642889819509-f026a1e936cb'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 4234,
     username: 'LoveStones',
     category: 'candy'
@@ -202,7 +199,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1597816131226-42f810b7cda1'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 4567,
     username: 'PinkStones',
     category: 'candy'
@@ -216,7 +213,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1639710158251-ed5ff1551b00'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 2876,
     username: 'CitrusStones',
     category: 'candy'
@@ -230,7 +227,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1723078377323-0c96f913fc91'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 4234,
     username: 'GrapeGems',
     category: 'candy'
@@ -248,7 +245,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1653933387093-7cf0cfce94a0'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3421,
     username: 'ToxicTreasures',
     category: 'neon'
@@ -262,7 +259,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1698629618740-3d4cf1038c16'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 2876,
     username: 'NeonCollector',
     category: 'neon'
@@ -276,7 +273,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1709252790050-dce1ad9401c7'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3567,
     username: 'GeometryLover',
     category: 'neon'
@@ -294,7 +291,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1563117063-ad38230557bc'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3212,
     username: 'ShadowStones',
     category: 'abyssal'
@@ -308,7 +305,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1627577449670-4bb9e862ab95'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 2345,
     username: 'ShadowQuartz',
     category: 'abyssal'
@@ -322,7 +319,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1760651913938-68663af9e049'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 2345,
     username: 'HeavyMetal',
     category: 'metal'
@@ -340,7 +337,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1667680468347-a2911303a6b4'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3456,
     username: 'OceanicGems',
     category: 'ethereal'
@@ -354,7 +351,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1728234553997-f71b87a44e13'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 2654,
     username: 'LilacLover',
     category: 'ethereal'
@@ -368,7 +365,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1603561427596-f73131e6b5bd'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3891,
     username: 'PastelStones',
     category: 'ethereal'
@@ -386,7 +383,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1767131543360-f80666ccb092'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 5678,
     username: 'RoyalGems',
     category: 'precious'
@@ -400,7 +397,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1664158040981-e6c48be04e40'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 4987,
     username: 'SapphireSeeker',
     category: 'precious'
@@ -414,7 +411,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1682963135833-ee78c62672b3'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 5432,
     username: 'OpalObsessed',
     category: 'precious'
@@ -432,7 +429,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1550007056-6b482603900b'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3456,
     username: 'ForestStones',
     category: 'organic'
@@ -446,7 +443,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1512015222849-643b71ed34fa'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 4123,
     username: 'OceanicGems',
     category: 'organic'
@@ -460,7 +457,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1672377263898-d0f94e1c2110'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 2765,
     username: 'AncientWisdom',
     category: 'organic'
@@ -478,7 +475,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1658915241439-26733b9fbb3a'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 2987,
     username: 'EverydayGems',
     category: 'common'
@@ -492,7 +489,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1660913339621-a0f01b9bb882'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 2567,
     username: 'FireStones',
     category: 'common'
@@ -506,7 +503,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1614092872241-c9a193f2b4aa'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3456,
     username: 'WealthStones',
     category: 'common'
@@ -520,7 +517,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1564145593722-41a01c018a10'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 3456,
     username: 'RoyalStones',
     category: 'common'
@@ -534,7 +531,7 @@ export const demoSpecimens: DemoSpecimen[] = [
     source: 'Unsplash',
     license: 'CC0',
     url: 'https://unsplash.com',
-    imageUrl: unsplash('photo-1550008048-79f06a04b08b'),
+    imageUrl: FALLBACK_IMAGE_URL,
     likes: 1987,
     username: 'BlueStones',
     category: 'common'

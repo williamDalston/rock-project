@@ -85,30 +85,35 @@ export function useRocks(user: User | null): UseRocksReturn {
     }
   }
 
-  const deleteRock = async (rockId: string, rockName: string) => {
+  const deleteRock = async (rockId: string, _rockName: string) => {
     if (!user) throw new Error('User not authenticated')
 
     const paths = getCollectionPaths(APP_CONFIG.APP_ID, user.uid)
     if (!paths.userRocks) throw new Error('Invalid user path')
 
+    // Get the rock data before deleting so we can match the market listing
+    const rockDoc = await getDocs(query(collection(db, paths.userRocks), where('__name__', '==', rockId)))
+    const rockData = rockDoc.docs[0]?.data()
+
     // Delete from personal collection
     await deleteDoc(doc(db, paths.userRocks, rockId))
 
-    // Also try to delete from market (find by ownerId and name match)
-    // Since market rocks have different IDs, we query by ownerId and name
-    const marketRef = collection(db, paths.marketRocks)
-    const q = query(
-      marketRef,
-      where('ownerId', '==', user.uid),
-      where('name', '==', rockName)
-    )
-    const snapshot = await getDocs(q)
+    // Delete from market - match by ownerId and imageUrl+createdAt for uniqueness
+    // This avoids the name-collision bug where two rocks with the same name both get deleted
+    if (rockData) {
+      const marketRef = collection(db, paths.marketRocks)
+      const q = query(
+        marketRef,
+        where('ownerId', '==', user.uid),
+        where('imageUrl', '==', rockData.imageUrl || '')
+      )
+      const snapshot = await getDocs(q)
 
-    // Delete all matching market listings
-    const deletePromises = snapshot.docs.map(docSnap =>
-      deleteDoc(doc(db, paths.marketRocks, docSnap.id))
-    )
-    await Promise.all(deletePromises)
+      // Only delete the first match (there should be exactly one)
+      if (snapshot.docs.length > 0) {
+        await deleteDoc(doc(db, paths.marketRocks, snapshot.docs[0].id))
+      }
+    }
   }
 
   return { personalRocks, marketRocks, loading, addRock, deleteRock }

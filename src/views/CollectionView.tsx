@@ -26,6 +26,7 @@ import { useUserProfile } from '@/hooks/useUserProfile'
 import { getTradeStatusLabel, getTradeStatusColor, formatTradeDate } from '@/services/trading'
 import { formatWishlistCriteria } from '@/services/wishlist'
 import { getDemoTradeProposals, getDemoWishlists, isDemoId } from '@/data/demoData'
+import { FALLBACK_IMAGE_URL } from '@/constants'
 import type { Rock, UserProfile, User, TradeProposal } from '@/types'
 
 type TabType = 'collection' | 'trades' | 'wishlists'
@@ -41,6 +42,8 @@ interface CollectionViewProps {
   isAnonymous?: boolean
   onSignOut?: () => void
   onDeleteRock?: (rockId: string, rockName: string) => Promise<void>
+  onShowError?: (title: string, description?: string) => void
+  isDemoData?: boolean
 }
 
 export function CollectionView({
@@ -53,7 +56,9 @@ export function CollectionView({
   onOpenAuth,
   isAnonymous = false,
   onSignOut,
-  onDeleteRock
+  onDeleteRock,
+  onShowError,
+  isDemoData = false
 }: CollectionViewProps) {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
@@ -83,6 +88,7 @@ export function CollectionView({
   const [showWishlistModal, setShowWishlistModal] = useState(false)
   const [showProfileModal, setShowProfileModal] = useState(false)
   const [viewProfileUserId, setViewProfileUserId] = useState<string | null>(null)
+  const [wishlistDeleteConfirm, setWishlistDeleteConfirm] = useState<string | null>(null)
   const [tradeToReview, setTradeToReview] = useState<TradeProposal | null>(null)
   const [detailRock, setDetailRock] = useState<Rock | null>(null)
 
@@ -135,6 +141,7 @@ export function CollectionView({
       await respondToProposal(tradeId, accept ? 'accept' : 'reject')
     } catch (err) {
       console.error('Failed to respond to trade:', err)
+      onShowError?.('Trade response failed', `Could not ${accept ? 'accept' : 'decline'} the trade. Please try again.`)
     }
   }
 
@@ -147,6 +154,7 @@ export function CollectionView({
       setTradeToReview(trade)
     } catch (err) {
       console.error('Failed to complete trade:', err)
+      onShowError?.('Trade completion failed', 'Could not complete the trade. Please try again.')
     }
   }
 
@@ -157,6 +165,7 @@ export function CollectionView({
       setTradeToReview(null)
     } catch (err) {
       console.error('Failed to submit review:', err)
+      onShowError?.('Review failed', 'Could not submit your review. Please try again.')
     }
   }
 
@@ -311,15 +320,15 @@ export function CollectionView({
             {/* Stats Row */}
             <div className="flex justify-between mt-4 pt-3 border-t border-stone-800">
               <div className="text-center">
-                <p className="text-lg font-bold text-white">{personalRocks.length}</p>
+                <p className="text-lg font-bold text-white">{isDemoData ? 0 : personalRocks.length}</p>
                 <p className="text-[11px] text-stone-500 uppercase tracking-wider">Specimens</p>
               </div>
               <div className="text-center">
-                <p className="text-lg font-bold text-emerald-400">{selfCollectedCount}</p>
+                <p className="text-lg font-bold text-emerald-400">{isDemoData ? 0 : selfCollectedCount}</p>
                 <p className="text-[11px] text-stone-500 uppercase tracking-wider">Self-Found</p>
               </div>
               <div className="text-center">
-                <p className="text-lg font-bold text-white">{rockTypes.size}</p>
+                <p className="text-lg font-bold text-white">{isDemoData ? 0 : rockTypes.size}</p>
                 <p className="text-[11px] text-stone-500 uppercase tracking-wider">Types</p>
               </div>
               <div className="text-center">
@@ -364,7 +373,7 @@ export function CollectionView({
             <Hexagon className="w-4 h-4" aria-hidden="true" />
             <span>Vault</span>
             <span className="bg-black/30 px-1.5 py-0.5 rounded text-[11px]">
-              {personalRocks.length}
+              {isDemoData ? 0 : personalRocks.length}
             </span>
           </button>
 
@@ -416,7 +425,14 @@ export function CollectionView({
       <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-6 py-4">
         {/* Collection Tab */}
         {activeTab === 'collection' && (
-          <div role="tabpanel" id="panel-collection" aria-labelledby="tab-collection" className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+          <div role="tabpanel" id="panel-collection" aria-labelledby="tab-collection" className="space-y-4">
+            {isDemoData && (
+              <div className="px-4 py-3 bg-amber-900/20 border border-amber-800/40 rounded-xl text-center">
+                <p className="text-amber-400 text-sm font-medium">Sample collection shown below</p>
+                <p className="text-amber-500/70 text-xs mt-0.5">Scan your first rock to start building your real vault!</p>
+              </div>
+            )}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {personalRocks.length === 0 ? (
               <div className="col-span-full">
                 <EmptyState type="collection" />
@@ -431,7 +447,7 @@ export function CollectionView({
                 >
                   <div className="aspect-square relative">
                     <OptimizedImage
-                      src={rock.imageUrl}
+                      src={rock.imageUrl || FALLBACK_IMAGE_URL}
                       alt={rock.name}
                       aspectRatio="square"
                       hoverZoom={true}
@@ -498,6 +514,7 @@ export function CollectionView({
                 </article>
               ))
             )}
+            </div>
           </div>
         )}
 
@@ -619,12 +636,32 @@ export function CollectionView({
                           </div>
                         </div>
 
-                        <button
-                          onClick={() => !isDemoId(item.id) && removeWishlistItem(item.id)}
-                          className="text-stone-600 hover:text-rose-400 transition-colors"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+                        {wishlistDeleteConfirm === item.id ? (
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => setWishlistDeleteConfirm(null)}
+                              className="text-[11px] text-stone-500 hover:text-stone-300 px-2 py-1 rounded transition-colors"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (!isDemoId(item.id)) removeWishlistItem(item.id)
+                                setWishlistDeleteConfirm(null)
+                              }}
+                              className="text-[11px] text-rose-400 hover:text-rose-300 bg-rose-900/30 px-2 py-1 rounded transition-colors"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => setWishlistDeleteConfirm(item.id)}
+                            className="text-stone-600 hover:text-rose-400 transition-colors"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
 
                       {/* Criteria Tags */}
@@ -660,7 +697,7 @@ export function CollectionView({
                                 >
                                   <div className="w-16 h-16 rounded-lg overflow-hidden ring-2 ring-rose-500/50">
                                     <img
-                                      src={rock.imageUrl}
+                                      src={rock.imageUrl || FALLBACK_IMAGE_URL}
                                       alt={rock.name}
                                       className="w-full h-full object-cover"
                                     />
@@ -785,7 +822,7 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
           <div className="flex items-center space-x-2">
             <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 ${isReceived ? 'ring-2 ring-emerald-500/50' : 'ring-2 ring-amber-500/50'}`}>
               <img
-                src={trade.offeredRock?.imageUrl}
+                src={trade.offeredRock?.imageUrl || FALLBACK_IMAGE_URL}
                 alt={trade.offeredRock?.name}
                 className="w-full h-full object-cover"
               />
@@ -809,7 +846,7 @@ function TradeCard({ trade, isReceived, onRespond, onComplete, loading }: TradeC
           <div className="flex items-center space-x-2">
             <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 ${isReceived ? 'ring-2 ring-amber-500/50' : 'ring-2 ring-emerald-500/50'}`}>
               <img
-                src={trade.targetRock?.imageUrl}
+                src={trade.targetRock?.imageUrl || FALLBACK_IMAGE_URL}
                 alt={trade.targetRock?.name}
                 className="w-full h-full object-cover"
               />

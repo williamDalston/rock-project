@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Bell, X } from 'lucide-react'
+import { Bell, X, Loader2 } from 'lucide-react'
 import { useNotifications } from '@/hooks/useNotifications'
 
 interface NotificationPromptProps {
@@ -10,6 +10,7 @@ export function NotificationPrompt({ onNavigateToTrades }: NotificationPromptPro
   const { permission, supported, requestPermission } = useNotifications(onNavigateToTrades)
   const [dismissed, setDismissed] = useState(false)
   const [show, setShow] = useState(false)
+  const [requesting, setRequesting] = useState(false)
 
   useEffect(() => {
     // Check if already dismissed this session
@@ -32,8 +33,13 @@ export function NotificationPrompt({ onNavigateToTrades }: NotificationPromptPro
   }
 
   const handleEnable = async () => {
-    await requestPermission()
-    handleDismiss()
+    setRequesting(true)
+    try {
+      await requestPermission()
+      handleDismiss()
+    } finally {
+      setRequesting(false)
+    }
   }
 
   if (!show || dismissed || permission !== 'default') return null
@@ -43,7 +49,8 @@ export function NotificationPrompt({ onNavigateToTrades }: NotificationPromptPro
       <div className="bg-stone-800 border border-stone-700 rounded-xl p-4 shadow-2xl">
         <button
           onClick={handleDismiss}
-          className="absolute top-2 right-2 p-1 text-stone-500 hover:text-stone-300 transition-colors"
+          disabled={requesting}
+          className="absolute top-2 right-2 p-1 text-stone-500 hover:text-stone-300 transition-colors disabled:opacity-50"
           aria-label="Dismiss"
         >
           <X className="w-4 h-4" />
@@ -56,18 +63,27 @@ export function NotificationPrompt({ onNavigateToTrades }: NotificationPromptPro
           <div className="flex-1 min-w-0">
             <h3 className="text-white font-medium text-sm">Enable Notifications</h3>
             <p className="text-stone-400 text-xs mt-1">
-              Get notified when someone wants to trade with you!
+              Get notified when someone wants to trade with you. Your browser will show a permission prompt — choose Allow.
             </p>
             <div className="flex gap-2 mt-3">
               <button
                 onClick={handleEnable}
-                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors"
+                disabled={requesting}
+                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-70 flex items-center gap-1.5"
               >
-                Enable
+                {requesting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+                    Look for browser prompt…
+                  </>
+                ) : (
+                  'Enable'
+                )}
               </button>
               <button
                 onClick={handleDismiss}
-                className="px-3 py-1.5 bg-stone-700 hover:bg-stone-600 text-stone-300 text-xs font-medium rounded-lg transition-colors"
+                disabled={requesting}
+                className="px-3 py-1.5 bg-stone-700 hover:bg-stone-600 text-stone-300 text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
               >
                 Not now
               </button>
