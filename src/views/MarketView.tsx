@@ -23,6 +23,7 @@ import { useTrending } from '@/hooks/useTrending'
 import { useTradeProposals } from '@/hooks/useTradeProposals'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import { useReputation } from '@/hooks/useReputation'
+import { FALLBACK_IMAGE_URL } from '@/constants'
 
 interface MarketViewProps {
   marketRocks: Rock[]
@@ -435,7 +436,7 @@ export function MarketView({
             {filteredRocks.map((rock) => (
               <RarityBorderGlow key={rock.id} score={rock.rarityScore}>
                 <article
-                  className={`relative group rounded-2xl overflow-hidden shadow-xl bg-stone-900 border transition-all duration-500 flex flex-col h-full ${
+                  className={`relative group rounded-2xl overflow-hidden shadow-xl bg-stone-900 border transition-all duration-500 ${
                     isNewListing(rock.createdAt)
                       ? 'border-emerald-800/50 ring-1 ring-emerald-500/20'
                       : 'border-stone-800'
@@ -493,7 +494,7 @@ export function MarketView({
                   className="w-full relative block cursor-pointer"
                 >
                   <OptimizedImage
-                    src={rock.imageUrl}
+                    src={rock.imageUrl || FALLBACK_IMAGE_URL}
                     alt={rock.name}
                     aspectRatio="square"
                   />
@@ -516,7 +517,7 @@ export function MarketView({
                 </button>
 
                 {/* Action Bar - Compact like Instagram */}
-                <div className="p-3 bg-stone-900 flex-grow flex flex-col">
+                <div className="p-3 bg-stone-900">
                   {/* Action buttons row */}
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center space-x-3">
@@ -561,14 +562,12 @@ export function MarketView({
                   </div>
 
                   {/* Title and description */}
-                  <div className="mt-auto">
-                    <h2 className="text-sm font-serif font-bold text-white mb-1">
-                      {rock.marketTitle || rock.name}
-                    </h2>
-                    <p className="text-xs text-stone-400 line-clamp-2 leading-relaxed">
-                      {rock.description}
-                    </p>
-                  </div>
+                  <h2 className="text-sm font-serif font-bold text-white mb-1">
+                    {rock.marketTitle || rock.name}
+                  </h2>
+                  <p className="text-xs text-stone-400 line-clamp-2 leading-relaxed">
+                    {rock.description}
+                  </p>
                 </div>
               </article>
               </RarityBorderGlow>
